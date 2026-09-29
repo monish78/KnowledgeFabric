@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Add data</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#16201E;background:#F5F6F4}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+.top{height:56px;background:#fff;border-bottom:1px solid #DDE2E0;display:flex;align-items:center;padding:0 24px;gap:32px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px}
+.mark{width:26px;height:26px;border-radius:7px;background:#0B6B5F}
+.tabs{display:flex;gap:4px;flex-grow:1}
+.tab{padding:9px 14px;border-radius:8px;font-size:14px;color:#5B6764;font-weight:500}
+.tab.on{background:#E3F1EE;color:#0B6B5F}
+.user{display:flex;align-items:center;gap:12px;font-size:13px}
+.av{width:32px;height:32px;border-radius:50%;background:#16201E;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:10px;background:#0B6B5F;color:#fff;font-size:14px;font-weight:600;border:0;font-family:inherit}
+.btn.sec{background:#fff;color:#16201E;border:1px solid #C9D0CE}
+.btn.sm{height:32px;padding:0 12px;font-size:13px}
+.card{background:#fff;border:1px solid #DDE2E0;border-radius:14px}
+.lbl{font-size:13px;font-weight:600;margin-bottom:6px;display:block}
+.inp{height:44px;width:100%;border:1px solid #C9D0CE;border-radius:10px;padding:0 14px;font-size:14px;font-family:inherit;background:#fff;color:#16201E}
+.badge{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;font-weight:600;background:#E3F1EE;color:#0B6B5F}
+.badge.g{background:#EDEFEE;color:#46524F}
+.badge.b{background:#E4ECFB;color:#1E40AF}
+.badge.w{background:#FFF3D6;color:#7A4E00}
+.badge.r{background:#FDECEA;color:#B42318}
+.muted{color:#5B6764}
+.h{font-size:12px;font-weight:600;letter-spacing:0.06em;color:#5B6764}
+.drop{border:1.5px dashed #9FB0AC;border-radius:12px;background:#FAFBFA;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:26px;font-size:14px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.4}
+.box{width:18px;height:18px;border-radius:5px;background:#0B6B5F;flex-shrink:0;margin-top:1px}
+.run{padding:14px 0;border-bottom:1px solid #EAEDEC;font-size:13px;line-height:1.5}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; overflow: hidden; display: flex; flex-direction: column">
+  <div class="top">
+    <div class="logo"><div class="mark"></div>Graphbase</div>
+    <nav class="tabs">
+      <a class="tab" href="Workspace.dc.html">Workspace</a>
+      <a class="tab on" href="AddData.dc.html">Add data</a>
+      <a class="tab" href="Access.dc.html">Access</a>
+      <a class="tab" href="Chat.dc.html">Chat</a>
+    </nav>
+    <div class="user"><div class="av">PN</div><div><div style="font-weight:600">Priya Nair</div><div class="muted" style="font-size:12px">priya.nair</div></div><a class="tab" href="Main.dc.html">Sign out</a></div>
+  </div>
+  <div style="padding: 28px 40px; display: flex; flex-direction: column; gap: 22px">
+    <div>
+      <div style="font-size: 26px; font-weight: 600">Add data to an existing knowledge base</div>
+      <div class="muted" style="font-size: 14px; margin-top: 4px">The schema already exists, so new rows are mapped automatically. There is no review step.</div>
+    </div>
+    <div style="display: flex; gap: 24px">
+      <div style="width: 780px; display: flex; flex-direction: column; gap: 18px">
+        <div class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 18px">
+          <div>
+            <label class="lbl" for="tk">Knowledge base</label>
+            <select class="inp" id="tk"><option>retail_supply_chain_kg (Graph, owner)</option><option>hr_policies_rag (RAG, owner)</option></select>
+          </div>
+          <div style="background: #F5F6F4; border-radius: 10px; padding: 12px 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap"><span class="badge b">Graph</span><span style="font-size: 13px">6 node types, 7 relationship types, 128 entities</span><span class="muted" style="font-size: 13px">Last updated 27 Sep 2026</span></div>
+          <div class="drop"><div style="font-weight: 600">Drop new CSV or XLSX here</div><div class="muted">or <span style="color: #0B6B5F; font-weight: 600">browse</span>. For RAG bases, drop PDF, DOCX or TXT instead.</div></div>
+          <div style="display: flex; align-items: center; gap: 10px; background: #F5F6F4; border-radius: 10px; padding: 10px 14px"><div style="flex-grow: 1"><div style="font-weight: 600; font-size: 14px">supplier_orders_october.xlsx</div><div class="muted" style="font-size: 12px">1.1 MB, 1 sheet, 1,230 rows. Columns match the existing schema.</div></div><span class="badge">Schema matched</span></div>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <div class="chk"><div class="box"></div><div>Merge with existing nodes using their key property, so duplicates are not created.</div></div>
+            <div class="chk"><div class="box"></div><div>Skip rows that do not fit the schema and list them in the run report.</div></div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 12px"><button class="btn sec" type="button">Clear</button><button class="btn" type="button">Ingest data</button></div>
+        </div>
+      </div>
+      <div class="card" style="flex-grow: 1; padding: 20px 22px">
+        <div class="h" style="margin-bottom: 6px">PIPELINE RUNS</div>
+        <div class="run"><div style="display: flex; justify-content: space-between"><b>Run 15, supplier_orders_october.xlsx</b><span class="badge w">Running 68%</span></div><div class="muted">Mapping rows to existing schema and writing to the graph.</div><div style="height: 6px; border-radius: 3px; background: #EAEDEC; margin-top: 8px"><div style="width: 68%; height: 6px; border-radius: 3px; background: #0B6B5F"></div></div></div>
+        <div class="run"><div style="display: flex; justify-content: space-between"><b>Run 14, supplier_orders_sep.xlsx</b><span class="badge">Completed</span></div><div class="muted">Added 312 nodes and 540 relationships. 27 Sep, 15:20.</div></div>
+        <div class="run"><div style="display: flex; justify-content: space-between"><b>Run 13, warehouse_update.csv</b><span class="badge r">12 rows rejected</span></div><div class="muted">Added 44 nodes. 12 rows had no supplier_id. <span style="color: #0B6B5F; font-weight: 600">View report</span></div></div>
+        <div class="run" style="border-bottom: 0"><div style="display: flex; justify-content: space-between"><b>Run 12, supplier_orders.xlsx</b><span class="badge g">Initial build</span></div><div class="muted">Created from the reviewed schema. 22 Sep, 14:40.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

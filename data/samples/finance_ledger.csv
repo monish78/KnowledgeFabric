@@ -1,0 +1,481 @@
+﻿Entry No;Posting Date;GL Account;Account Name;Cost Centre;Vendor;Amount;Currency;Approved By;Approver Email
+JE-202600001;15/09/2026;5300;Cloud Hosting;CC-IT;Amazon Web Services;162,118.32;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600002;09/06/2026;5600;Facilities;CC-HR;Kaveri Packaging;3,380.40;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600003;02/05/2026;5100;Utilities;CC-HR;Tata Power;32,473.93;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600004;31/07/2026;5500;Logistics;CC-HR;Bluepeak Textiles;178,085.22;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600005;25/08/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;261,518.62;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600006;17/09/2026;5200;Telecom;CC-FIN;Airtel Business;111,904.97;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600007;09/04/2026;5700;Raw Material;CC-HR;Infosys BPM;237,233.01;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600008;24/09/2026;5200;Telecom;CC-OPS;Airtel Business;91,833.96;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600009;19/07/2026;5400;Outsourcing;CC-MKT;Infosys BPM;239,926.69;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600010;30/04/2026;5400;Outsourcing;CC-HR;Amazon Web Services;30,026.97;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600011;09/04/2026;5700;Raw Material;CC-HR;Amazon Web Services;183,113.61;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600012;06/06/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;312,608.56;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600013;04/09/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;242,045.15;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600014;26/06/2026;5100;Utilities;CC-OPS;Bluepeak Textiles;78,902.64;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600015;11/04/2026;5600;Facilities;CC-IT;Kaveri Packaging;75,843.40;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600016;12/09/2026;2100;Accounts Payable;CC-FIN;Sodexo Facilities;74,172.67;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600017;22/08/2026;5700;Raw Material;CC-FIN;Sodexo Facilities;23,405.14;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600018;28/05/2026;2100;Accounts Payable;CC-FIN;Tata Power;69,854.89;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600019;02/09/2026;5100;Utilities;CC-IT;Amazon Web Services;196,241.84;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600020;08/06/2026;5400;Outsourcing;CC-IT;Sodexo Facilities;214,648.73;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600021;11/05/2026;5700;Raw Material;CC-IT;Tata Power;38,634.56;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600022;02/04/2026;5200;Telecom;CC-MKT;Sodexo Facilities;61,714.34;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600023;14/07/2026;5200;Telecom;CC-IT;Deccan Couriers;61,208.43;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600024;19/08/2026;5600;Facilities;CC-FIN;Bluepeak Textiles;7,464.14;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600025;22/04/2026;5100;Utilities;CC-IT;Deccan Couriers;177,369.81;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600026;04/08/2026;5400;Outsourcing;CC-IT;Sodexo Facilities;143,579.33;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600027;22/08/2026;5500;Logistics;CC-HR;Bluepeak Textiles;123,308.17;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600028;05/05/2026;5500;Logistics;CC-OPS;Bluepeak Textiles;181,524.96;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600029;12/06/2026;5500;Logistics;CC-MKT;Amazon Web Services;204,342.96;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600030;27/06/2026;5300;Cloud Hosting;CC-IT;Amazon Web Services;359,795.06;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600031;28/08/2026;5500;Logistics;CC-HR;Airtel Business;219,896.05;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600032;03/04/2026;5400;Outsourcing;CC-OPS;Infosys BPM;95,391.97;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600033;01/08/2026;5100;Utilities;CC-HR;Tata Power;236,125.37;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600034;05/04/2026;2100;Accounts Payable;CC-OPS;Sodexo Facilities;6,333.27;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600035;17/09/2026;5500;Logistics;CC-IT;Amazon Web Services;(30,264.01);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600036;21/08/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;237,442.78;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600037;28/05/2026;5300;Cloud Hosting;CC-FIN;Amazon Web Services;261,877.07;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600038;10/07/2026;5200;Telecom;CC-IT;Sodexo Facilities;203,663.27;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600039;23/04/2026;5300;Cloud Hosting;CC-FIN;Amazon Web Services;247,178.97;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600040;10/09/2026;5300;Cloud Hosting;CC-IT;Amazon Web Services;221,039.77;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600041;20/05/2026;2100;Accounts Payable;CC-OPS;Deccan Couriers;97,297.75;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600042;13/08/2026;5600;Facilities;CC-HR;Infosys BPM;149,482.68;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600043;14/04/2026;5400;Outsourcing;CC-IT;Tata Power;150,340.94;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600044;12/09/2026;5700;Raw Material;CC-FIN;Sodexo Facilities;191,265.09;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600045;27/04/2026;5500;Logistics;CC-HR;Tata Power;190,423.57;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600046;16/09/2026;2100;Accounts Payable;CC-IT;Airtel Business;218,450.62;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600047;13/04/2026;5200;Telecom;CC-FIN;Airtel Business;112,014.31;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600048;24/07/2026;5200;Telecom;CC-IT;Amazon Web Services;(121,427.82);INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600049;24/04/2026;2100;Accounts Payable;CC-IT;Deccan Couriers;216,876.66;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600050;14/08/2026;5400;Outsourcing;CC-IT;Amazon Web Services;62,671.99;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600051;05/08/2026;2100;Accounts Payable;CC-HR;Airtel Business;46,228.22;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600052;02/06/2026;5200;Telecom;CC-MKT;Tata Power;97,699.58;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600053;27/07/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;229,363.90;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600054;17/09/2026;5400;Outsourcing;CC-FIN;Sodexo Facilities;42,093.62;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600055;23/05/2026;5700;Raw Material;CC-HR;Bluepeak Textiles;78,005.96;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600056;01/08/2026;5100;Utilities;CC-OPS;Sodexo Facilities;83,462.11;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600057;14/04/2026;5500;Logistics;CC-OPS;Bluepeak Textiles;188,563.30;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600058;02/05/2026;5700;Raw Material;CC-IT;Airtel Business;41,682.30;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600059;04/04/2026;5700;Raw Material;CC-MKT;Deccan Couriers;115,747.37;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600060;23/04/2026;2100;Accounts Payable;CC-IT;Kaveri Packaging;98,269.01;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600061;28/05/2026;5500;Logistics;CC-MKT;Infosys BPM;64,174.07;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600062;16/06/2026;2100;Accounts Payable;CC-FIN;Airtel Business;98,815.04;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600063;21/04/2026;5200;Telecom;CC-OPS;Infosys BPM;112,976.29;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600064;03/08/2026;5600;Facilities;CC-IT;Airtel Business;245,530.59;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600065;02/04/2026;2100;Accounts Payable;CC-MKT;Tata Power;229,048.07;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600066;10/06/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;209,515.75;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600067;29/07/2026;5700;Raw Material;CC-MKT;Airtel Business;111,441.42;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600068;25/06/2026;5700;Raw Material;CC-OPS;Sodexo Facilities;23,078.53;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600069;28/05/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;253,855.26;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600070;23/05/2026;5200;Telecom;CC-FIN;Sodexo Facilities;93,427.30;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600071;25/04/2026;5700;Raw Material;CC-OPS;Infosys BPM;(180,016.26);INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600072;19/05/2026;5700;Raw Material;CC-OPS;Infosys BPM;8,604.40;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600073;19/05/2026;5200;Telecom;CC-HR;Airtel Business;19,077.81;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600074;30/06/2026;5400;Outsourcing;CC-IT;Infosys BPM;236,350.17;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600075;07/08/2026;5500;Logistics;CC-MKT;Bluepeak Textiles;34,154.96;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600076;20/09/2026;2100;Accounts Payable;CC-OPS;Bluepeak Textiles;220,264.27;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600077;13/06/2026;5400;Outsourcing;CC-FIN;Kaveri Packaging;207,111.78;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600078;08/04/2026;5600;Facilities;CC-FIN;Airtel Business;123,702.81;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600079;05/07/2026;5500;Logistics;CC-MKT;Airtel Business;70,195.86;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600080;18/08/2026;5600;Facilities;CC-IT;Airtel Business;(179,980.52);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600081;13/04/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;286,412.37;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600082;17/06/2026;2100;Accounts Payable;CC-OPS;Amazon Web Services;137,372.05;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600083;16/09/2026;5100;Utilities;CC-FIN;Deccan Couriers;216,069.39;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600084;13/04/2026;5700;Raw Material;CC-HR;Sodexo Facilities;99,018.03;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600085;17/04/2026;5100;Utilities;CC-FIN;Infosys BPM;249,418.26;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600086;27/04/2026;5500;Logistics;CC-HR;Kaveri Packaging;(206,630.11);INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600087;28/04/2026;5400;Outsourcing;CC-FIN;Amazon Web Services;76,023.72;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600088;05/09/2026;5600;Facilities;CC-OPS;Deccan Couriers;110,417.88;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600089;28/05/2026;2100;Accounts Payable;CC-MKT;Bluepeak Textiles;115,530.10;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600090;01/07/2026;5600;Facilities;CC-HR;Deccan Couriers;175,224.13;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600091;17/09/2026;5700;Raw Material;CC-MKT;Kaveri Packaging;31,713.15;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600092;24/07/2026;2100;Accounts Payable;CC-MKT;Bluepeak Textiles;37,363.55;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600093;26/08/2026;5600;Facilities;CC-FIN;Airtel Business;102,596.44;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600094;06/07/2026;5600;Facilities;CC-MKT;Kaveri Packaging;171,524.77;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600095;17/08/2026;5500;Logistics;CC-FIN;Deccan Couriers;180,324.34;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600096;16/07/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;153,483.01;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600097;07/05/2026;5500;Logistics;CC-MKT;Amazon Web Services;155,613.72;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600098;22/05/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;363,597.68;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600099;22/05/2026;5600;Facilities;CC-FIN;Bluepeak Textiles;114,831.31;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600100;30/05/2026;2100;Accounts Payable;CC-IT;Kaveri Packaging;64,491.32;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600101;27/05/2026;5600;Facilities;CC-MKT;Deccan Couriers;43,019.73;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600102;25/08/2026;5100;Utilities;CC-FIN;Deccan Couriers;135,206.88;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600103;21/07/2026;5300;Cloud Hosting;CC-FIN;Amazon Web Services;235,719.05;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600104;10/09/2026;5200;Telecom;CC-MKT;Sodexo Facilities;24,509.38;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600105;25/08/2026;5400;Outsourcing;CC-IT;Kaveri Packaging;87,626.37;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600106;20/07/2026;5500;Logistics;CC-MKT;Sodexo Facilities;125,030.47;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600107;24/07/2026;5400;Outsourcing;CC-HR;Airtel Business;(149,482.54);INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600108;25/07/2026;5500;Logistics;CC-FIN;Bluepeak Textiles;170,348.49;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600109;17/09/2026;5100;Utilities;CC-MKT;Airtel Business;144,410.76;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600110;25/06/2026;5700;Raw Material;CC-HR;Sodexo Facilities;32,054.38;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600111;21/07/2026;5200;Telecom;CC-FIN;Tata Power;58,655.23;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600112;23/07/2026;5400;Outsourcing;CC-HR;Deccan Couriers;(60,251.82);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600113;21/05/2026;2100;Accounts Payable;CC-HR;Infosys BPM;200,669.28;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600114;20/04/2026;5200;Telecom;CC-OPS;Amazon Web Services;52,721.60;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600115;27/06/2026;2100;Accounts Payable;CC-HR;Sodexo Facilities;(96,866.63);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600116;24/04/2026;5100;Utilities;CC-FIN;Deccan Couriers;54,290.03;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600117;13/08/2026;5600;Facilities;CC-FIN;Tata Power;48,690.14;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600118;08/07/2026;5200;Telecom;CC-FIN;Kaveri Packaging;248,084.98;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600119;26/06/2026;5600;Facilities;CC-OPS;Deccan Couriers;205,847.21;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600120;01/08/2026;5400;Outsourcing;CC-HR;Airtel Business;145,658.69;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600121;09/05/2026;2100;Accounts Payable;CC-OPS;Infosys BPM;170,312.84;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600122;01/08/2026;5500;Logistics;CC-FIN;Amazon Web Services;217,609.88;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600123;17/06/2026;2100;Accounts Payable;CC-MKT;Kaveri Packaging;130,121.00;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600124;07/04/2026;5700;Raw Material;CC-HR;Deccan Couriers;197,089.02;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600125;25/05/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;365,016.83;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600126;11/08/2026;5400;Outsourcing;CC-FIN;Infosys BPM;102,017.90;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600127;11/05/2026;2100;Accounts Payable;CC-OPS;Sodexo Facilities;61,602.66;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600128;11/09/2026;2100;Accounts Payable;CC-MKT;Amazon Web Services;227,529.58;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600129;29/04/2026;5700;Raw Material;CC-MKT;Airtel Business;225,401.23;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600130;13/05/2026;5500;Logistics;CC-FIN;Amazon Web Services;32,722.34;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600131;18/06/2026;5100;Utilities;CC-FIN;Sodexo Facilities;198,899.10;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600132;24/06/2026;5100;Utilities;CC-FIN;Deccan Couriers;176,388.57;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600133;01/08/2026;5200;Telecom;CC-MKT;Sodexo Facilities;184,356.24;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600134;19/06/2026;5400;Outsourcing;CC-HR;Tata Power;36,325.79;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600135;21/05/2026;5300;Cloud Hosting;CC-IT;Amazon Web Services;328,604.81;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600136;07/08/2026;5500;Logistics;CC-FIN;Airtel Business;71,278.94;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600137;20/07/2026;2100;Accounts Payable;CC-FIN;Deccan Couriers;232,623.96;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600138;29/08/2026;5400;Outsourcing;CC-IT;Tata Power;70,105.91;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600139;27/08/2026;5600;Facilities;CC-HR;Amazon Web Services;157,709.63;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600140;29/06/2026;5200;Telecom;CC-IT;Kaveri Packaging;78,546.48;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600141;13/05/2026;5700;Raw Material;CC-MKT;Infosys BPM;(135,573.04);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600142;04/04/2026;5100;Utilities;CC-OPS;Infosys BPM;26,398.48;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600143;28/05/2026;2100;Accounts Payable;CC-IT;Kaveri Packaging;(83,111.92);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600144;25/09/2026;5600;Facilities;CC-MKT;Sodexo Facilities;219,972.33;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600145;14/05/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;285,350.64;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600146;15/07/2026;5500;Logistics;CC-IT;Tata Power;(45,097.70);INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600147;31/07/2026;5300;Cloud Hosting;CC-FIN;Amazon Web Services;392,018.03;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600148;03/04/2026;5700;Raw Material;CC-OPS;Kaveri Packaging;53,416.21;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600149;09/07/2026;2100;Accounts Payable;CC-MKT;Bluepeak Textiles;(237,228.66);INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600150;07/09/2026;5200;Telecom;CC-FIN;Deccan Couriers;243,025.23;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600151;03/08/2026;5200;Telecom;CC-HR;Sodexo Facilities;119,637.85;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600152;19/05/2026;5500;Logistics;CC-FIN;Kaveri Packaging;137,861.87;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600153;23/05/2026;5400;Outsourcing;CC-FIN;Airtel Business;(246,268.00);INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600154;20/08/2026;5400;Outsourcing;CC-IT;Tata Power;220,954.61;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600155;30/08/2026;5400;Outsourcing;CC-HR;Amazon Web Services;49,064.14;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600156;27/08/2026;5400;Outsourcing;CC-HR;Tata Power;211,448.48;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600157;19/08/2026;5500;Logistics;CC-MKT;Bluepeak Textiles;40,951.74;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600158;04/04/2026;5200;Telecom;CC-FIN;Infosys BPM;(25,790.96);INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600159;20/04/2026;2100;Accounts Payable;CC-OPS;Kaveri Packaging;248,594.17;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600160;21/05/2026;5400;Outsourcing;CC-HR;Kaveri Packaging;65,268.67;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600161;07/05/2026;2100;Accounts Payable;CC-MKT;Sodexo Facilities;(225,023.27);INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600162;13/09/2026;5600;Facilities;CC-OPS;Bluepeak Textiles;9,637.53;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600163;05/08/2026;5200;Telecom;CC-HR;Infosys BPM;194,511.93;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600164;07/04/2026;5200;Telecom;CC-IT;Tata Power;100,689.03;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600165;22/04/2026;5100;Utilities;CC-HR;Sodexo Facilities;67,840.38;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600166;16/08/2026;5400;Outsourcing;CC-HR;Bluepeak Textiles;207,868.30;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600167;04/05/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;219,435.38;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600168;25/06/2026;5700;Raw Material;CC-OPS;Infosys BPM;86,131.80;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600169;17/05/2026;5700;Raw Material;CC-FIN;Kaveri Packaging;(195,927.03);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600170;05/04/2026;5100;Utilities;CC-IT;Kaveri Packaging;19,304.18;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600171;10/08/2026;5100;Utilities;CC-FIN;Amazon Web Services;226,649.10;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600172;23/08/2026;5400;Outsourcing;CC-FIN;Kaveri Packaging;88,453.96;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600173;03/09/2026;5400;Outsourcing;CC-FIN;Sodexo Facilities;169,133.94;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600174;07/06/2026;5300;Cloud Hosting;CC-IT;Amazon Web Services;341,351.94;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600175;26/04/2026;5400;Outsourcing;CC-MKT;Sodexo Facilities;(22,834.02);INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600176;22/05/2026;5100;Utilities;CC-FIN;Kaveri Packaging;210,316.50;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600177;20/06/2026;5500;Logistics;CC-MKT;Bluepeak Textiles;12,441.71;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600178;05/05/2026;5500;Logistics;CC-MKT;Airtel Business;49,709.24;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600179;10/09/2026;5400;Outsourcing;CC-IT;Amazon Web Services;25,375.91;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600180;25/07/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;322,268.68;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600181;19/09/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;303,063.60;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600182;16/09/2026;5100;Utilities;CC-OPS;Deccan Couriers;(171,850.71);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600183;11/09/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;229,841.00;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600184;11/04/2026;5100;Utilities;CC-MKT;Infosys BPM;83,145.20;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600185;18/09/2026;5500;Logistics;CC-OPS;Tata Power;128,533.01;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600186;26/07/2026;5200;Telecom;CC-FIN;Sodexo Facilities;74,458.62;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600187;29/05/2026;2100;Accounts Payable;CC-OPS;Deccan Couriers;210,391.90;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600188;06/07/2026;5600;Facilities;CC-OPS;Deccan Couriers;207,667.03;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600189;24/07/2026;5500;Logistics;CC-HR;Sodexo Facilities;28,406.32;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600190;15/06/2026;5200;Telecom;CC-MKT;Kaveri Packaging;127,015.05;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600191;02/09/2026;5600;Facilities;CC-MKT;Tata Power;248,151.66;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600192;25/04/2026;5600;Facilities;CC-MKT;Sodexo Facilities;175,540.17;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600193;30/04/2026;2100;Accounts Payable;CC-OPS;Sodexo Facilities;15,066.41;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600194;26/05/2026;5100;Utilities;CC-MKT;Kaveri Packaging;97,288.95;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600195;27/06/2026;5700;Raw Material;CC-HR;Kaveri Packaging;130,999.27;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600196;21/06/2026;5200;Telecom;CC-HR;Amazon Web Services;192,444.46;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600197;01/09/2026;2100;Accounts Payable;CC-IT;Sodexo Facilities;(123,257.51);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600198;28/04/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;171,249.50;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600199;31/08/2026;5700;Raw Material;CC-OPS;Tata Power;16,429.54;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600200;09/04/2026;2100;Accounts Payable;CC-OPS;Airtel Business;2,729.41;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600201;29/05/2026;5100;Utilities;CC-OPS;Kaveri Packaging;120,896.56;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600202;24/08/2026;5700;Raw Material;CC-OPS;Airtel Business;119,646.92;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600203;22/09/2026;5600;Facilities;CC-FIN;Deccan Couriers;219,350.55;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600204;04/06/2026;5400;Outsourcing;CC-IT;Kaveri Packaging;184,563.40;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600205;01/06/2026;5100;Utilities;CC-OPS;Infosys BPM;176,413.87;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600206;29/06/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;383,506.39;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600207;28/05/2026;5100;Utilities;CC-FIN;Tata Power;154,648.91;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600208;07/04/2026;5100;Utilities;CC-IT;Sodexo Facilities;11,909.12;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600209;29/08/2026;5700;Raw Material;CC-FIN;Bluepeak Textiles;204,852.22;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600210;26/05/2026;5200;Telecom;CC-HR;Amazon Web Services;202,092.64;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600211;05/05/2026;5100;Utilities;CC-FIN;Airtel Business;(191,566.26);INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600212;01/09/2026;5100;Utilities;CC-HR;Infosys BPM;93,313.44;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600213;08/08/2026;5600;Facilities;CC-OPS;Sodexo Facilities;72,204.92;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600214;10/05/2026;5500;Logistics;CC-HR;Tata Power;94,249.62;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600215;17/09/2026;5200;Telecom;CC-MKT;Kaveri Packaging;246,589.11;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600216;21/06/2026;5100;Utilities;CC-FIN;Tata Power;119,922.86;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600217;22/06/2026;5500;Logistics;CC-MKT;Airtel Business;(84,617.03);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600218;16/04/2026;5600;Facilities;CC-HR;Sodexo Facilities;17,357.25;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600219;21/08/2026;5200;Telecom;CC-IT;Kaveri Packaging;107,005.02;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600220;04/09/2026;5600;Facilities;CC-FIN;Kaveri Packaging;(195,653.18);INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600221;07/04/2026;5400;Outsourcing;CC-FIN;Sodexo Facilities;235,909.53;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600222;08/09/2026;5500;Logistics;CC-HR;Sodexo Facilities;218,204.61;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600223;14/09/2026;2100;Accounts Payable;CC-IT;Amazon Web Services;28,812.78;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600224;28/07/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;255,192.71;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600225;02/06/2026;5500;Logistics;CC-FIN;Kaveri Packaging;15,816.06;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600226;22/04/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;309,800.66;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600227;17/09/2026;5700;Raw Material;CC-IT;Bluepeak Textiles;226,001.81;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600228;13/09/2026;5200;Telecom;CC-IT;Bluepeak Textiles;24,221.84;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600229;24/05/2026;5500;Logistics;CC-HR;Infosys BPM;155,520.12;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600230;09/05/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;242,824.50;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600231;28/05/2026;5600;Facilities;CC-MKT;Bluepeak Textiles;53,273.24;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600232;16/07/2026;5700;Raw Material;CC-FIN;Kaveri Packaging;78,199.07;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600233;04/05/2026;5700;Raw Material;CC-MKT;Amazon Web Services;177,609.29;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600234;26/06/2026;5500;Logistics;CC-IT;Bluepeak Textiles;192,857.61;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600235;29/07/2026;5200;Telecom;CC-FIN;Deccan Couriers;79,818.13;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600236;20/05/2026;5400;Outsourcing;CC-OPS;Amazon Web Services;(65,997.43);INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600237;02/09/2026;5100;Utilities;CC-IT;Tata Power;7,307.08;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600238;26/08/2026;5500;Logistics;CC-OPS;Infosys BPM;92,011.20;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600239;11/07/2026;5200;Telecom;CC-IT;Amazon Web Services;141,201.18;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600240;26/06/2026;5100;Utilities;CC-IT;Amazon Web Services;211,388.64;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600241;07/06/2026;5400;Outsourcing;CC-HR;Airtel Business;147,061.60;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600242;09/04/2026;5600;Facilities;CC-OPS;Infosys BPM;(54,902.25);INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600243;06/06/2026;5100;Utilities;CC-MKT;Bluepeak Textiles;57,233.43;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600244;20/06/2026;5700;Raw Material;CC-OPS;Sodexo Facilities;245,003.11;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600245;22/08/2026;5100;Utilities;CC-FIN;Amazon Web Services;16,159.14;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600246;03/07/2026;2100;Accounts Payable;CC-MKT;Sodexo Facilities;115,765.45;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600247;30/06/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;270,360.42;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600248;26/05/2026;2100;Accounts Payable;CC-IT;Infosys BPM;92,486.24;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600249;28/08/2026;5600;Facilities;CC-FIN;Amazon Web Services;2,976.50;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600250;17/09/2026;2100;Accounts Payable;CC-IT;Sodexo Facilities;89,961.93;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600251;31/05/2026;5200;Telecom;CC-MKT;Tata Power;208,080.23;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600252;30/04/2026;5200;Telecom;CC-HR;Infosys BPM;198,299.31;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600253;03/06/2026;5100;Utilities;CC-HR;Tata Power;149,014.31;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600254;24/06/2026;5500;Logistics;CC-MKT;Airtel Business;221,233.27;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600255;03/07/2026;5700;Raw Material;CC-FIN;Deccan Couriers;168,532.10;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600256;09/05/2026;5200;Telecom;CC-MKT;Kaveri Packaging;71,618.57;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600257;04/04/2026;5200;Telecom;CC-MKT;Deccan Couriers;189,787.07;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600258;24/04/2026;5600;Facilities;CC-HR;Amazon Web Services;(97,962.37);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600259;03/04/2026;5400;Outsourcing;CC-HR;Kaveri Packaging;18,189.60;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600260;31/08/2026;5500;Logistics;CC-MKT;Amazon Web Services;56,153.09;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600261;26/07/2026;5500;Logistics;CC-FIN;Amazon Web Services;228,036.22;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600262;15/04/2026;5700;Raw Material;CC-FIN;Deccan Couriers;(159,829.20);INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600263;24/08/2026;5500;Logistics;CC-IT;Airtel Business;216,979.21;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600264;11/05/2026;5600;Facilities;CC-IT;Kaveri Packaging;156,597.15;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600265;01/05/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;390,555.00;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600266;29/08/2026;5600;Facilities;CC-MKT;Sodexo Facilities;226,114.85;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600267;28/05/2026;2100;Accounts Payable;CC-HR;Kaveri Packaging;177,770.76;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600268;21/06/2026;5400;Outsourcing;CC-FIN;Bluepeak Textiles;53,295.07;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600269;09/06/2026;5600;Facilities;CC-MKT;Airtel Business;238,119.76;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600270;24/08/2026;5500;Logistics;CC-HR;Sodexo Facilities;93,665.61;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600271;17/05/2026;5600;Facilities;CC-IT;Tata Power;154,053.50;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600272;13/07/2026;5600;Facilities;CC-FIN;Amazon Web Services;239,187.87;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600273;16/09/2026;5500;Logistics;CC-FIN;Tata Power;96,474.63;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600274;09/09/2026;5200;Telecom;CC-FIN;Kaveri Packaging;98,249.97;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600275;29/07/2026;5200;Telecom;CC-HR;Airtel Business;4,582.27;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600276;28/05/2026;5700;Raw Material;CC-MKT;Kaveri Packaging;127,852.32;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600277;07/06/2026;5400;Outsourcing;CC-IT;Infosys BPM;145,565.19;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600278;05/08/2026;5700;Raw Material;CC-HR;Bluepeak Textiles;153,721.76;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600279;07/06/2026;5500;Logistics;CC-FIN;Deccan Couriers;51,378.88;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600280;02/04/2026;5300;Cloud Hosting;CC-IT;Amazon Web Services;216,537.59;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600281;06/05/2026;5700;Raw Material;CC-FIN;Airtel Business;72,158.56;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600282;17/09/2026;5500;Logistics;CC-MKT;Bluepeak Textiles;89,958.58;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600283;02/09/2026;2100;Accounts Payable;CC-FIN;Amazon Web Services;145,877.74;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600284;14/09/2026;2100;Accounts Payable;CC-MKT;Bluepeak Textiles;239,111.07;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600285;30/08/2026;5600;Facilities;CC-HR;Sodexo Facilities;189,073.03;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600286;01/08/2026;5400;Outsourcing;CC-OPS;Bluepeak Textiles;14,365.02;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600287;05/06/2026;5400;Outsourcing;CC-OPS;Sodexo Facilities;16,417.45;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600288;23/07/2026;5300;Cloud Hosting;CC-FIN;Amazon Web Services;359,469.56;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600289;13/05/2026;5500;Logistics;CC-FIN;Tata Power;34,894.10;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600290;27/05/2026;5100;Utilities;CC-MKT;Deccan Couriers;15,480.68;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600291;28/06/2026;5700;Raw Material;CC-OPS;Amazon Web Services;(14,967.89);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600292;09/06/2026;5100;Utilities;CC-FIN;Amazon Web Services;176,812.88;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600293;03/07/2026;5100;Utilities;CC-FIN;Bluepeak Textiles;114,633.00;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600294;30/07/2026;5400;Outsourcing;CC-FIN;Sodexo Facilities;155,092.29;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600295;04/06/2026;5400;Outsourcing;CC-IT;Bluepeak Textiles;(44,268.12);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600296;05/05/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;296,481.11;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600297;30/06/2026;5100;Utilities;CC-OPS;Kaveri Packaging;3,644.53;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600298;26/06/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;261,138.84;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600299;10/05/2026;5700;Raw Material;CC-FIN;Sodexo Facilities;92,786.53;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600300;23/09/2026;5600;Facilities;CC-OPS;Kaveri Packaging;(165,271.12);INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600301;11/05/2026;5200;Telecom;CC-OPS;Tata Power;101,190.90;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600302;06/08/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;255,547.22;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600303;18/04/2026;5500;Logistics;CC-OPS;Bluepeak Textiles;27,873.47;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600304;17/07/2026;5500;Logistics;CC-IT;Kaveri Packaging;101,470.46;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600305;03/08/2026;5200;Telecom;CC-HR;Kaveri Packaging;134,761.74;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600306;25/08/2026;5600;Facilities;CC-IT;Bluepeak Textiles;89,449.15;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600307;05/05/2026;5200;Telecom;CC-HR;Tata Power;237,306.98;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600308;12/09/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;169,599.05;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600309;02/08/2026;5200;Telecom;CC-OPS;Deccan Couriers;160,089.02;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600310;21/06/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;172,427.04;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600311;23/04/2026;5600;Facilities;CC-HR;Tata Power;36,081.72;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600312;10/07/2026;5300;Cloud Hosting;CC-IT;Amazon Web Services;377,786.30;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600313;13/07/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;216,132.35;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600314;29/08/2026;5500;Logistics;CC-MKT;Sodexo Facilities;39,100.61;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600315;07/07/2026;5100;Utilities;CC-MKT;Amazon Web Services;80,065.47;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600316;16/09/2026;5700;Raw Material;CC-IT;Deccan Couriers;217,463.65;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600317;22/08/2026;5700;Raw Material;CC-FIN;Infosys BPM;116,506.99;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600318;11/08/2026;5700;Raw Material;CC-OPS;Kaveri Packaging;141,858.51;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600319;10/08/2026;5700;Raw Material;CC-OPS;Deccan Couriers;56,739.24;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600320;11/04/2026;5700;Raw Material;CC-IT;Bluepeak Textiles;4,012.52;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600321;09/06/2026;5100;Utilities;CC-HR;Amazon Web Services;145,255.13;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600322;23/06/2026;5500;Logistics;CC-IT;Infosys BPM;29,260.60;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600323;21/06/2026;5100;Utilities;CC-IT;Infosys BPM;(211,626.48);INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600324;27/07/2026;5200;Telecom;CC-FIN;Kaveri Packaging;234,994.55;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600325;10/04/2026;2100;Accounts Payable;CC-IT;Tata Power;170,931.97;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600326;07/04/2026;5600;Facilities;CC-MKT;Deccan Couriers;171,759.28;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600327;08/09/2026;2100;Accounts Payable;CC-FIN;Kaveri Packaging;225,924.10;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600328;05/09/2026;5300;Cloud Hosting;CC-FIN;Amazon Web Services;153,831.93;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600329;20/08/2026;5500;Logistics;CC-IT;Bluepeak Textiles;(217,939.31);INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600330;22/06/2026;5100;Utilities;CC-MKT;Amazon Web Services;129,563.53;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600331;03/09/2026;5100;Utilities;CC-HR;Deccan Couriers;110,390.00;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600332;09/08/2026;5100;Utilities;CC-MKT;Sodexo Facilities;42,242.24;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600333;20/08/2026;2100;Accounts Payable;CC-FIN;Bluepeak Textiles;153,786.72;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600334;14/04/2026;5400;Outsourcing;CC-IT;Airtel Business;128,515.40;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600335;25/07/2026;5600;Facilities;CC-FIN;Sodexo Facilities;238,321.73;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600336;17/09/2026;5700;Raw Material;CC-OPS;Bluepeak Textiles;160,366.86;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600337;04/05/2026;5500;Logistics;CC-HR;Tata Power;249,009.13;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600338;03/08/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;295,831.01;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600339;14/07/2026;2100;Accounts Payable;CC-HR;Tata Power;(105,301.64);INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600340;12/04/2026;5700;Raw Material;CC-OPS;Bluepeak Textiles;140,186.71;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600341;21/04/2026;5100;Utilities;CC-HR;Deccan Couriers;165,992.99;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600342;11/04/2026;5500;Logistics;CC-HR;Deccan Couriers;(17,469.80);INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600343;03/06/2026;2100;Accounts Payable;CC-FIN;Sodexo Facilities;119,216.21;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600344;31/05/2026;5200;Telecom;CC-HR;Infosys BPM;44,590.84;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600345;27/05/2026;5400;Outsourcing;CC-HR;Infosys BPM;98,456.06;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600346;07/08/2026;5700;Raw Material;CC-OPS;Infosys BPM;17,183.80;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600347;25/08/2026;5100;Utilities;CC-IT;Deccan Couriers;28,711.84;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600348;04/04/2026;5600;Facilities;CC-MKT;Infosys BPM;18,940.18;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600349;16/04/2026;5400;Outsourcing;CC-IT;Bluepeak Textiles;(17,570.63);INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600350;12/07/2026;5700;Raw Material;CC-HR;Infosys BPM;15,110.17;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600351;21/09/2026;5400;Outsourcing;CC-HR;Airtel Business;59,442.06;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600352;26/07/2026;5700;Raw Material;CC-MKT;Amazon Web Services;58,515.37;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600353;04/09/2026;5600;Facilities;CC-FIN;Tata Power;9,524.89;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600354;22/04/2026;5200;Telecom;CC-MKT;Airtel Business;136,348.38;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600355;15/06/2026;5200;Telecom;CC-IT;Kaveri Packaging;(147,437.57);INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600356;08/08/2026;5500;Logistics;CC-HR;Kaveri Packaging;140,949.74;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600357;02/04/2026;5700;Raw Material;CC-MKT;Infosys BPM;36,969.73;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600358;04/09/2026;5200;Telecom;CC-MKT;Sodexo Facilities;(122,289.43);INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600359;07/09/2026;5200;Telecom;CC-FIN;Airtel Business;97,587.54;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600360;27/08/2026;5400;Outsourcing;CC-MKT;Sodexo Facilities;215,017.56;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600361;25/06/2026;5100;Utilities;CC-HR;Amazon Web Services;157,145.62;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600362;23/04/2026;5500;Logistics;CC-MKT;Bluepeak Textiles;209,981.74;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600363;12/04/2026;5500;Logistics;CC-FIN;Deccan Couriers;135,392.63;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600364;16/07/2026;5400;Outsourcing;CC-OPS;Sodexo Facilities;204,024.93;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600365;19/09/2026;5400;Outsourcing;CC-IT;Kaveri Packaging;80,925.15;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600366;30/08/2026;5500;Logistics;CC-MKT;Infosys BPM;59,890.01;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600367;29/05/2026;2100;Accounts Payable;CC-OPS;Kaveri Packaging;(144,668.33);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600368;26/07/2026;5700;Raw Material;CC-MKT;Kaveri Packaging;88,178.74;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600369;25/05/2026;5700;Raw Material;CC-OPS;Kaveri Packaging;213,822.98;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600370;30/05/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;336,671.56;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600371;09/08/2026;5700;Raw Material;CC-IT;Bluepeak Textiles;170,670.48;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600372;03/07/2026;5200;Telecom;CC-IT;Kaveri Packaging;111,217.35;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600373;04/09/2026;5400;Outsourcing;CC-FIN;Tata Power;74,788.52;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600374;19/08/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;319,899.22;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600375;14/07/2026;5400;Outsourcing;CC-FIN;Infosys BPM;199,387.07;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600376;24/05/2026;5400;Outsourcing;CC-MKT;Kaveri Packaging;220,331.87;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600377;17/06/2026;5600;Facilities;CC-OPS;Sodexo Facilities;180,724.79;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600378;28/07/2026;5500;Logistics;CC-MKT;Airtel Business;73,874.00;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600379;20/05/2026;5700;Raw Material;CC-HR;Bluepeak Textiles;30,605.02;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600380;19/04/2026;5500;Logistics;CC-OPS;Amazon Web Services;235,821.41;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600381;15/05/2026;5400;Outsourcing;CC-FIN;Bluepeak Textiles;193,951.39;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600382;28/06/2026;5700;Raw Material;CC-OPS;Bluepeak Textiles;43,933.35;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600383;31/07/2026;2100;Accounts Payable;CC-HR;Sodexo Facilities;188,777.00;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600384;10/08/2026;5700;Raw Material;CC-IT;Infosys BPM;165,413.44;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600385;30/07/2026;5100;Utilities;CC-HR;Bluepeak Textiles;106,112.20;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600386;23/04/2026;5100;Utilities;CC-IT;Sodexo Facilities;42,638.56;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600387;16/08/2026;5500;Logistics;CC-FIN;Tata Power;211,791.18;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600388;09/04/2026;5400;Outsourcing;CC-HR;Tata Power;178,198.44;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600389;30/06/2026;5100;Utilities;CC-IT;Amazon Web Services;120,704.48;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600390;19/08/2026;5600;Facilities;CC-FIN;Deccan Couriers;103,383.97;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600391;01/08/2026;2100;Accounts Payable;CC-HR;Deccan Couriers;226,545.17;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600392;06/08/2026;5500;Logistics;CC-MKT;Infosys BPM;210,817.90;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600393;13/07/2026;5700;Raw Material;CC-OPS;Sodexo Facilities;16,465.67;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600394;04/08/2026;5500;Logistics;CC-MKT;Kaveri Packaging;232,500.58;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600395;11/08/2026;5100;Utilities;CC-OPS;Amazon Web Services;(223,895.57);INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600396;07/07/2026;2100;Accounts Payable;CC-HR;Deccan Couriers;85,672.65;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600397;20/08/2026;5600;Facilities;CC-HR;Bluepeak Textiles;105,140.56;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600398;16/07/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;396,305.86;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600399;15/07/2026;5100;Utilities;CC-MKT;Amazon Web Services;217,261.94;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600400;24/07/2026;5600;Facilities;CC-OPS;Bluepeak Textiles;226,371.03;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600401;15/09/2026;5500;Logistics;CC-IT;Infosys BPM;112,890.31;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600402;01/07/2026;5100;Utilities;CC-FIN;Deccan Couriers;168,726.66;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600403;04/05/2026;5500;Logistics;CC-OPS;Kaveri Packaging;213,653.80;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600404;25/04/2026;5200;Telecom;CC-OPS;Tata Power;128,721.71;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600405;24/04/2026;5100;Utilities;CC-FIN;Bluepeak Textiles;110,090.84;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600406;31/08/2026;5700;Raw Material;CC-IT;Tata Power;208,671.55;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600407;21/05/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;301,958.55;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600408;19/07/2026;5500;Logistics;CC-MKT;Kaveri Packaging;115,013.90;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600409;29/08/2026;5200;Telecom;CC-FIN;Kaveri Packaging;62,094.22;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600410;02/04/2026;5400;Outsourcing;CC-MKT;Airtel Business;173,943.49;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600411;01/07/2026;5700;Raw Material;CC-HR;Deccan Couriers;158,914.79;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600412;12/09/2026;5200;Telecom;CC-HR;Airtel Business;1,719.81;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600413;23/09/2026;5600;Facilities;CC-FIN;Infosys BPM;220,354.24;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600414;07/09/2026;5500;Logistics;CC-MKT;Sodexo Facilities;105,405.32;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600415;06/06/2026;5400;Outsourcing;CC-FIN;Kaveri Packaging;7,789.49;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600416;23/05/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;354,255.56;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600417;18/05/2026;5600;Facilities;CC-OPS;Airtel Business;188,017.48;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600418;01/04/2026;5500;Logistics;CC-OPS;Deccan Couriers;22,611.05;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600419;25/04/2026;5200;Telecom;CC-IT;Bluepeak Textiles;187,451.72;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600420;09/06/2026;5700;Raw Material;CC-MKT;Sodexo Facilities;5,043.83;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600421;26/05/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;217,052.03;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600422;12/08/2026;5400;Outsourcing;CC-HR;Sodexo Facilities;165,326.19;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600423;12/07/2026;5700;Raw Material;CC-FIN;Tata Power;(175,544.91);INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600424;01/04/2026;5600;Facilities;CC-MKT;Deccan Couriers;25,206.91;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600425;03/04/2026;5200;Telecom;CC-HR;Amazon Web Services;56,107.52;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600426;02/07/2026;5500;Logistics;CC-OPS;Deccan Couriers;186,236.99;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600427;08/09/2026;5700;Raw Material;CC-OPS;Kaveri Packaging;(128,986.24);INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600428;18/09/2026;5500;Logistics;CC-MKT;Tata Power;206,356.39;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600429;19/09/2026;5300;Cloud Hosting;CC-IT;Amazon Web Services;278,143.11;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600430;22/05/2026;5400;Outsourcing;CC-OPS;Amazon Web Services;169,057.34;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600431;13/09/2026;5500;Logistics;CC-HR;Deccan Couriers;217,604.10;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600432;13/08/2026;5300;Cloud Hosting;CC-FIN;Amazon Web Services;387,406.03;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600433;06/07/2026;2100;Accounts Payable;CC-OPS;Deccan Couriers;77,597.59;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600434;14/08/2026;5300;Cloud Hosting;CC-MKT;Amazon Web Services;335,220.51;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600435;06/09/2026;5600;Facilities;CC-HR;Deccan Couriers;155,369.60;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600436;16/06/2026;5300;Cloud Hosting;CC-FIN;Amazon Web Services;154,601.64;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600437;03/08/2026;5700;Raw Material;CC-IT;Amazon Web Services;85,569.20;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600438;26/05/2026;5100;Utilities;CC-MKT;Infosys BPM;212,071.41;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600439;17/09/2026;5300;Cloud Hosting;CC-HR;Amazon Web Services;152,906.55;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600440;11/09/2026;5700;Raw Material;CC-HR;Amazon Web Services;187,939.38;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600441;30/08/2026;5500;Logistics;CC-IT;Amazon Web Services;195,638.67;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600442;21/09/2026;2100;Accounts Payable;CC-MKT;Tata Power;136,595.95;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600443;02/05/2026;2100;Accounts Payable;CC-OPS;Sodexo Facilities;83,645.46;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600444;07/06/2026;5700;Raw Material;CC-FIN;Airtel Business;248,146.67;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600445;09/08/2026;2100;Accounts Payable;CC-FIN;Amazon Web Services;235,196.17;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600446;28/07/2026;5600;Facilities;CC-IT;Tata Power;111,335.80;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600447;17/07/2026;5500;Logistics;CC-FIN;Tata Power;53,799.01;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600448;16/05/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;275,815.84;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600449;14/06/2026;5200;Telecom;CC-IT;Infosys BPM;96,748.29;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600450;29/05/2026;5100;Utilities;CC-MKT;Kaveri Packaging;185,660.55;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600451;31/08/2026;5400;Outsourcing;CC-IT;Sodexo Facilities;222,108.71;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600452;16/07/2026;5400;Outsourcing;CC-OPS;Tata Power;243,098.92;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600453;06/08/2026;5600;Facilities;CC-MKT;Sodexo Facilities;37,602.91;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600454;19/09/2026;5400;Outsourcing;CC-HR;Tata Power;86,855.35;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600455;05/09/2026;5700;Raw Material;CC-FIN;Amazon Web Services;234,422.36;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600456;05/04/2026;5400;Outsourcing;CC-OPS;Bluepeak Textiles;91,159.81;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600457;14/04/2026;5700;Raw Material;CC-MKT;Amazon Web Services;238,255.15;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600458;21/09/2026;5300;Cloud Hosting;CC-IT;Amazon Web Services;390,379.64;INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600459;15/08/2026;5400;Outsourcing;CC-OPS;Deccan Couriers;82,276.36;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600460;08/04/2026;5200;Telecom;CC-MKT;Airtel Business;248,323.79;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600461;25/07/2026;5400;Outsourcing;CC-IT;Sodexo Facilities;75,768.29;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600462;08/09/2026;5600;Facilities;CC-IT;Airtel Business;202,186.52;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600463;01/09/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;254,109.87;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600464;12/09/2026;5400;Outsourcing;CC-OPS;Airtel Business;(146,183.20);INR;Joseph Singh;joseph.singh@graphbase-retail.example
+JE-202600465;02/04/2026;5500;Logistics;CC-IT;Infosys BPM;77,207.68;INR;Mary Krishnan;mary.krishnan@graphbase-retail.example
+JE-202600466;11/09/2026;5400;Outsourcing;CC-OPS;Airtel Business;92,827.10;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600467;18/05/2026;5700;Raw Material;CC-HR;Deccan Couriers;5,587.41;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600468;21/09/2026;5200;Telecom;CC-MKT;Deccan Couriers;(60,220.85);INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600469;05/08/2026;5300;Cloud Hosting;CC-OPS;Amazon Web Services;203,655.94;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600470;03/08/2026;5600;Facilities;CC-HR;Infosys BPM;237,717.15;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600471;24/06/2026;2100;Accounts Payable;CC-OPS;Deccan Couriers;164,825.23;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600472;27/05/2026;5400;Outsourcing;CC-OPS;Infosys BPM;83,663.24;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600473;02/06/2026;5600;Facilities;CC-MKT;Airtel Business;190,475.33;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600474;18/05/2026;5500;Logistics;CC-MKT;Bluepeak Textiles;145,014.39;INR;Priyanka Fernandes;priyanka.fernandes@graphbase-retail.example
+JE-202600475;04/04/2026;5200;Telecom;CC-IT;Infosys BPM;191,704.46;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600476;19/06/2026;5500;Logistics;CC-HR;Deccan Couriers;39,344.64;INR;Karthik Chatterjee;karthik.chatterjee@graphbase-retail.example
+JE-202600477;24/04/2026;5200;Telecom;CC-IT;Tata Power;204,557.61;INR;Ananya Das;ananya.das@graphbase-retail.example
+JE-202600478;17/04/2026;2100;Accounts Payable;CC-MKT;Airtel Business;167,199.19;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600479;28/08/2026;2100;Accounts Payable;CC-OPS;Amazon Web Services;24,949.51;INR;Lakshmi Kulkarni;lakshmi.kulkarni@graphbase-retail.example
+JE-202600480;22/04/2026;5700;Raw Material;CC-OPS;Infosys BPM;82,986.90;INR;Joseph Singh;joseph.singh@graphbase-retail.example

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Login</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#16201E;background:#F5F6F4}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 20px;border-radius:10px;background:#0B6B5F;color:#fff;font-size:15px;font-weight:600;border:0;font-family:inherit}
+.lbl{font-size:13px;font-weight:600;margin-bottom:6px;display:block}
+.inp{height:48px;width:100%;border:1px solid #C9D0CE;border-radius:10px;padding:0 14px;font-size:15px;font-family:inherit;background:#fff;color:#16201E}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; display: flex; overflow: hidden; background: #F5F6F4">
+  <div style="width: 720px; height: 900px; background: #0B4F46; color: #fff; padding: 56px 72px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden">
+    <div style="display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px">
+      <div style="width: 30px; height: 30px; border-radius: 8px; background: #7FD1C2"></div>Graphbase
+    </div>
+    <svg width="720" height="460" viewBox="0 0 720 460" style="position: absolute; left: 0; top: 180px" aria-hidden="true">
+      <g stroke="#7FD1C2" stroke-opacity="0.45" stroke-width="1.5" fill="none">
+        <line x1="120" y1="120" x2="290" y2="200"/><line x1="290" y1="200" x2="470" y2="110"/><line x1="290" y1="200" x2="330" y2="360"/>
+        <line x1="470" y1="110" x2="620" y2="230"/><line x1="330" y1="360" x2="560" y2="380"/><line x1="620" y1="230" x2="560" y2="380"/><line x1="120" y1="120" x2="90" y2="300"/><line x1="90" y1="300" x2="330" y2="360"/>
+      </g>
+      <g fill="#0B4F46" stroke="#7FD1C2" stroke-width="2">
+        <circle cx="120" cy="120" r="14"/><circle cx="290" cy="200" r="22"/><circle cx="470" cy="110" r="16"/><circle cx="330" cy="360" r="18"/><circle cx="620" cy="230" r="12"/><circle cx="560" cy="380" r="15"/><circle cx="90" cy="300" r="10"/>
+      </g>
+      <circle cx="290" cy="200" r="8" fill="#7FD1C2"/>
+    </svg>
+    <div style="position: relative; z-index: 1; max-width: 520px">
+      <div style="font-size: 40px; line-height: 1.15; font-weight: 600; margin-bottom: 16px">Turn spreadsheets and documents into answers you can trace.</div>
+      <div style="font-size: 16px; line-height: 1.5; color: #B9D8D2">Build knowledge graphs and RAG stores, share them with your team, and chat with the data you have access to.</div>
+    </div>
+  </div>
+  <div style="width: 720px; height: 900px; display: flex; align-items: center; justify-content: center">
+    <div style="width: 400px; display: flex; flex-direction: column; gap: 20px">
+      <div>
+        <div style="font-size: 28px; font-weight: 600; margin-bottom: 6px">Sign in</div>
+        <div style="font-size: 14px; color: #5B6764">Use your organisation user ID and password.</div>
+      </div>
+      <div>
+        <label class="lbl" for="uid">User ID</label>
+        <input class="inp" id="uid" type="text" value="priya.nair">
+      </div>
+      <div>
+        <label class="lbl" for="pwd">Password</label>
+        <input class="inp" id="pwd" type="password" value="password123">
+      </div>
+      <a class="btn" href="Workspace.dc.html">Sign in</a>
+      <div style="font-size: 13px; color: #5B6764; text-align: center">Need an account? Ask your administrator.</div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Review extraction</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#16201E;background:#F5F6F4}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+.top{height:56px;background:#fff;border-bottom:1px solid #DDE2E0;display:flex;align-items:center;padding:0 24px;gap:32px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px}
+.mark{width:26px;height:26px;border-radius:7px;background:#0B6B5F}
+.tabs{display:flex;gap:4px;flex-grow:1}
+.tab{padding:9px 14px;border-radius:8px;font-size:14px;color:#5B6764;font-weight:500}
+.tab.on{background:#E3F1EE;color:#0B6B5F}
+.user{display:flex;align-items:center;gap:12px;font-size:13px}
+.av{width:32px;height:32px;border-radius:50%;background:#16201E;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:10px;background:#0B6B5F;color:#fff;font-size:14px;font-weight:600;border:0;font-family:inherit}
+.btn.sec{background:#fff;color:#16201E;border:1px solid #C9D0CE}
+.btn.sm{height:30px;padding:0 10px;font-size:12px;border-radius:8px}
+.btn.del{background:#fff;color:#B42318;border:1px solid #E8B4AE}
+.card{background:#fff;border:1px solid #DDE2E0;border-radius:14px}
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:11px;font-size:12px;font-weight:600;background:#E3F1EE;color:#0B6B5F}
+.badge.g{background:#EDEFEE;color:#46524F}
+.badge.b{background:#E4ECFB;color:#1E40AF}
+.badge.w{background:#FFF3D6;color:#7A4E00}
+.badge.r{background:#FDECEA;color:#B42318}
+.muted{color:#5B6764}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;font-size:12px;color:#5B6764;padding:9px 12px;background:#F5F6F4;border-bottom:1px solid #DDE2E0}
+td{padding:8px 12px;border-bottom:1px solid #EAEDEC;vertical-align:middle}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:12px}
+.cell{height:32px;width:100%;border:1.5px solid #0B6B5F;border-radius:8px;padding:0 8px;font-size:13px;font-family:inherit;background:#fff;color:#16201E}
+.h{font-size:12px;font-weight:600;letter-spacing:0.06em;color:#5B6764}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; overflow: hidden; display: flex; flex-direction: column">
+  <div class="top">
+    <div class="logo"><div class="mark"></div>Graphbase</div>
+    <nav class="tabs">
+      <a class="tab on" href="Workspace.dc.html">Workspace</a>
+      <a class="tab" href="AddData.dc.html">Add data</a>
+      <a class="tab" href="Access.dc.html">Access</a>
+      <a class="tab" href="Chat.dc.html">Chat</a>
+    </nav>
+    <div class="user"><div class="av">PN</div><div><div style="font-weight:600">Priya Nair</div><div class="muted" style="font-size:12px">priya.nair</div></div><a class="tab" href="Main.dc.html">Sign out</a></div>
+  </div>
+  <div style="padding: 20px 32px 0; display: flex; align-items: flex-end; justify-content: space-between">
+    <div>
+      <div class="muted" style="font-size: 13px">Workspace / retail_supply_chain_kg / Review extraction</div>
+      <div style="font-size: 24px; font-weight: 600; margin-top: 4px">Review extracted graph</div>
+    </div>
+    <div style="display: flex; gap: 8px"><span class="badge b">6 node types</span><span class="badge b">128 entities</span><span class="badge b">7 relationship types</span><span class="badge w">4 pending changes</span></div>
+  </div>
+  <div style="display: flex; gap: 20px; padding: 16px 32px 0">
+    <div class="card" style="width: 640px; overflow: hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid #DDE2E0"><span class="h">NODES AND ENTITIES</span><button class="btn sec sm" type="button">Add node type</button></div>
+      <table>
+        <thead><tr><th>Label</th><th>Key property</th><th>Properties</th><th>Count</th><th style="width: 130px"></th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight: 600">Supplier</td><td class="mono">supplier_id</td><td>name, country, rating</td><td>48</td><td><button class="btn sec sm" type="button">Edit</button> <button class="btn del sm" type="button">Delete</button></td></tr>
+          <tr style="background: #F0F8F6"><td><input class="cell" type="text" value="Product" aria-label="Node label"></td><td><input class="cell mono" type="text" value="sku" aria-label="Key property"></td><td><input class="cell" type="text" value="name, category, unit_cost" aria-label="Properties"></td><td>312</td><td><button class="btn sm" type="button">Save</button></td></tr>
+          <tr><td style="font-weight: 600">Warehouse</td><td class="mono">warehouse_id</td><td>city, capacity</td><td>9</td><td><button class="btn sec sm" type="button">Edit</button> <button class="btn del sm" type="button">Delete</button></td></tr>
+          <tr style="background: #FDF5F4"><td style="text-decoration: line-through; color: #8A1F14; font-weight: 600">TempColumn</td><td class="mono" style="text-decoration: line-through; color: #8A1F14">row_no</td><td style="text-decoration: line-through; color: #8A1F14">notes</td><td>4,812</td><td><span class="badge r">Removed</span> <button class="btn sec sm" type="button">Undo</button></td></tr>
+          <tr><td style="font-weight: 600">Customer</td><td class="mono">customer_id</td><td>name, region</td><td>120</td><td><button class="btn sec sm" type="button">Edit</button> <button class="btn del sm" type="button">Delete</button></td></tr>
+          <tr><td style="font-weight: 600">Order</td><td class="mono">order_id</td><td>date, qty, status</td><td>4,812</td><td><button class="btn sec sm" type="button">Edit</button> <button class="btn del sm" type="button">Delete</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="flex-grow: 1; overflow: hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid #DDE2E0"><span class="h">RELATIONSHIPS</span><button class="btn sec sm" type="button">Add relationship</button></div>
+      <table>
+        <thead><tr><th>From</th><th>Relationship</th><th>To</th><th>Properties</th><th style="width: 130px"></th></tr></thead>
+        <tbody>
+          <tr><td>Supplier</td><td class="mono">SUPPLIES</td><td>Product</td><td>lead_days</td><td><button class="btn sec sm" type="button">Edit</button> <button class="btn del sm" type="button">Delete</button></td></tr>
+          <tr><td>Product</td><td class="mono">STORED_IN</td><td>Warehouse</td><td>stock_qty</td><td><button class="btn sec sm" type="button">Edit</button> <button class="btn del sm" type="button">Delete</button></td></tr>
+          <tr style="background: #F0F8F6"><td>Customer</td><td><input class="cell mono" type="text" value="PLACED" aria-label="Relationship type"></td><td>Order</td><td>placed_on</td><td><button class="btn sm" type="button">Save</button></td></tr>
+          <tr><td>Order</td><td class="mono">CONTAINS</td><td>Product</td><td>qty</td><td><button class="btn sec sm" type="button">Edit</button> <button class="btn del sm" type="button">Delete</button></td></tr>
+          <tr><td>Order</td><td class="mono">SHIPPED_FROM</td><td>Warehouse</td><td>shipped_on</td><td><button class="btn sec sm" type="button">Edit</button> <button class="btn del sm" type="button">Delete</button></td></tr>
+          <tr><td>Customer</td><td class="mono">LOCATED_IN</td><td>Warehouse</td><td>none</td><td><button class="btn sec sm" type="button">Edit</button> <button class="btn del sm" type="button">Delete</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div style="padding: 16px 32px 0">
+    <div style="background: #16201E; border-radius: 14px; padding: 14px 18px; color: #E6EDEB">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px"><span style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; color: #9FB8B2">GENERATED CYPHER (updates as you edit)</span><span style="font-size: 12px; color: #9FB8B2">4 of 13 statements shown</span></div>
+      <div class="mono" style="line-height: 1.6">MERGE (s:Supplier {supplier_id: row.supplier_id}) SET s.name = row.name, s.country = row.country<br>MERGE (p:Product {sku: row.sku}) SET p.name = row.product, p.category = row.category<br>MERGE (s)-[:SUPPLIES {lead_days: row.lead_days}]-&gt;(p)<br>MERGE (c)-[:PLACED {placed_on: row.order_date}]-&gt;(o)</div>
+    </div>
+  </div>
+  <div style="margin-top: auto; height: 76px; background: #fff; border-top: 1px solid #DDE2E0; display: flex; align-items: center; justify-content: space-between; padding: 0 32px">
+    <div class="muted" style="font-size: 13px">2 edits and 1 removal pending. Nothing is written to the graph until you submit.</div>
+    <div style="display: flex; gap: 12px"><a class="btn sec" href="Workspace.dc.html">Discard</a><a class="btn" href="Chat.dc.html">Submit and build graph</a></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

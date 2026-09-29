@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Extracting graph</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#16201E;background:#E9ECEA}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+.step{display:flex;align-items:center;gap:14px;font-size:14px}
+.dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+</style>
+</helmet>
+<div style="width: 900px; height: 600px; display: flex; align-items: center; justify-content: center; background: #E9ECEA">
+  <div style="width: 600px; background: #fff; border: 1px solid #DDE2E0; border-radius: 16px; padding: 32px; display: flex; flex-direction: column; gap: 22px">
+    <div>
+      <div style="font-size: 22px; font-weight: 600">Extracting your knowledge graph</div>
+      <div style="font-size: 14px; color: #5B6764; margin-top: 4px">supplier_orders.xlsx for retail_supply_chain_kg</div>
+    </div>
+    <div style="height: 8px; border-radius: 4px; background: #EAEDEC"><div style="width: 62%; height: 8px; border-radius: 4px; background: #0B6B5F"></div></div>
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <div class="step"><div class="dot" style="background: #0B6B5F; color: #fff">1</div><span style="flex-grow: 1">Read file and detect sheets</span><span style="color: #5B6764; font-size: 13px">3 sheets, 4,812 rows</span></div>
+      <div class="step"><div class="dot" style="background: #0B6B5F; color: #fff">2</div><span style="flex-grow: 1">LLM identifies nodes and entities</span><span style="color: #5B6764; font-size: 13px">6 node types</span></div>
+      <div class="step"><div class="dot" style="background: #FFF3D6; color: #7A4E00; border: 2px solid #C58A10">3</div><span style="flex-grow: 1; font-weight: 600">LLM infers relationships</span><span style="color: #7A4E00; font-size: 13px; font-weight: 600">In progress</span></div>
+      <div class="step"><div class="dot" style="background: #EDEFEE; color: #46524F">4</div><span style="flex-grow: 1; color: #5B6764">Generate Cypher queries</span><span style="color: #5B6764; font-size: 13px">Waiting</span></div>
+    </div>
+    <div style="background: #F5F6F4; border-radius: 10px; padding: 12px 14px; font-size: 13px; color: #46524F; line-height: 1.45">You can leave this page. We will open the review screen when extraction finishes.</div>
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <button type="button" style="height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid #C9D0CE; background: #fff; font-family: inherit; font-size: 14px; font-weight: 600; color: #16201E">Cancel</button>
+      <a href="Review.dc.html" style="font-size: 13px; font-weight: 600; color: #0B6B5F">Skip ahead to review</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":900,"height":600}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

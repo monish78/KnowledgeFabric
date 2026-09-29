@@ -1,0 +1,326 @@
+{
+  "seed": 20260929,
+  "ingest_contract": "(also written into the manifest) is:\n  * header rows may be offset by title/blank rows; blank rows are ignored\n  * headers are matched case/space/underscore-insensitively\n  * key values are compared after strip() + upper()\n  * numbers may carry currency symbols, thousands separators or accounting\n    parentheses; dates may be ISO, DD/MM/YYYY, \"Sep 22, 2026\" or Excel dates;\n    booleans may be Y/N/yes/no/TRUE/FALSE/1/0\n  * all nodes are created before relationships (forward references are legal)\n  * a row is rejected (and reported) if a node key it needs is missing or a\n    relationship endpoint it references does not exist; rejection is per row\n  * duplicate rows merge on the key property; for repeated relationship rows\n    the last row wins",
+  "files": {
+    "supplier_orders.xlsx": {
+      "kb": "retail_supply_chain_kg",
+      "kind": "graph_initial",
+      "sheets": {
+        "Suppliers": {
+          "header_row": 3,
+          "data_rows": 50
+        },
+        "Products": {
+          "header_row": 1,
+          "data_rows": 312
+        },
+        "Warehouses": {
+          "header_row": 1,
+          "data_rows": 9
+        },
+        "Customers": {
+          "header_row": 1,
+          "data_rows": 123
+        },
+        "Orders": {
+          "header_row": 1,
+          "data_rows": 4812,
+          "blank_rows": 6
+        },
+        "Inventory": {
+          "header_row": 1,
+          "data_rows": 1044
+        }
+      },
+      "expected_nodes": {
+        "Suppliers.Supplier ID": 48,
+        "Products.SKU": 307,
+        "Warehouses.WH Code": 9,
+        "Customers.customer_id": 120,
+        "Orders.order_id": 1607
+      },
+      "expected_relationships": {
+        "supplier->product": 307,
+        "product->substitute_product": 31,
+        "product->warehouse (stock)": 1034,
+        "customer->order": 1607,
+        "order->product (line)": 4785,
+        "order->warehouse": 1607
+      },
+      "expected_rejections": {
+        "Products": {
+          "supplier_given_as_name": 5
+        },
+        "Orders": {
+          "missing_customer_id": 9,
+          "unknown_sku": 7,
+          "unknown_warehouse": 5,
+          "missing_order_id": 6
+        }
+      },
+      "pii": {
+        "Suppliers": {
+          "Contact Person": "person_name",
+          "Contact Email": "email",
+          "Contact Phone": "phone",
+          "Bank Account": "bank_account"
+        },
+        "Warehouses": {
+          "Manager": "person_name",
+          "Manager Phone": "phone"
+        },
+        "Customers": {
+          "Name": "person_name",
+          "Email": "email",
+          "Phone": "phone",
+          "DOB": "date_of_birth",
+          "PAN": "government_id",
+          "Address": "address"
+        },
+        "Orders": {
+          "notes": "free_text_may_contain_pii"
+        }
+      },
+      "not_pii_traps": [
+        "Suppliers.Supplier Name (company)",
+        "Products.Product",
+        "Warehouses.City",
+        "Customers.Region",
+        "Orders.row_no"
+      ],
+      "junk_columns": [
+        "Orders.row_no"
+      ]
+    },
+    "supplier_orders_october.xlsx": {
+      "kb": "retail_supply_chain_kg",
+      "kind": "graph_add_data",
+      "rows": 1230,
+      "header_note": "same columns as Orders but renamed/reordered, no row_no",
+      "expected": {
+        "new_orders": 476,
+        "new_order_lines": 1200,
+        "already_loaded_lines": 20,
+        "rejected": {
+          "unknown_customer_id": 4,
+          "unknown_sku": 3,
+          "missing_order_id": 3
+        }
+      }
+    },
+    "warehouse_update.csv": {
+      "kb": "retail_supply_chain_kg",
+      "kind": "graph_add_data",
+      "rows": 56,
+      "format": "UTF-8 BOM, ';' delimiter, CRLF",
+      "expected": {
+        "updated_pairs": 30,
+        "new_pairs": 14,
+        "rejected": {
+          "missing_sku": 12
+        }
+      }
+    },
+    "finance_ledger.csv": {
+      "kb": "finance_ledger_kg",
+      "kind": "graph_initial",
+      "rows": 480,
+      "format": "UTF-8 BOM, ';' delimiter, CRLF, accounting negatives '(1,200.00)', DD/MM/YYYY",
+      "pii": {
+        "Approved By": "person_name",
+        "Approver Email": "email"
+      },
+      "isolation_trap": "vendors 'Bluepeak Textiles' and 'Kaveri Packaging' also exist in the retail KB"
+    },
+    "returns_policy.pdf": {
+      "kb": "retail_policies_rag",
+      "kind": "rag",
+      "pii": {
+        "email": 1,
+        "phone": 1,
+        "person_name": 1
+      },
+      "not_pii_traps": [
+        "returns@ is a shared mailbox but still counts as an email"
+      ]
+    },
+    "vendor_handbook.docx": {
+      "kb": "retail_policies_rag",
+      "kind": "rag",
+      "pii": {
+        "person_name": 2,
+        "email": 2,
+        "phone": 2
+      }
+    },
+    "warehouse_sop.txt": {
+      "kb": "retail_policies_rag",
+      "kind": "rag",
+      "format": "CRLF, contains Tamil",
+      "pii": {
+        "person_name": 1,
+        "phone": 1
+      }
+    },
+    "edge_cases/corrupt.xlsx": {
+      "expect": "clear error, no job crash"
+    },
+    "edge_cases/empty.csv": {
+      "expect": "clear error: no data rows"
+    }
+  },
+  "questions": [
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "q": "How many suppliers are there?",
+      "answer": 48
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "q": "Which suppliers deliver products stored in the Chennai warehouse?",
+      "answer": [
+        "Bluepeak Textiles",
+        "Kaveri Packaging",
+        "Orion Components",
+        "Suvarna Foods"
+      ]
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "follow_up": true,
+      "q": "Which of those have a rating below 4?",
+      "answer": [
+        "Kaveri Packaging",
+        "Orion Components"
+      ]
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "q": "Which customer ordered the largest total quantity?",
+      "answer": "Ravi Gupta",
+      "detail": {
+        "customer_id": "CUS-0042",
+        "qty": 12890
+      }
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "q": "How many orders were cancelled?",
+      "answer": 115
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "q": "Which warehouse has the largest capacity?",
+      "answer": "Mumbai"
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "q": "What is the substitute product for SKU-10007?",
+      "answer": "SKU-10213"
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "q": "What is the total stock of SKU-10001 across all warehouses?",
+      "answer": 3936,
+      "after_add_data": 4039
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "q": "How many products does Bluepeak Textiles supply?",
+      "answer": 45
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "stretch",
+      "q": "How many products are stored in the Bengaluru warehouse?",
+      "answer": 120,
+      "trap": "city is stored as 'Bangalore'"
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "core",
+      "after_add_data_only": true,
+      "q": "How many orders were cancelled?",
+      "answer": 163
+    },
+    {
+      "kb": "finance_ledger_kg",
+      "level": "core",
+      "q": "What is the total amount posted to cost centre CC-IT?",
+      "answer": 9926365.97,
+      "tolerance": 0.01
+    },
+    {
+      "kb": "finance_ledger_kg",
+      "level": "core",
+      "q": "Which vendor has the highest total spend?",
+      "answer": "Amazon Web Services"
+    },
+    {
+      "kb": "retail_policies_rag",
+      "level": "core",
+      "q": "What is the standard return window?",
+      "answer": "30 days",
+      "trap": "superseded 45-day rule is also in the document"
+    },
+    {
+      "kb": "retail_policies_rag",
+      "level": "core",
+      "q": "What is the restocking fee for electronics?",
+      "answer": "12%",
+      "trap": "fact is only in a PDF table"
+    },
+    {
+      "kb": "retail_policies_rag",
+      "level": "core",
+      "q": "What are the vendor payment terms?",
+      "answer": "net 45 days"
+    },
+    {
+      "kb": "retail_policies_rag",
+      "level": "core",
+      "q": "What is the late delivery penalty?",
+      "answer": "2% of PO value per week of delay, capped at 10%"
+    },
+    {
+      "kb": "retail_policies_rag",
+      "level": "core",
+      "q": "What temperature must the Chennai cold room be kept at?",
+      "answer": "2 to 8 degrees Celsius"
+    },
+    {
+      "kb": "retail_policies_rag",
+      "level": "core",
+      "q": "What are the inbound dock hours?",
+      "answer": "06:00 to 14:00, Monday to Saturday"
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "security",
+      "as_user": "unauthorised",
+      "q": "How many suppliers are there?",
+      "answer": "403 access denied"
+    },
+    {
+      "kb": "retail_supply_chain_kg",
+      "level": "security",
+      "q": "Delete all suppliers",
+      "answer": "refused: chat Cypher is read-only"
+    },
+    {
+      "kb": "finance_ledger_kg",
+      "level": "security",
+      "q": "Which products are stored in the Chennai warehouse?",
+      "answer": "no retail data (KB isolation)"
+    }
+  ]
+}

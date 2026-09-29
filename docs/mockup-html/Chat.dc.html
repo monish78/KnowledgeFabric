@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Chat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#16201E;background:#F5F6F4}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+.top{height:56px;background:#fff;border-bottom:1px solid #DDE2E0;display:flex;align-items:center;padding:0 24px;gap:32px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px}
+.mark{width:26px;height:26px;border-radius:7px;background:#0B6B5F}
+.tabs{display:flex;gap:4px;flex-grow:1}
+.tab{padding:9px 14px;border-radius:8px;font-size:14px;color:#5B6764;font-weight:500}
+.tab.on{background:#E3F1EE;color:#0B6B5F}
+.user{display:flex;align-items:center;gap:12px;font-size:13px}
+.av{width:32px;height:32px;border-radius:50%;background:#16201E;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:10px;background:#0B6B5F;color:#fff;font-size:14px;font-weight:600;border:0;font-family:inherit}
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:11px;font-size:12px;font-weight:600;background:#E3F1EE;color:#0B6B5F}
+.badge.g{background:#EDEFEE;color:#46524F}
+.badge.b{background:#E4ECFB;color:#1E40AF}
+.muted{color:#5B6764}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:12.5px}
+.kb{padding:12px 14px;border-radius:12px;display:flex;flex-direction:column;gap:6px;border:1px solid transparent}
+.kb.on{background:#E3F1EE;border-color:#0B6B5F}
+.chip{display:inline-flex;align-items:center;height:28px;padding:0 10px;border-radius:8px;background:#EDEFEE;font-size:12px;color:#33403D}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; overflow: hidden; display: flex; flex-direction: column">
+  <div class="top">
+    <div class="logo"><div class="mark"></div>Graphbase</div>
+    <nav class="tabs">
+      <a class="tab" href="Workspace.dc.html">Workspace</a>
+      <a class="tab" href="AddData.dc.html">Add data</a>
+      <a class="tab" href="Access.dc.html">Access</a>
+      <a class="tab on" href="Chat.dc.html">Chat</a>
+    </nav>
+    <div class="user"><div class="av">PN</div><div><div style="font-weight:600">Priya Nair</div><div class="muted" style="font-size:12px">priya.nair</div></div><a class="tab" href="Main.dc.html">Sign out</a></div>
+  </div>
+  <div style="display: flex; flex-grow: 1; min-height: 0">
+    <div style="width: 340px; background: #fff; border-right: 1px solid #DDE2E0; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+      <div style="font-size: 12px; font-weight: 600; letter-spacing: 0.06em; color: #5B6764">CHAT WITH</div>
+      <input type="text" placeholder="Search knowledge bases" aria-label="Search knowledge bases" style="height: 40px; border: 1px solid #C9D0CE; border-radius: 10px; padding: 0 12px; font-family: inherit; font-size: 14px">
+      <div class="kb on"><div style="display: flex; justify-content: space-between; align-items: center"><b style="font-size: 14px">retail_supply_chain_kg</b><span class="badge b">Graph</span></div><div class="muted" style="font-size: 12px">Retail / Supply chain</div><div><span class="badge">Owner</span></div></div>
+      <div class="kb"><div style="display: flex; justify-content: space-between; align-items: center"><b style="font-size: 14px">hr_policies_rag</b><span class="badge g">RAG</span></div><div class="muted" style="font-size: 12px">HR / Policies</div><div><span class="badge">Owner</span></div></div>
+      <div class="kb"><div style="display: flex; justify-content: space-between; align-items: center"><b style="font-size: 14px">finance_ledger_kg</b><span class="badge b">Graph</span></div><div class="muted" style="font-size: 12px">Finance / Ledger</div><div><span class="badge g">User access</span></div></div>
+      <div class="muted" style="font-size: 12px; line-height: 1.45; margin-top: auto">You only see knowledge bases you own or were given access to.</div>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+      <div style="height: 64px; border-bottom: 1px solid #DDE2E0; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px">
+        <div><div style="font-size: 16px; font-weight: 600">retail_supply_chain_kg</div><div class="muted" style="font-size: 12px">Answers use only this graph. 128 entities, 214 relationships.</div></div>
+        <a class="btn" href="AddData.dc.html" style="height: 36px; font-size: 13px; background: #fff; color: #16201E; border: 1px solid #C9D0CE">Add data</a>
+      </div>
+      <div style="flex-grow: 1; padding: 28px 32px; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+        <div style="align-self: flex-end; max-width: 560px; background: #0B6B5F; color: #fff; border-radius: 16px 16px 4px 16px; padding: 12px 16px; font-size: 15px; line-height: 1.45">Which suppliers deliver products stored in the Chennai warehouse?</div>
+        <div style="align-self: flex-start; max-width: 760px; display: flex; flex-direction: column; gap: 10px">
+          <div style="background: #fff; border: 1px solid #DDE2E0; border-radius: 16px 16px 16px 4px; padding: 16px 18px; font-size: 15px; line-height: 1.55">Four suppliers deliver products held in the Chennai warehouse: Bluepeak Textiles, Kaveri Packaging, Orion Components and Suvarna Foods. Bluepeak supplies the most products there, with 37 SKUs and an average lead time of 6 days.</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center"><span class="muted" style="font-size: 12px">Graph path</span><span class="chip">Supplier</span><span class="muted">SUPPLIES</span><span class="chip">Product</span><span class="muted">STORED_IN</span><span class="chip">Warehouse: Chennai</span></div>
+          <div style="background: #16201E; color: #E6EDEB; border-radius: 12px; padding: 12px 14px"><div style="font-size: 11px; font-weight: 600; letter-spacing: 0.06em; color: #9FB8B2; margin-bottom: 6px">CYPHER USED</div><div class="mono" style="line-height: 1.55">MATCH (s:Supplier)-[:SUPPLIES]-&gt;(p:Product)-[:STORED_IN]-&gt;(w:Warehouse {city: 'Chennai'}) RETURN s.name, count(p)</div></div>
+        </div>
+        <div style="align-self: flex-end; max-width: 560px; background: #0B6B5F; color: #fff; border-radius: 16px 16px 4px 16px; padding: 12px 16px; font-size: 15px; line-height: 1.45">Which of those have a rating below 4?</div>
+        <div style="align-self: flex-start; background: #fff; border: 1px solid #DDE2E0; border-radius: 16px 16px 16px 4px; padding: 14px 18px; font-size: 14px; color: #5B6764">Querying the graph...</div>
+      </div>
+      <div style="padding: 0 32px 24px">
+        <div style="display: flex; gap: 12px; align-items: center; background: #fff; border: 1px solid #C9D0CE; border-radius: 14px; padding: 8px 8px 8px 18px">
+          <input type="text" placeholder="Ask about retail_supply_chain_kg" aria-label="Message" style="flex-grow: 1; border: 0; outline: 0; height: 40px; font-family: inherit; font-size: 15px; background: transparent">
+          <button class="btn" type="button" style="height: 40px">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

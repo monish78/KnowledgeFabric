@@ -1,0 +1,18 @@
+WAREHOUSE STANDARD OPERATING PROCEDURES (Chennai, WH-CHN)
+=========================================================
+
+1. Cold storage
+The Chennai warehouse has a cold room that must be held between 2 and 8 degrees Celsius.
+குளிர் அறை வெப்பநிலை 2 முதல் 8 டிகிரி செல்சியஸ் வரை இருக்க வேண்டும்.
+Temperature is logged every 4 hours. Two consecutive readings outside the range must be escalated to the shift lead.
+
+2. Dock hours
+Inbound docks are open 06:00 to 14:00, Monday to Saturday. Outbound dispatch runs 14:00 to 22:00.
+Vehicles arriving outside dock hours wait in the holding bay.
+
+3. Equipment
+Forklift operators must renew their certification every 12 months.
+Fire drills are held once a quarter; the last drill was on 12 August 2026.
+
+4. Contacts
+Shift lead (day): Karthik Pillai, +91 94440 55667

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Manage access</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#16201E;background:#F5F6F4}
+*{box-sizing:border-box}
+a{text-decoration:none;color:inherit}
+.top{height:56px;background:#fff;border-bottom:1px solid #DDE2E0;display:flex;align-items:center;padding:0 24px;gap:32px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px}
+.mark{width:26px;height:26px;border-radius:7px;background:#0B6B5F}
+.tabs{display:flex;gap:4px;flex-grow:1}
+.tab{padding:9px 14px;border-radius:8px;font-size:14px;color:#5B6764;font-weight:500}
+.tab.on{background:#E3F1EE;color:#0B6B5F}
+.user{display:flex;align-items:center;gap:12px;font-size:13px}
+.av{width:32px;height:32px;border-radius:50%;background:#16201E;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border-radius:10px;background:#0B6B5F;color:#fff;font-size:14px;font-weight:600;border:0;font-family:inherit}
+.btn.sec{background:#fff;color:#16201E;border:1px solid #C9D0CE}
+.btn.sm{height:34px;padding:0 12px;font-size:13px}
+.btn.del{background:#fff;color:#B42318;border:1px solid #E8B4AE}
+.card{background:#fff;border:1px solid #DDE2E0;border-radius:14px}
+.lbl{font-size:13px;font-weight:600;margin-bottom:6px;display:block}
+.inp{height:44px;width:100%;border:1px solid #C9D0CE;border-radius:10px;padding:0 14px;font-size:14px;font-family:inherit;background:#fff;color:#16201E}
+.badge{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;font-weight:600;background:#E3F1EE;color:#0B6B5F}
+.badge.g{background:#EDEFEE;color:#46524F}
+.badge.b{background:#E4ECFB;color:#1E40AF}
+.badge.r{background:#FDECEA;color:#B42318}
+.muted{color:#5B6764}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;font-size:12px;color:#5B6764;padding:10px 14px;background:#F5F6F4;border-bottom:1px solid #DDE2E0}
+td{padding:12px 14px;border-bottom:1px solid #EAEDEC;vertical-align:middle}
+.h{font-size:12px;font-weight:600;letter-spacing:0.06em;color:#5B6764}
+.log{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #EAEDEC;font-size:13px;line-height:1.45}
+.pip{width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; overflow: hidden; display: flex; flex-direction: column">
+  <div class="top">
+    <div class="logo"><div class="mark"></div>Graphbase</div>
+    <nav class="tabs">
+      <a class="tab" href="Workspace.dc.html">Workspace</a>
+      <a class="tab" href="AddData.dc.html">Add data</a>
+      <a class="tab on" href="Access.dc.html">Access</a>
+      <a class="tab" href="Chat.dc.html">Chat</a>
+    </nav>
+    <div class="user"><div class="av">PN</div><div><div style="font-weight:600">Priya Nair</div><div class="muted" style="font-size:12px">priya.nair</div></div><a class="tab" href="Main.dc.html">Sign out</a></div>
+  </div>
+  <div style="padding: 28px 40px; display: flex; flex-direction: column; gap: 20px; flex-grow: 1">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end">
+      <div>
+        <div style="font-size: 26px; font-weight: 600">Manage access</div>
+        <div class="muted" style="font-size: 14px; margin-top: 4px">Choose one of the knowledge bases you own to control who can chat with it.</div>
+      </div>
+      <div style="width: 360px">
+        <label class="lbl" for="kb">Knowledge base</label>
+        <select class="inp" id="kb"><option>retail_supply_chain_kg (Retail / Supply chain)</option><option>hr_policies_rag (HR / Policies)</option></select>
+      </div>
+    </div>
+    <div style="display: flex; gap: 24px; flex-grow: 1; min-height: 0">
+      <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px">
+        <div style="background: #E3F1EE; border-radius: 12px; padding: 14px 18px; font-size: 14px; color: #0B4F46; line-height: 1.45"><b>You own this knowledge base.</b> Only the owner can grant or revoke access. Other users can chat with it but cannot share it.</div>
+        <div class="card" style="padding: 18px 20px">
+          <div class="h" style="margin-bottom: 12px">GRANT ACCESS</div>
+          <div style="display: flex; gap: 12px; align-items: flex-end">
+            <div style="flex-grow: 1"><label class="lbl" for="gu">User ID</label><input class="inp" id="gu" type="text" value="meera.s"></div>
+            <div style="width: 200px"><label class="lbl" for="gr">Role</label><select class="inp" id="gr"><option>User (chat only)</option></select></div>
+            <button class="btn" type="button">Grant access</button>
+          </div>
+        </div>
+        <div class="card" style="overflow: hidden">
+          <div style="padding: 14px 20px; border-bottom: 1px solid #DDE2E0" class="h">PEOPLE WITH ACCESS (4)</div>
+          <table>
+            <thead><tr><th>User ID</th><th>Name</th><th>Role</th><th>Granted by</th><th>Granted on</th><th></th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight: 600">priya.nair</td><td>Priya Nair</td><td><span class="badge">Owner</span></td><td class="muted">Created the base</td><td>22 Sep 2026</td><td></td></tr>
+              <tr><td style="font-weight: 600">arjun.mehta</td><td>Arjun Mehta</td><td><span class="badge g">User</span></td><td>priya.nair</td><td>23 Sep 2026</td><td><button class="btn del sm" type="button">Revoke</button></td></tr>
+              <tr><td style="font-weight: 600">sneha.iyer</td><td>Sneha Iyer</td><td><span class="badge g">User</span></td><td>priya.nair</td><td>25 Sep 2026</td><td><button class="btn del sm" type="button">Revoke</button></td></tr>
+              <tr><td style="font-weight: 600">karthik.r</td><td>Karthik R</td><td><span class="badge g">User</span></td><td>priya.nair</td><td>29 Sep 2026</td><td><button class="btn del sm" type="button">Revoke</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="width: 420px; padding: 18px 20px; display: flex; flex-direction: column">
+        <div class="h" style="margin-bottom: 4px">ACCESS LOG</div>
+        <div class="muted" style="font-size: 12px; margin-bottom: 6px">Every grant and revoke is written to Postgres.</div>
+        <div class="log"><div class="pip" style="background: #0B6B5F"></div><div><b>priya.nair</b> granted <b>karthik.r</b> access<div class="muted" style="font-size: 12px">29 Sep 2026, 10:12</div></div></div>
+        <div class="log"><div class="pip" style="background: #B42318"></div><div><b>priya.nair</b> revoked access for <b>rohan.d</b><div class="muted" style="font-size: 12px">27 Sep 2026, 16:40</div></div></div>
+        <div class="log"><div class="pip" style="background: #0B6B5F"></div><div><b>priya.nair</b> granted <b>sneha.iyer</b> access<div class="muted" style="font-size: 12px">25 Sep 2026, 09:05</div></div></div>
+        <div class="log"><div class="pip" style="background: #0B6B5F"></div><div><b>priya.nair</b> granted <b>arjun.mehta</b> access<div class="muted" style="font-size: 12px">23 Sep 2026, 11:30</div></div></div>
+        <div class="log" style="border-bottom: 0"><div class="pip" style="background: #1E40AF"></div><div><b>priya.nair</b> created the knowledge base and became owner<div class="muted" style="font-size: 12px">22 Sep 2026, 14:02</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

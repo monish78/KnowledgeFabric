@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Postgres tables</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#16201E;background:#F5F6F4}
+*{box-sizing:border-box}
+.card{background:#fff;border:1px solid #DDE2E0;border-radius:14px;overflow:hidden}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:12.5px}
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:11px;font-size:12px;font-weight:600;background:#E3F1EE;color:#0B6B5F}
+.badge.g{background:#EDEFEE;color:#46524F}
+.muted{color:#5B6764}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-weight:600;font-size:12px;color:#5B6764;padding:10px 12px;background:#F5F6F4;border-bottom:1px solid #DDE2E0;font-family:'IBM Plex Mono',monospace}
+td{padding:10px 12px;border-bottom:1px solid #EAEDEC}
+.hd{padding:16px 20px;border-bottom:1px solid #DDE2E0}
+.col{display:flex;justify-content:space-between;padding:8px 20px;border-bottom:1px solid #EAEDEC;font-size:13px}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; overflow: hidden; padding: 40px 48px; display: flex; flex-direction: column; gap: 24px">
+  <div>
+    <div style="font-size: 26px; font-weight: 600">Postgres tables for access control</div>
+    <div class="muted" style="font-size: 14px; margin-top: 4px">Two tables. One records who currently has access and who granted it. The other lists every knowledge base per user with their role.</div>
+  </div>
+  <div style="display: flex; gap: 28px; align-items: flex-start">
+    <div class="card" style="width: 640px">
+      <div class="hd"><div class="mono" style="font-size: 16px; font-weight: 500">kb_access</div><div class="muted" style="font-size: 13px; margin-top: 2px">Access grants with an audit trail of who gave them</div></div>
+      <div class="col"><span class="mono">id</span><span class="muted">bigserial, primary key</span></div>
+      <div class="col"><span class="mono">kb_name</span><span class="muted">text, references knowledge_bases</span></div>
+      <div class="col"><span class="mono">user_id</span><span class="muted">text, person who received access</span></div>
+      <div class="col"><span class="mono">role</span><span class="muted">owner or user</span></div>
+      <div class="col"><span class="mono">granted_by</span><span class="muted">text, must be the owner</span></div>
+      <div class="col"><span class="mono">granted_at</span><span class="muted">timestamptz</span></div>
+      <div class="col" style="border-bottom: 0"><span class="mono">revoked_at</span><span class="muted">timestamptz, null while active</span></div>
+      <table>
+        <thead><tr><th>kb_name</th><th>user_id</th><th>role</th><th>granted_by</th><th>granted_at</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">retail_supply_chain_kg</td><td class="mono">priya.nair</td><td><span class="badge">owner</span></td><td class="mono">system</td><td class="mono">2026-09-22</td></tr>
+          <tr><td class="mono">retail_supply_chain_kg</td><td class="mono">arjun.mehta</td><td><span class="badge g">user</span></td><td class="mono">priya.nair</td><td class="mono">2026-09-23</td></tr>
+          <tr><td class="mono">retail_supply_chain_kg</td><td class="mono">karthik.r</td><td><span class="badge g">user</span></td><td class="mono">priya.nair</td><td class="mono">2026-09-29</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card" style="width: 640px">
+      <div class="hd"><div class="mono" style="font-size: 16px; font-weight: 500">knowledge_bases</div><div class="muted" style="font-size: 13px; margin-top: 2px">One row per user per knowledge base they can reach</div></div>
+      <div class="col"><span class="mono">user_id</span><span class="muted">text</span></div>
+      <div class="col"><span class="mono">kb_name</span><span class="muted">text</span></div>
+      <div class="col"><span class="mono">kb_type</span><span class="muted">graph or rag</span></div>
+      <div class="col"><span class="mono">domain</span><span class="muted">text</span></div>
+      <div class="col"><span class="mono">sub_domain</span><span class="muted">text</span></div>
+      <div class="col" style="border-bottom: 0"><span class="mono">access</span><span class="muted">owner or user</span></div>
+      <table>
+        <thead><tr><th>user_id</th><th>kb_name</th><th>domain</th><th>sub_domain</th><th>access</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">priya.nair</td><td class="mono">retail_supply_chain_kg</td><td>Retail</td><td>Supply chain</td><td><span class="badge">owner</span></td></tr>
+          <tr><td class="mono">arjun.mehta</td><td class="mono">retail_supply_chain_kg</td><td>Retail</td><td>Supply chain</td><td><span class="badge g">user</span></td></tr>
+          <tr><td class="mono">priya.nair</td><td class="mono">hr_policies_rag</td><td>HR</td><td>Policies</td><td><span class="badge">owner</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div style="background: #fff; border: 1px solid #DDE2E0; border-radius: 14px; padding: 16px 20px; font-size: 14px; line-height: 1.6; max-width: 1308px">
+    <b>How they work together.</b> Creating a knowledge base inserts an owner row into both tables. When the owner grants access, one row is added to each, with the owner recorded in granted_by. Revoking sets revoked_at and removes the user row. Chat lists only the knowledge bases where the signed-in user has a row.
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
