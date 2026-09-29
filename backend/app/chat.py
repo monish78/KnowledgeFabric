@@ -12,7 +12,7 @@ from typing import TypedDict
 from langgraph.graph import END, StateGraph
 
 from app import graph_schema as gs
-from app.cypher_repair import repair
+from app.cypher_repair import error_hint, lint, repair
 from app.graphstore import GraphStore, UnsafeQueryError
 from app.llm import ask_json, ask_text
 from app.rag import retrieve
@@ -43,6 +43,10 @@ Rules:
 - If the question follows up an earlier one ("those", "them"), reuse the earlier query's pattern and filters.
 - Write relationship arrows exactly as listed. Relationship properties belong to the relationship variable.
 - Use full id values exactly as in the examples of each id (e.g. 'SKU-10001', not '10001').
+- When returning an entity, return both its id and its name.
+- For a follow-up question, reuse the earlier query's MATCH and filters and add the new condition in WHERE;
+  do not copy names or values from the earlier answer into the query.
+- For the largest/smallest value use ORDER BY ... DESC/ASC LIMIT 1, never max()/min() inside WHERE.
 Reply with JSON: {{"cypher": "..."}}
 
 Graph schema:
@@ -143,13 +147,18 @@ def build_graph_chat(store: GraphStore, schema: dict):
     def run(state: GraphState) -> GraphState:
         if not state["cypher"]:
             return {"error": "empty query", "rows": []}
+        problems = lint(state["cypher"], schema)
+        if problems and state.get("attempts", 0) < 2:  # let the model fix schema mistakes before running
+            return {"error": "the query does not match the graph schema: " + " ".join(problems), "rows": []}
         try:
             executed, rows = store.run_readonly(state["cypher"])
             return {"executed": executed, "rows": _json_safe(rows), "error": ""}
         except UnsafeQueryError as exc:
             return {"error": f"refused: {exc}", "rows": []}
         except Exception as exc:  # syntax errors, unknown functions, timeouts
-            return {"error": f"{type(exc).__name__}: {str(exc)[:300]}", "rows": []}
+            message = f"{type(exc).__name__}: {str(exc)[:300]}"
+            hint = error_hint(message)
+            return {"error": message + (f" Hint: {hint}" if hint else ""), "rows": []}
 
     def answer(state: GraphState) -> GraphState:
         if state.get("error"):

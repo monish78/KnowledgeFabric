@@ -50,7 +50,7 @@ def fake_llm(monkeypatch):
                      "confidence": 0.9, "reason": "bank details", "detected_by": "llm"}]
         return s
     monkeypatch.setattr(extraction, "extract", fake_extract)
-    monkeypatch.setattr(rag, "ask_json", lambda s, u, retries=1: {"counts": {}})
+    monkeypatch.setattr(rag, "ask_json", lambda s, u, retries=1: {"people": []})
 
     cypher = {"chennai": "MATCH (s:Supplier)-[:SUPPLIES]->(p:Product)-[:STORED_IN]->(w:Warehouse {city: 'Chennai'}) "
                          "RETURN DISTINCT s.name AS supplier ORDER BY supplier",

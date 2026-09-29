@@ -1,4 +1,6 @@
 """Phase 5: RAG ingest — parsing, chunking, Chroma storage, retrieval quality, PII scan."""
+import re
+
 import pytest
 
 from app import rag
@@ -73,12 +75,14 @@ def test_retrieval_finds_the_fact(indexed, question):
 
 
 def test_pii_scan_counts_by_category(monkeypatch):
-    monkeypatch.setattr(rag, "ask_json", lambda s, u, retries=1: {"counts": {"person_name": 1}}
-                        if "Deepa Menon" in u or "Karthik Pillai" in u else {"counts": {}})
+    people = {"Deepa Menon", "Karthik Pillai", "Priya Nair", "Venkat Rao"}
+    monkeypatch.setattr(rag, "ask_json", lambda s, u, retries=1: {
+        "people": [c for c in re.findall(r"^- (.+)$", u, re.M) if c in people] + ["Invented Person"]})
     for name in DOCS:
         chunks = rag.chunk(rag.extract_text(SAMPLES / name, name))
         found = {p["pii_category"]: p for p in rag.scan_pii(name, chunks)}
         expected = manifest()["files"][name]["pii"]
         for cat in ("email", "phone"):
             assert found.get(cat, {}).get("occurrences", 0) == expected.get(cat, 0), (name, cat)
-        assert all(p["reason"] and "@" not in p["reason"] for p in found.values())  # never the raw value
+        assert found["person_name"]["occurrences"] == expected["person_name"]  # invented names are dropped
+        assert all(p["reason"] and "@" not in p["reason"] and "Nair" not in p["reason"] for p in found.values())

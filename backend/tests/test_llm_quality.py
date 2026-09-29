@@ -149,4 +149,4 @@ def test_rag_chat_quality():
                            "vendor_handbook_pii": pii}
     _save()
     assert sum(r["ok"] for r in rows) >= 0.8 * len(rows)
-    assert pii.get("email") == 2 and pii.get("phone") == 2 and pii.get("person_name", 0) >= 1
+    assert pii.get("email") == 2 and pii.get("phone") == 2 and pii.get("person_name", 0) >= 1  # 2 in the text

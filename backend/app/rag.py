@@ -12,7 +12,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pypdf import PdfReader
 
 from app.config import get_settings
-from app.extraction import _EMAIL, _PHONE, PII_CATEGORIES
+from app.extraction import _EMAIL, _PHONE
 from app.llm import ask_json, get_embeddings
 
 log = logging.getLogger(__name__)
@@ -154,54 +154,52 @@ def documents(kb_name: str) -> dict[str, int]:
 
 
 # ------------------------------------------------------------------ PII scan
-PII_DOC_PROMPT = """Count the personal information (PII) about individual people in this passage from
-"{doc}". For each category give how many distinct items appear (0 if none):
-person_name (people's names, not companies or job titles), address (postal addresses of people),
-date_of_birth, government_id, bank_account, financial.
-(E-mails and phone numbers are counted separately; skip them.)
-Never copy the personal data itself.
-JSON: {{"counts": {{"person_name": 0, "address": 0, "date_of_birth": 0, "government_id": 0, "bank_account": 0,
-"financial": 0}}}}
+PII_NAMES_PROMPT = """Here are capitalised phrases found in the document "{doc}":
+{candidates}
 
-Passage:
-\"\"\"{text}\"\"\""""
+Which of them are names of individual people (a first name and a surname)? Not companies, products, places,
+departments, document titles or job titles.
+JSON: {{"people": [<the phrases that are people, copied exactly>]}}"""
+
+_CANDIDATE = re.compile(r"\b([A-Z][a-z]+(?:[ \t]+[A-Z][a-z]+){1,2})\b")
+_PAN = re.compile(r"\b[A-Z]{5}\d{4}[A-Z]\b")
+_AADHAAR = re.compile(r"\b\d{4}\s\d{4}\s\d{4}\b")
+_DOB = re.compile(r"\b(?:date of birth|dob|born on)\b", re.I)
 
 
 def scan_pii(filename: str, chunks: list[dict], use_llm: bool = True) -> list[dict]:
-    """Per-category occurrence counts for one document. Emails/phones by pattern, the rest by the LLM."""
+    """Per-category occurrence counts for one document; values are never kept.
+    Emails, phones and ID numbers are found by pattern. Person names: capitalised phrases are the
+    candidates and the LLM picks the ones that are people (small models classify far better than they
+    extract); its picks must be among the candidates."""
+    from app.extraction import _COMPANY
+
     full = "\n".join(c["text"] for c in chunks)
-    counts = Counter()
-    counts["email"] = len(set(_EMAIL.findall(full)))
-    counts["phone"] = len({re.sub(r"\D", "", p) for p in _PHONE.findall(full)})
-    llm_counts = Counter()
-    llm_ok = False
-    for c in (chunks if use_llm else []):
+    counts = Counter({
+        "email": len(set(_EMAIL.findall(full))),
+        "phone": len({re.sub(r"\D", "", p) for p in _PHONE.findall(full)}),
+        "government_id": len(set(_PAN.findall(full)) | set(_AADHAAR.findall(full))),
+        "date_of_birth": len(_DOB.findall(full)),
+    })
+    names_by = "llm"
+    candidates = sorted({m for m in _CANDIDATE.findall(full) if not _COMPANY.search(m)})
+    if use_llm and candidates:
         try:
             data = ask_json("You are a data-privacy auditor. Reply with one JSON object only.",
-                            PII_DOC_PROMPT.format(doc=filename, text=c["text"][:2500]))
-            llm_ok = True
+                            PII_NAMES_PROMPT.format(doc=filename, candidates="\n".join(f"- {c}" for c in candidates[:150])))
+            people = {p for p in (data.get("people") or []) if isinstance(p, str) and p in candidates}
+            counts["person_name"] = len(people)
         except Exception as exc:
-            log.warning("PII scan failed for a chunk of %s: %s", filename, exc)
-            continue
-        counts_in = data.get("counts") if isinstance(data.get("counts"), dict) else {}
-        for cat, n in counts_in.items():
-            if cat not in PII_CATEGORIES or cat in ("email", "phone"):
-                continue
-            try:
-                n = max(int(n), 0)
-            except (TypeError, ValueError):
-                continue
-            llm_counts[cat] += n
-    counts.update(llm_counts)
+            log.warning("PII name scan failed for %s: %s", filename, exc)
+            names_by = "unavailable"
     out = []
-    sens = {"government_id": "high", "bank_account": "high", "date_of_birth": "high", "financial": "high",
-            "person_name": "low"}
+    sens = {"government_id": "high", "date_of_birth": "high", "person_name": "low"}
     for cat, n in counts.items():
         if n <= 0:
             continue
-        by_rules = cat in ("email", "phone")
+        by_rules = cat != "person_name"
         out.append({"source_document": filename, "pii_category": cat, "occurrences": n,
                     "sensitivity": sens.get(cat, "medium"), "confidence": 0.95 if by_rules else 0.7,
-                    "detected_by": "rules" if by_rules else "llm",
-                    "reason": f"{n} {cat.replace('_', ' ')} occurrence(s) found" + ("" if llm_ok or by_rules else " (LLM unavailable)")})
+                    "detected_by": "rules" if by_rules else names_by,
+                    "reason": f"{n} {cat.replace('_', ' ')} occurrence(s) found"})
     return out

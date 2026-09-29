@@ -211,3 +211,15 @@ def test_chat_examples_come_from_the_schema():
 
     text = examples(gs.clean(finance_schema()), {("CostCentre", "code"): ["CC-IT"]})
     assert "LedgerEntry" in text and "Supplier" not in text
+
+
+def test_cypher_lint_explains_schema_mistakes():
+    from app.cypher_repair import error_hint, lint
+
+    f = gs.clean(finance_schema())
+    problems = " ".join(lint("MATCH (v:Vendor)-[r:CHARGED_TO]->(a:Account) RETURN v.name, sum(r.amount)", f))
+    assert "CHARGED_TO does not connect Vendor and Account" in problems
+    assert "Relationship CHARGED_TO has no property amount (amount belongs to LedgerEntry)" in problems
+    assert lint("MATCH (e:LedgerEntry)-[:PAID_TO]->(v:Vendor) RETURN v.name, sum(e.amount)", f) == []
+    assert "Unknown node label Invoice" in " ".join(lint("MATCH (i:Invoice) RETURN i", f))
+    assert "ORDER BY" in error_hint("Invalid use of aggregating function max(...) in this context")

@@ -170,3 +170,57 @@ def repair(cypher: str, schema: dict) -> str:
     for (var, prop), new in moves.items():
         text = re.sub(rf"\b{re.escape(var)}\.{prop}\b", f"{new}.{prop}", text)
     return _unmask(text, literals)
+
+
+def lint(cypher: str, schema: dict) -> list[str]:
+    """Schema problems in a (repaired) query, phrased as feedback for the model's retry."""
+    idx = SchemaIndex(schema)
+    masked, _ = _mask_strings(cypher)
+    problems = []
+    var_label, rel_vars = {}, {}
+    for m in NODE_RE.finditer(masked):
+        raw = m.group("l")
+        if raw and not idx.label(raw):
+            problems.append(f"Unknown node label {raw.strip('`')}; valid labels: {', '.join(sorted(idx.node_props))}.")
+        if m.group("v") and idx.label(raw):
+            var_label[m.group("v").strip("`")] = idx.label(raw)
+    edges_text = "; ".join(f"(:{a})-[:{t}]->(:{b})" for a, t, b in sorted(idx.edges))
+    for chain in CHAIN_RE.finditer(masked):
+        nodes = list(NODE_RE.finditer(chain.group(0)))
+        for i, r in enumerate(REL_RE.finditer(chain.group(0))):
+            raw_t = r.group("rt")
+            t = idx.rtype(raw_t)
+            if raw_t and not t:
+                problems.append(f"Unknown relationship type {raw_t.strip('`')}; the relationships are: {edges_text}.")
+                continue
+            if r.group("rv") and t:
+                rel_vars[r.group("rv").strip("`")] = t
+            left = idx.label(nodes[i].group("l")) or var_label.get((nodes[i].group("v") or "").strip("`"))
+            right = idx.label(nodes[i + 1].group("l")) or var_label.get((nodes[i + 1].group("v") or "").strip("`"))
+            if t and left and right and not r.group("star") and not (
+                    (left, t, right) in idx.edges or (right, t, left) in idx.edges):
+                problems.append(f"{t} does not connect {left} and {right}. The relationships are: {edges_text}.")
+    for var, prop in set(re.findall(r"\b([A-Za-z_]\w*)\.([A-Za-z_]\w*)\b", masked)):
+        if var in var_label and prop not in idx.node_props[var_label[var]]:
+            owners = [l for l, ps in idx.node_props.items() if prop in ps] + [t for t, ps in idx.rel_props.items() if prop in ps]
+            problems.append(f"{var_label[var]} has no property {prop}"
+                            + (f" ({prop} belongs to {', '.join(owners)})" if owners else "")
+                            + f"; {var_label[var]} properties: {', '.join(sorted(idx.node_props[var_label[var]]))}.")
+        elif var in rel_vars and prop not in idx.rel_props.get(rel_vars[var], set()):
+            owners = [l for l, ps in idx.node_props.items() if prop in ps]
+            problems.append(f"Relationship {rel_vars[var]} has no property {prop}"
+                            + (f" ({prop} belongs to {', '.join(owners)})" if owners else "") + ".")
+    return list(dict.fromkeys(problems))
+
+
+ERROR_HINTS = [  # Neo4j error text -> advice a small model can act on
+    (re.compile(r"aggregat", re.I), "Aggregations (max, min, sum, count) can't be used in WHERE or inside node "
+                                   "patterns. For the largest/smallest value use ORDER BY x.prop DESC LIMIT 1; "
+                                   "for totals use WITH n, sum(...) AS total."),
+    (re.compile(r"not defined", re.I), "Every variable used in RETURN/WHERE must be introduced in a MATCH first."),
+    (re.compile(r"Invalid input", re.I), "Check brackets and quotes; write one MATCH ... RETURN statement."),
+]
+
+
+def error_hint(message: str) -> str:
+    return " ".join(h for rx, h in ERROR_HINTS if rx.search(message or ""))
