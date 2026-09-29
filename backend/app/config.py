@@ -26,7 +26,8 @@ class Settings(BaseSettings):
     auth_provider: str = "local"  # local | keycloak
     jwt_secret: str = ""
     jwt_expire_minutes: int = 480
-    keycloak_url: str = ""
+    keycloak_url: str = ""  # browser-facing; token issuer is {keycloak_url}/realms/{realm}
+    keycloak_internal_url: str = ""  # where the backend fetches signing keys; defaults to keycloak_url
     keycloak_realm: str = ""
     keycloak_client_id: str = ""
     keycloak_client_secret: str = ""

@@ -23,11 +23,25 @@ Ollama runs on the host at `localhost:11434`. The `ollama-proxy` profile (on by 
 `http://host.docker.internal:11435`. On Docker Desktop, or if Ollama listens on `0.0.0.0`, drop the
 profile and use `http://host.docker.internal:11434`.
 
+## Users (no sign-up screen)
+
+```bash
+docker compose exec backend python -m app.cli seed-demo-users        # local testing, password test1234
+docker compose exec backend python -m app.cli create-user meera.s --name "Meera S"
+docker compose exec backend python -m app.cli create-user meera.s --name "Meera S" --keycloak  # pre-provision
+docker compose exec backend python -m app.cli deactivate-user meera.s
+```
+
+With `AUTH_PROVIDER=keycloak`, users are created automatically on first sign-in; pre-provisioning only
+lets an owner grant access to someone who hasn't signed in yet.
+
 ## Tests
 
 ```bash
 docker compose exec backend pytest -q tests
 ```
+
+Tests use a separate `graphbase_test` database that is rebuilt on every run.
 
 ## Test dataset
 

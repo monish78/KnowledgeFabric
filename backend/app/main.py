@@ -1,12 +1,26 @@
+from contextlib import asynccontextmanager
+
 import chromadb
 import httpx
 import psycopg
 from fastapi import FastAPI
 from neo4j import GraphDatabase
 
+from app.api import auth as auth_api
 from app.config import get_settings
+from app.db import close_pool, open_pool, run_migrations
 
-app = FastAPI(title="Graphbase API")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    run_migrations()
+    open_pool()
+    yield
+    close_pool()
+
+
+app = FastAPI(title="Graphbase API", lifespan=lifespan)
+app.include_router(auth_api.router)
 
 
 def _check_postgres(s) -> str:
@@ -32,7 +46,9 @@ def _check_ollama(s) -> str:
     tags = httpx.get(f"{s.ollama_base_url}/api/tags", timeout=3).json()
     models = {m["name"] for m in tags.get("models", [])}
     missing = [m for m in (s.ollama_chat_model, s.ollama_embed_model) if m not in models and f"{m}:latest" not in models]
-    return "ok" if not missing else f"reachable, missing models: {', '.join(missing)}"
+    if missing:
+        raise RuntimeError(f"reachable, missing models: {', '.join(missing)}")
+    return "ok"
 
 
 @app.get("/api/health")
