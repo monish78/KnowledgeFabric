@@ -92,6 +92,8 @@ services:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: "5432"
       NEO4J_URI: bolt://neo4j:7687
+      # overridable from the shell, e.g. AUTH_PROVIDER=keycloak docker compose up -d backend
+      AUTH_PROVIDER: ${AUTH_PROVIDER:-local}
       CHROMA_HOST: chroma
       CHROMA_PORT: "8000"
     ports:
@@ -99,6 +101,7 @@ services:
     volumes:
       - ./backend/app:/app/app
       - ./backend/tests:/app/tests
+      - ./backend/pytest.ini:/app/pytest.ini:ro
       - ./data:/data
       - uploads:/uploads
     extra_hosts:

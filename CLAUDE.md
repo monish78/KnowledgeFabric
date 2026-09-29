@@ -51,6 +51,14 @@ Supporting tables (not in the mockups): `kb_catalog` (one row per KB: type, owne
 - Neo4j: local testing uses **Community (single database)**, but the code must also work on **Enterprise with many KBs in parallel**. `NEO4J_MODE=single|multi`: `multi` = one Neo4j database per KB; `single` = shared database, every node carries a per-KB label so KBs stay isolated. All graph access goes through one GraphStore abstraction; chat Cypher runs read-only and is scoped to the KB.
 - KG extraction sends the LLM each sheet's headers + sample rows (not the whole file); the approved Cypher is `UNWIND $rows`-style and runs over all rows in batches.
 - `kb_name` is globally unique. RAG bases are created from the same Create form (switches to RAG mode). Users are created by a CLI/seed script (no signup screen).
+- (2026-09-30, user: "complete everything, test everything well") Phases 3-9 were built in one go; the stop-after-each-phase rule was waived for that request.
+
+## Implementation notes (keep these when changing the code)
+- The LLM proposes, evidence verifies: small models (qwen2.5:3b) list every column as "ignore", reuse labels, reverse directions and over-flag PII. `app/extraction.py` feeds the model data evidence (reference columns, unique columns) and validates every answer (junk-only ignores, text-like keys, link-table demotion, line-level columns moved to relationships, PII categories must match the values). Don't remove these checks when switching to a bigger model; they are cheap.
+- Cypher for building graphs is generated from the reviewed schema (`app/graph_schema.py`), never taken verbatim from the LLM; the Review preview is the same code path.
+- Load contract (`app/loader.py`, also in `data/generate_dataset.py`): keys compared strip+upper; a row is rejected if a key is missing or a referenced entity is unknown (cascading); last row wins; nodes before relationships.
+- Chat Cypher is untrusted: `check_read_only` + `scope_cypher` (single mode) + read transaction + result limit.
+- PII rows never contain raw values.
 
 ## Local environment
 - Local Python: `uv` venv at `.venv` (Python 3.11) for the dataset generator and running tests/tools outside Docker.

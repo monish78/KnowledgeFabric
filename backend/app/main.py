@@ -1,3 +1,4 @@
+import logging
 from contextlib import asynccontextmanager
 
 import chromadb
@@ -6,21 +7,28 @@ import psycopg
 from fastapi import FastAPI
 from neo4j import GraphDatabase
 
-from app.api import auth as auth_api
+from app import jobs
+from app.api import auth as auth_api, kbs as kbs_api
 from app.config import get_settings
 from app.db import close_pool, open_pool, run_migrations
+from app.graphstore import close_driver
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     run_migrations()
     open_pool()
+    jobs.recover_interrupted()
     yield
+    close_driver()
     close_pool()
 
 
 app = FastAPI(title="Graphbase API", lifespan=lifespan)
 app.include_router(auth_api.router)
+app.include_router(kbs_api.router)
 
 
 def _check_postgres(s) -> str:

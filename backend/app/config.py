@@ -22,6 +22,14 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"
     ollama_chat_model: str = "qwen2.5:7b-instruct"
     ollama_embed_model: str = "nomic-embed-text"
+    ollama_num_ctx: int = 8192
+    llm_timeout_seconds: int = 600
+
+    azure_openai_endpoint: str = ""
+    azure_openai_api_key: str = ""
+    azure_openai_api_version: str = "2024-10-21"
+    azure_openai_chat_deployment: str = "gpt-4.1"
+    azure_openai_embed_deployment: str = "text-embedding-3-large"
 
     auth_provider: str = "local"  # local | keycloak
     jwt_secret: str = ""

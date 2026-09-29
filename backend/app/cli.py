@@ -5,6 +5,7 @@
     python -m app.cli set-password meera.s [--password ...]
     python -m app.cli deactivate-user meera.s
     python -m app.cli seed-demo-users          # local testing only; password test1234
+    python -m app.cli seed-demo-data [--llm-pii]   # the mockup knowledge bases, built from /data/samples
 """
 import argparse
 import getpass
@@ -54,6 +55,9 @@ def main(argv=None):
     d = sub.add_parser("deactivate-user")
     d.add_argument("user_id")
     sub.add_parser("seed-demo-users")
+    sd = sub.add_parser("seed-demo-data")
+    sd.add_argument("--samples", default="/data/samples")
+    sd.add_argument("--llm-pii", action="store_true", help="use the LLM for PII detection (slow on CPU)")
     a = p.parse_args(argv)
 
     run_migrations()
@@ -81,6 +85,16 @@ def main(argv=None):
                     (uid, name, f"{uid}@graphbase-retail.example", hash_password(DEMO_PASSWORD)),
                 )
         print(f"seeded {len(DEMO_USERS)} demo users (password {DEMO_PASSWORD})")
+    elif a.cmd == "seed-demo-data":
+        from pathlib import Path
+
+        from app import demo
+        from app.db import close_pool
+
+        main(["seed-demo-users"])
+        demo.seed(Path(a.samples), use_llm_pii=a.llm_pii)
+        close_pool()
+        print("demo data ready")
 
 
 if __name__ == "__main__":

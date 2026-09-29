@@ -1,0 +1,116 @@
+"""LLM / embedding factory. LLM_PROVIDER selects the backend; nothing else imports a provider.
+
+Ollama is active. The Azure OpenAI (GPT-4.1) code is written but commented out: to switch,
+uncomment the Azure blocks below and langchain-openai in requirements.txt, then set
+LLM_PROVIDER=azure and the AZURE_OPENAI_* variables.
+"""
+import json
+import re
+
+from langchain_core.embeddings import Embeddings
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_ollama import ChatOllama, OllamaEmbeddings
+
+from app.config import get_settings
+
+# from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
+
+
+def get_llm(json_mode: bool = False, temperature: float = 0.0) -> BaseChatModel:
+    s = get_settings()
+    if s.llm_provider == "ollama":
+        return ChatOllama(
+            base_url=s.ollama_base_url,
+            model=s.ollama_chat_model,
+            temperature=temperature,
+            format="json" if json_mode else None,
+            num_ctx=s.ollama_num_ctx,
+            keep_alive="30m",
+            client_kwargs={"timeout": s.llm_timeout_seconds},
+        )
+    # if s.llm_provider == "azure":
+    #     llm = AzureChatOpenAI(
+    #         azure_endpoint=s.azure_openai_endpoint,
+    #         api_key=s.azure_openai_api_key,
+    #         api_version=s.azure_openai_api_version,
+    #         azure_deployment=s.azure_openai_chat_deployment,  # gpt-4.1
+    #         temperature=temperature,
+    #         timeout=s.llm_timeout_seconds,
+    #     )
+    #     return llm.bind(response_format={"type": "json_object"}) if json_mode else llm
+    raise ValueError(f"Unsupported LLM_PROVIDER: {s.llm_provider}")
+
+
+class _PrefixedEmbeddings(Embeddings):
+    """nomic-embed-text expects task prefixes; retrieval quality drops noticeably without them."""
+
+    def __init__(self, inner: Embeddings, doc_prefix: str, query_prefix: str):
+        self.inner, self.doc_prefix, self.query_prefix = inner, doc_prefix, query_prefix
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        return self.inner.embed_documents([self.doc_prefix + t for t in texts])
+
+    def embed_query(self, text: str) -> list[float]:
+        return self.inner.embed_query(self.query_prefix + text)
+
+
+def get_embeddings() -> Embeddings:
+    s = get_settings()
+    if s.llm_provider == "ollama":
+        emb = OllamaEmbeddings(base_url=s.ollama_base_url, model=s.ollama_embed_model)
+        if s.ollama_embed_model.startswith("nomic-embed-text"):
+            return _PrefixedEmbeddings(emb, "search_document: ", "search_query: ")
+        return emb
+    # if s.llm_provider == "azure":
+    #     return AzureOpenAIEmbeddings(
+    #         azure_endpoint=s.azure_openai_endpoint,
+    #         api_key=s.azure_openai_api_key,
+    #         api_version=s.azure_openai_api_version,
+    #         azure_deployment=s.azure_openai_embed_deployment,
+    #     )
+    raise ValueError(f"Unsupported LLM_PROVIDER: {s.llm_provider}")
+
+
+# ------------------------------------------------------------------ helpers used by every LLM step
+class LLMOutputError(ValueError):
+    pass
+
+
+def parse_json(text: str):
+    """Parse a JSON object from model output, tolerating code fences and surrounding prose."""
+    text = text.strip()
+    fenced = re.search(r"```(?:json)?\s*(.*?)```", text, re.S)
+    if fenced:
+        text = fenced.group(1).strip()
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        start, end = text.find("{"), text.rfind("}")
+        if start != -1 and end > start:
+            try:
+                return json.loads(text[start:end + 1])
+            except json.JSONDecodeError:
+                pass
+    raise LLMOutputError(f"Model did not return valid JSON: {text[:200]!r}")
+
+
+def ask_json(system: str, user: str, retries: int = 1) -> dict:
+    """Ask for a JSON object; on invalid JSON retry once, telling the model what went wrong."""
+    llm = get_llm(json_mode=True)
+    messages = [("system", system), ("human", user)]
+    last_error = None
+    for _ in range(retries + 1):
+        reply = llm.invoke(messages).content
+        try:
+            data = parse_json(reply)
+            if not isinstance(data, dict):
+                raise LLMOutputError("Expected a JSON object")
+            return data
+        except LLMOutputError as exc:
+            last_error = exc
+            messages += [("ai", reply), ("human", f"That was not valid JSON ({exc}). Reply with one JSON object only.")]
+    raise last_error
+
+
+def ask_text(system: str, user: str) -> str:
+    return get_llm().invoke([("system", system), ("human", user)]).content.strip()
