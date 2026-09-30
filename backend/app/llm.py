@@ -77,9 +77,17 @@ class LLMOutputError(ValueError):
     pass
 
 
+_THINKING = re.compile(r"<think>.*?</think>", re.S | re.I)
+
+
+def strip_thinking(text: str) -> str:
+    """Reasoning models (e.g. Qwen3) may prefix answers with a <think>...</think> block; users never see it."""
+    return _THINKING.sub("", text or "").strip()
+
+
 def parse_json(text: str):
     """Parse a JSON object from model output, tolerating code fences and surrounding prose."""
-    text = text.strip()
+    text = strip_thinking(text)
     fenced = re.search(r"```(?:json)?\s*(.*?)```", text, re.S)
     if fenced:
         text = fenced.group(1).strip()
@@ -114,4 +122,4 @@ def ask_json(system: str, user: str, retries: int = 1) -> dict:
 
 
 def ask_text(system: str, user: str) -> str:
-    return get_llm().invoke([("system", system), ("human", user)]).content.strip()
+    return strip_thinking(get_llm().invoke([("system", system), ("human", user)]).content)

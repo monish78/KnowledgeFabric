@@ -79,3 +79,14 @@ def test_real_embeddings_available():
 @pytest.mark.llm
 def test_real_chat_model_returns_json():
     assert llm.ask_json("Reply with JSON only.", 'Return {"answer": 4} for 2+2.') == {"answer": 4}
+
+
+def test_reasoning_blocks_are_removed(monkeypatch):
+    assert llm.parse_json('<think>{"draft": 1} maybe</think>\n{"answer": 2}') == {"answer": 2}
+
+    class Fake:
+        def invoke(self, messages):
+            return type("R", (), {"content": "<think>let me reason</think>\nThe answer is 48."})()
+
+    monkeypatch.setattr(llm, "get_llm", lambda **kw: Fake())
+    assert llm.ask_text("sys", "q") == "The answer is 48."
