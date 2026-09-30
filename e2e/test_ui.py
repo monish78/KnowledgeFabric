@@ -288,3 +288,90 @@ def test_keycloak_redirect_login(page, keycloak_backend):
     expect(page.locator("tbody tr", has_text="retail_supply_chain_kg")).to_contain_text("Owner")
     page.get_by_role("button", name="Sign out").click()
     expect(page).to_have_url(re.compile(r"/login"), timeout=30_000)
+
+
+def test_review_edits_are_built_into_the_graph(page):
+    """Edit, rename, remove, delete and add on the Review screen, submit, then check Neo4j and Postgres."""
+    kb = "e2e_edited_kg"
+    reset_kb(kb)
+    backend_python(f"""
+from app import demo
+from app.db import open_pool
+open_pool()
+demo._graph('{kb}', 'priya.nair', 'Retail', 'Supply chain', demo.retail_schema(), False, approve=False)
+""")
+    login(page)
+    page.goto(f"{BASE}/kbs/{kb}/review")
+    nodes, rels = page.locator("table").nth(0), page.locator("table").nth(1)
+    expect(nodes.locator("tbody tr")).to_have_count(5)
+
+    # rename a node type, rename one property, remove another
+    nodes.locator("tr", has_text="Warehouse").get_by_role("button", name="Edit").click()
+    page.get_by_label("Label", exact=True).fill("Depot")
+    page.get_by_label("Property City").fill("town")
+    page.get_by_role("button", name="Remove manager_phone").click()
+    nodes.get_by_role("button", name="Save").click()
+    # rename a relationship type
+    rels.locator("tr", has_text="SUPPLIES").get_by_role("button", name="Edit").click()
+    page.get_by_label("Relationship type").fill("PROVIDES")
+    rels.get_by_role("button", name="Save").click()
+    # delete a node type (its PLACED relationship goes with it)
+    nodes.locator("tr", has_text="Customer").get_by_role("button", name="Delete").click()
+    # add a node type and a relationship to it
+    page.get_by_role("button", name="Add node type").click()
+    add = nodes.locator("tr.editing")
+    add.get_by_label("Sheet", exact=True).select_option("Suppliers")
+    add.get_by_label("New label", exact=True).fill("Country")
+    add.get_by_label("Key column", exact=True).select_option("Country")
+    add.get_by_role("button", name="Add").click()
+    page.get_by_role("button", name="Add relationship").click()
+    add = rels.locator("tr.editing")
+    add.get_by_label("Sheet", exact=True).select_option("Suppliers")
+    add.get_by_label("From", exact=True).select_option("Supplier")
+    add.get_by_label("From column", exact=True).select_option("Supplier ID")
+    add.get_by_label("Type", exact=True).fill("LOCATED_IN")
+    add.get_by_label("To", exact=True).select_option("Country")
+    add.get_by_label("To column", exact=True).select_option("Country")
+    add.get_by_role("button", name="Add").click()
+
+    cypher = page.locator(".code pre")
+    page.get_by_role("button", name=re.compile(r"statements shown")).click()  # show all statements
+    expect(cypher).to_contain_text("MERGE (n:Depot {warehouse_id: row.warehouse_id}) SET n.town = row.town")
+    expect(cypher).to_contain_text("MERGE (n:Country {country: row.country})")
+    expect(cypher).to_contain_text("MERGE (a)-[r:PROVIDES]->(b)")
+    expect(cypher).to_contain_text("MERGE (a)-[r:LOCATED_IN]->(b)")
+    expect(cypher).not_to_contain_text("Customer")
+    expect(cypher).not_to_contain_text("manager_phone")
+    shot(page, "4_review_edited")
+    page.get_by_role("button", name="Submit and build graph").click()
+    expect(page).to_have_url(re.compile(rf"/chat\?kb={kb}"), timeout=300_000)
+
+    out = backend_python(f"""
+import json
+from app.db import get_conn, open_pool
+from app.graphstore import GraphStore
+open_pool()
+s = GraphStore('{kb}')
+c = s.counts()
+props = s.read_internal("MATCH (d:" + s.label('Depot') + ") RETURN keys(d) AS k LIMIT 1")[0]['k']
+with get_conn() as conn:
+    pii = [(r['node_label'], r['property_name']) for r in conn.execute(
+        "SELECT node_label, property_name FROM kb_pii_fields WHERE kb_name = %s", ('{kb}',))]
+print(json.dumps({{"nodes": c['nodes'], "rels": c['relationships'], "depot_props": sorted(props), "pii": pii}}))
+""")
+    import json
+
+    got = json.loads(out.strip().splitlines()[-1])
+    # 1607 + 9: without Customer there is no PLACED rule, so orders missing a customer_id are no longer rejected
+    assert got["nodes"] == {"Supplier": 48, "Product": 307, "Depot": 9, "Order": 1616, "Country": 4}
+    assert "Customer" not in got["nodes"] and "Warehouse" not in got["nodes"]
+    assert got["rels"]["PROVIDES"] == 307 and got["rels"]["LOCATED_IN"] == 48 and "PLACED" not in got["rels"]
+    assert "SUPPLIES" not in got["rels"] and got["rels"]["STORED_IN"] > 0  # renamed end label kept its relationships
+    assert (
+        "town" in got["depot_props"] and "city" not in got["depot_props"] and "manager_phone" not in got["depot_props"]
+    )
+    pii = {tuple(x) for x in got["pii"]}
+    # PII rows follow the edits: the removed property and the deleted node type leave no rows behind
+    assert ("Supplier", "contact_email") in pii
+    assert not any(label in ("Customer", "Warehouse") or prop == "manager_phone" for label, prop in pii)
+    reset_kb(kb)

@@ -348,8 +348,28 @@ def build_nodes(
                 info["row"] = e
                 taken.add(e["label"])
     row_labels = {info["row"]["label"] for info in per_sheet.values() if info["row"]}
-    for info in per_sheet.values():  # embedded entities that have their own sheet are references
-        info["embedded"] = [e for e in info["embedded"] if e["label"] not in row_labels]
+    # Embedded entities that have their own sheet are references, whether the model reused that sheet's label
+    # or invented a new one (a "Dept" column holding Department codes).
+    own_keys = {
+        name: key_values(sheet_map[name], info["row"]["key_column"])
+        for name, info in per_sheet.items()
+        if info["row"] and sheet_map[name].profile[info["row"]["key_column"]].distinct_ratio >= UNIQUE
+    }
+
+    def is_reference(sheet_name, entity):
+        vals = key_values(sheet_map[sheet_name], entity["key_column"])
+        return bool(vals) and any(
+            other != sheet_name and len(vals & keys) / len(vals) >= LINK_OVERLAP for other, keys in own_keys.items()
+        )
+
+    for name, info in per_sheet.items():
+        kept = []
+        for e in info["embedded"]:
+            if e["label"] in row_labels or is_reference(name, e):
+                info["refs"].add(e["key_column"])
+            else:
+                kept.append(e)
+        info["embedded"] = kept
         seen = set()
         info["embedded"] = [e for e in info["embedded"] if not (e["label"] in seen or seen.add(e["label"]))]
 

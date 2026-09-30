@@ -352,10 +352,10 @@ function AddNode({ sheets, columnsOf, onAdd, onCancel }) {
     <tr className="editing">
       <td colSpan={5}>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
-          <label>Sheet<select className="inp sm" value={sheet} onChange={(e) => { setSheet(e.target.value); setKey(columnsOf(e.target.value)[0]); setProps([]); }}>
+          <label>Sheet<select className="inp sm" aria-label="Sheet" value={sheet} onChange={(e) => { setSheet(e.target.value); setKey(columnsOf(e.target.value)[0]); setProps([]); }}>
             {sheets.map((s) => <option key={s}>{s}</option>)}</select></label>
-          <label>Label<input className="inp sm" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Region" /></label>
-          <label>Key column<select className="inp sm" value={key} onChange={(e) => setKey(e.target.value)}>
+          <label>Label<input className="inp sm" aria-label="New label" value={label} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Region" /></label>
+          <label>Key column<select className="inp sm" aria-label="Key column" value={key} onChange={(e) => setKey(e.target.value)}>
             {cols.map((c) => <option key={c}>{c}</option>)}</select></label>
         </div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", margin: "8px 0" }} className="small">
@@ -385,19 +385,21 @@ function AddRel({ sheets, columnsOf, labels, onAdd, onCancel }) {
   const [toCol, setToCol] = useState(columnsOf(sheets[0])[1] || columnsOf(sheets[0])[0]);
   const [type, setType] = useState("");
   const cols = columnsOf(sheet);
-  const pick = (value, set, options) => (
-    <select className="inp sm" value={value} onChange={(e) => set(e.target.value)}>{options.map((o) => <option key={o}>{o}</option>)}</select>
+  const pick = (name, value, set, options) => (
+    <select className="inp sm" aria-label={name} value={value} onChange={(e) => set(e.target.value)}>
+      {options.map((o) => <option key={o}>{o}</option>)}
+    </select>
   );
   return (
     <tr className="editing">
       <td colSpan={5}>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
-          <label>Sheet{pick(sheet, (s) => { setSheet(s); setFromCol(columnsOf(s)[0]); setToCol(columnsOf(s)[0]); }, sheets)}</label>
-          <label>From{pick(from, setFrom, labels)}</label>
-          <label>via column{pick(fromCol, setFromCol, cols)}</label>
-          <label>Type<input className="inp sm" value={type} onChange={(e) => setType(e.target.value)} placeholder="e.g. LOCATED_IN" /></label>
-          <label>To{pick(to, setTo, labels)}</label>
-          <label>via column{pick(toCol, setToCol, cols)}</label>
+          <label>Sheet{pick("Sheet", sheet, (s) => { setSheet(s); setFromCol(columnsOf(s)[0]); setToCol(columnsOf(s)[0]); }, sheets)}</label>
+          <label>From{pick("From", from, setFrom, labels)}</label>
+          <label>via column{pick("From column", fromCol, setFromCol, cols)}</label>
+          <label>Type<input className="inp sm" aria-label="Type" value={type} onChange={(e) => setType(e.target.value)} placeholder="e.g. LOCATED_IN" /></label>
+          <label>To{pick("To", to, setTo, labels)}</label>
+          <label>via column{pick("To column", toCol, setToCol, cols)}</label>
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
           <button className="btn sm" disabled={!type.trim()} onClick={() => onAdd({

@@ -79,7 +79,9 @@ def parse_number(v):
     if negative:
         s = s[1:-1].strip()
     s = _CURRENCY.sub("", s).strip()
-    if re.fullmatch(r"-?\d{1,3}(,\d{3})+(\.\d+)?", s):
+    s = re.sub(r"\s*/-$", "", s)  # "1,250/-"
+    # 1,250,000 (international) or 12,50,000 (Indian lakh grouping)
+    if re.fullmatch(r"-?\d{1,3}(,\d{3})+(\.\d+)?", s) or re.fullmatch(r"-?\d{1,2}(,\d{2})*,\d{3}(\.\d+)?", s):
         s = s.replace(",", "")
     if not _NUMBER.match(s):
         return None
@@ -96,6 +98,8 @@ _DATE_FORMATS = [
     "%B %d, %Y",
     "%d %b %Y",
     "%d %B %Y",
+    "%d-%b-%Y",
+    "%d-%b-%y",
     "%Y/%m/%d",
 ]
 
@@ -190,8 +194,8 @@ def _build_sheet(name: str, raw: list[list]) -> Sheet | None:
     if not any(any(not is_blank(c) for c in r) for r in raw):
         return None
     h = _find_header(raw)
-    if h is None:
-        raise TabularError(f"Sheet '{name}': could not find a header row in the first {MAX_HEADER_SCAN} rows.")
+    if h is None:  # notes, cover pages, charts: not a table
+        return None
     columns, seen = [], {}
     for i, c in enumerate(raw[h]):
         col = str(c).strip() if not is_blank(c) else f"column_{i + 1}"
@@ -227,7 +231,8 @@ def read_table_file(path: str | Path, original_name: str | None = None) -> list[
         except (zipfile.BadZipFile, InvalidFileException, KeyError, OSError) as exc:
             raise TabularError(f"The file is not a valid Excel workbook ({type(exc).__name__}).") from exc
         for ws in wb.worksheets:
-            s = _build_sheet(ws.title, [list(r) for r in ws.iter_rows(values_only=True)])
+            raw = [list(r) for r in ws.iter_rows(values_only=True)]
+            s = _build_sheet(ws.title, raw)
             if s:
                 sheets.append(s)
         wb.close()
@@ -237,9 +242,12 @@ def read_table_file(path: str | Path, original_name: str | None = None) -> list[
             sheets.append(s)
     else:
         raise TabularError("Only CSV and XLSX files are supported for knowledge graphs.")
+    tables_found = len(sheets)
     sheets = [s for s in sheets if s.rows]
     if not sheets:
-        raise TabularError("The file has a header but no data rows.")
+        if tables_found:
+            raise TabularError("The file has a header but no data rows.")
+        raise TabularError(f"No table found: no sheet has a header row in its first {MAX_HEADER_SCAN} rows.")
     return sheets
 
 

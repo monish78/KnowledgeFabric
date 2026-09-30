@@ -1,0 +1,317 @@
+{
+  "seed": 4242,
+  "files": {
+    "hospital_operations.xlsx": {
+      "sheets": {
+        "ReadMe": "not a table (must be skipped)",
+        "Dept Master": {
+          "header_row": 2,
+          "rows": 10
+        },
+        "Doctors": {
+          "rows": 60
+        },
+        "Patients": {
+          "rows": 404
+        },
+        "Wards": {
+          "rows": 20
+        },
+        "Procedures": {
+          "rows": 50
+        },
+        "Medications": {
+          "rows": 80
+        },
+        "Admissions": {
+          "rows": 1918
+        },
+        "Prescriptions": {
+          "rows": 1911
+        }
+      },
+      "expected_nodes": {
+        "Department": 10,
+        "Doctor": 60,
+        "Patient": 400,
+        "Insurer": 8,
+        "Ward": 20,
+        "Procedure": 50,
+        "Medication": 80,
+        "Admission": 950,
+        "Prescription": 1904
+      },
+      "expected_relationships": {
+        "HEADED_BY": 10,
+        "WORKS_IN": 60,
+        "SUPERVISED_BY": 50,
+        "INSURED_BY": 400,
+        "BELONGS_TO": 20,
+        "ADMITTED": 950,
+        "ADMITTED_BY": 950,
+        "IN_WARD": 950,
+        "UNDERWENT": 1900,
+        "FOR_ADMISSION": 1904,
+        "OF_MEDICATION": 1904,
+        "PRESCRIBED_BY": 1904
+      },
+      "expected_rejections": {
+        "Admissions": {
+          "missing_adm_id": 4,
+          "unknown_patient": 6,
+          "unknown_procedure": 5,
+          "unknown_doctor": 3
+        },
+        "Prescriptions": {
+          "unknown_medication": 4,
+          "unknown_admission": 3
+        }
+      },
+      "entity_keys": {
+        "Dept Master": "Dept#",
+        "Doctors": "Reg. No.",
+        "Patients": "UHID",
+        "Wards": "Ward",
+        "Procedures": "Code",
+        "Medications": "Drug Code",
+        "Admissions": "Adm ID",
+        "Prescriptions": "Rx No"
+      },
+      "expected_links": [
+        [
+          "Department",
+          "Doctor"
+        ],
+        [
+          "Doctor",
+          "Department"
+        ],
+        [
+          "Doctor",
+          "Doctor"
+        ],
+        [
+          "Ward",
+          "Department"
+        ],
+        [
+          "Admission",
+          "Patient"
+        ],
+        [
+          "Admission",
+          "Doctor"
+        ],
+        [
+          "Admission",
+          "Ward"
+        ],
+        [
+          "Admission",
+          "Procedure"
+        ],
+        [
+          "Prescription",
+          "Admission"
+        ],
+        [
+          "Prescription",
+          "Medication"
+        ],
+        [
+          "Prescription",
+          "Doctor"
+        ]
+      ],
+      "pii": {
+        "Doctors": {
+          "Doctor Name": "person_name",
+          "Mobile": "phone"
+        },
+        "Patients": {
+          "Full Name": "person_name",
+          "Date of Birth": "date_of_birth",
+          "Aadhaar": "government_id",
+          "Phone": "phone"
+        },
+        "Admissions": {
+          "Remarks": "free_text"
+        }
+      },
+      "not_pii_traps": [
+        "Doctors.Specialisation",
+        "Dept Master.Department",
+        "Medications.Generic Name",
+        "Procedures.Procedure Name",
+        "Patients.City",
+        "Patients.Insurer",
+        "Doctors.Joined On"
+      ]
+    },
+    "admissions_april.xlsx": {
+      "expected": {
+        "new_admissions": 60,
+        "new_procedure_lines": 86,
+        "rejected": {
+          "unknown_patient": 2
+        }
+      }
+    },
+    "infection_control_policy.pdf": {
+      "pii": {
+        "person_name": 1,
+        "email": 1
+      }
+    },
+    "discharge_protocol.docx": {
+      "pii": {
+        "person_name": 1,
+        "phone": 1
+      }
+    },
+    "pharmacy_sop.txt": {
+      "pii": {
+        "person_name": 1,
+        "phone": 1
+      }
+    }
+  },
+  "questions": [
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "How many patients are registered?",
+      "answer": 400
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "Which doctors work in the Cardiology department?",
+      "answer": [
+        "Dr. Aditi Easwaran",
+        "Dr. Aditi Upadhyay",
+        "Dr. Dinesh Gill",
+        "Dr. Esha Thakur",
+        "Dr. Farooq Raman",
+        "Dr. Uday Ismail"
+      ]
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "Who is the head of the Neurology department?",
+      "answer": "Dr. Oviya Qureshi"
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "Who supervises Dr. Anand Ojha?",
+      "answer": "Dr. Pranav Hegde"
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "Which patient had the highest total procedure cost?",
+      "answer": "Anand Dsouza"
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "How many admissions ended with the outcome Transferred?",
+      "answer": 89
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "Which medication (generic name) was prescribed most often?",
+      "answer": "Morphine"
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "How many prescriptions did Dr. Ishita Ojha write?",
+      "answer": 53
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "Which insurer covers the most patients?",
+      "answer": "Star Health"
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "Which ward has the most beds?",
+      "answer": "W-07"
+    },
+    {
+      "kb": "graph",
+      "level": "core",
+      "q": "What is the base price of the Total knee replacement procedure?",
+      "answer": 99000
+    },
+    {
+      "kb": "graph",
+      "level": "stretch",
+      "q": "How many procedures were performed in admissions handled by Orthopaedics doctors?",
+      "answer": 202
+    },
+    {
+      "kb": "graph",
+      "level": "stretch",
+      "q": "How many patients have blood group O negative?",
+      "answer": 60,
+      "trap": "stored as 'O-'"
+    },
+    {
+      "kb": "rag",
+      "level": "core",
+      "q": "How long must alcohol hand rub be applied?",
+      "answer": [
+        "20"
+      ]
+    },
+    {
+      "kb": "rag",
+      "level": "core",
+      "q": "What precautions are needed for a patient with tuberculosis?",
+      "answer": [
+        "airborne"
+      ]
+    },
+    {
+      "kb": "rag",
+      "level": "core",
+      "q": "How often should urinary catheters be replaced?",
+      "answer": [
+        "clinically indicated"
+      ],
+      "trap": "withdrawn 7-day rule is also in the document"
+    },
+    {
+      "kb": "rag",
+      "level": "core",
+      "q": "When must the discharge summary be signed?",
+      "answer": [
+        "24 hours"
+      ]
+    },
+    {
+      "kb": "rag",
+      "level": "core",
+      "q": "How often is the narcotics register audited?",
+      "answer": [
+        "monday"
+      ]
+    },
+    {
+      "kb": "rag",
+      "level": "core",
+      "q": "Which medicines need an independent double check?",
+      "answer": [
+        "insulin",
+        "heparin"
+      ]
+    }
+  ]
+}

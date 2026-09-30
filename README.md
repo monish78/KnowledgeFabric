@@ -71,13 +71,13 @@ UI use the LLM.
 ## Tests
 
 ```bash
-docker compose exec backend pytest -q                    # 173 tests (start the keycloak profile for the Keycloak ones)
-docker compose exec backend pytest -m llm -s             # real-LLM quality benchmark, ~40 min on CPU
+docker compose exec backend pytest -q                    # 202 tests (start the keycloak profile for the Keycloak ones)
+docker compose exec backend pytest -m llm -s             # real-LLM quality on both datasets, ~1 h on CPU
 .venv/bin/python -m pytest e2e -q                        # browser tests of every screen (needs seed-demo-data)
 ```
 
 Backend tests use a separate `graphbase_test` database and `t_*` KB names. The benchmark writes
-`backend/tests/reports/llm_quality.json`. The browser tests save screenshots to `e2e/screenshots/`.
+`backend/tests/reports/llm_quality.json` and `llm_hospital.json`. The browser tests save screenshots to `e2e/screenshots/`.
 
 Local Python environment for the dataset generator and browser tests:
 
@@ -87,7 +87,17 @@ uv pip install --python .venv/bin/python -r backend/requirements.txt -r data/req
 .venv/bin/python -m playwright install chromium
 ```
 
-## Test dataset
+## Test datasets
+
+Two unrelated, deliberately messy datasets, each generated deterministically with its own ground truth:
+
+- **Retail** (`data/generate_dataset.py` -> `data/samples/`, `data/expected/manifest.json`): suppliers, products,
+  warehouses, customers, orders, inventory, a finance ledger and retail policy documents.
+- **Hospital** (`data/generate_hospital_dataset.py` -> `data/samples/hospital/`, `data/expected/hospital_manifest.json`):
+  departments, doctors (with supervisors), patients (with insurers), wards, procedures, medications, admissions (one
+  row per procedure), prescriptions and clinical policy documents; includes a non-table ReadMe sheet, Indian lakh
+  amounts, `05-Mar-2026` dates and circular references.
+
 
 `data/generate_dataset.py` builds a deliberately messy, deterministic dataset in `data/samples/`
 and the ground truth in `data/expected/manifest.json` (expected counts, rejected rows, PII columns,

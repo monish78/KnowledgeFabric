@@ -1,14 +1,13 @@
 import logging
 from contextlib import asynccontextmanager
 
-import chromadb
 import httpx
 import psycopg
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from neo4j import GraphDatabase
 
-from app import jobs
+from app import jobs, rag
 from app.api import auth as auth_api
 from app.api import kbs as kbs_api
 from app.config import get_settings
@@ -16,6 +15,7 @@ from app.db import close_pool, open_pool, run_migrations
 from app.graphstore import close_driver
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+logging.getLogger("chromadb.telemetry").setLevel(logging.CRITICAL)  # telemetry is switched off; hide its noise
 
 
 @asynccontextmanager
@@ -65,7 +65,7 @@ def _check_neo4j(s) -> str:
 
 
 def _check_chroma(s) -> str:
-    client = chromadb.HttpClient(host=s.chroma_host, port=s.chroma_port)
+    client = rag.chroma_client()
     client.heartbeat()
     return f"ok ({client.get_version()})"
 

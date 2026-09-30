@@ -1,25 +1,28 @@
-# Test results (local laptop, qwen2.5:3b on CPU, 30 Sep 2026)
+# Test results (local laptop, qwen2.5:3b on CPU)
 
-All prompts and rules are domain-neutral (dataset-specific examples and word lists were removed on 30 Sep);
-every number below was measured after that change.
+All prompts and rules are domain-neutral; every number below comes from the current code.
 
 ## Without the LLM
-- Backend: 173 passed (`docker compose exec backend pytest -q`), including server-side sessions, CSRF protection, the
-  Keycloak sign-in flow run by the backend against a real Keycloak, and a never-seen school workbook extracted and
-  loaded correctly with the LLM switched off.
-- Browser (Playwright, `e2e/`): 11/11 passed, including the Keycloak sign-in, the full upload -> extraction -> review ->
-  build -> chat flow with the real LLM, and checks that the browser holds no session data (HttpOnly cookie, empty storage).
-- Lint: ruff (backend, tests, e2e, data) and ESLint (frontend) report no issues.
+- Backend: 202 passed (`docker compose exec backend pytest -q`): schema and audit columns, server-side sessions and
+  CSRF, the Keycloak sign-in flow against a real Keycloak, exact counts and rejections for both datasets, add-data,
+  KB isolation, read-only chat, access control, RAG retrieval, and extraction with the LLM switched off.
+- Browser (Playwright, `e2e/`): 12/12 passed, including Keycloak sign-in, the full upload -> extraction -> review ->
+  build -> chat flow, and editing on the Review screen (rename label/property, remove property, rename relationship,
+  delete a node type, add a node type and a relationship) verified in Neo4j and Postgres after Submit.
+- Lint: ruff and ESLint report no issues.
 
-## With the real LLM
-| Area | Result |
-|---|---|
-| Graph extraction, retail workbook | 5/5 entity keys, 6/6 relationships, PII recall 1.0 / precision 1.0 (~7 min) |
-| Graph extraction, unseen school workbook | 3/3 keys, link table recognised, PII names + email found; relationship names swapped (fix on Review) |
-| Graph chat | 6/11 and 7/11 core questions on two runs (bar is 60%); "delete all suppliers" refused |
-| RAG chat | 6/6 |
-| Document PII | e-mails and phones exact; person names 1-3 of 4 depending on document |
-| Browser with LLM | 3/3: upload -> extraction -> review -> build -> chat, graph chat, RAG chat |
+## With the real LLM (qwen2.5:3b)
+| Area | Retail dataset | Hospital dataset (new domain) |
+|---|---|---|
+| Entity keys | 5/5 | 8/8 |
+| Relationships found | 6/6 | 10/11 (the miss is now handled by a rule; covered by a test) |
+| Spreadsheet PII | recall 1.0, precision 1.0 | recall 1.0, precision 1.0 (7 columns, no false positives) |
+| Graph chat, core questions | 6-7 / 11 | 6 / 11 |
+| RAG chat | 6/6 | 6/6 |
+| Document PII | e-mails/phones exact, names 1-3 of 4 | exact for all 3 documents |
+| Destructive chat request | refused | refused |
 
-Graph chat is the weak spot with a 3b model. Re-run `docker compose exec backend pytest -m llm -s` with the work
-system's model before relying on it. The full code walkthrough is docs/Graphbase_Code_Guide.pdf.
+Relationship names from a 3b model are often awkward (e.g. `Department-TREATS->Doctor`) and need renaming on the
+Review screen. Graph chat misses come from the model: dropping the "Dr." prefix from names, inventing a relationship,
+invalid aggregation syntax. A larger model (Azure GPT-4.1 at work) is expected to do much better on these; re-run
+`docker compose exec backend pytest -m llm -s` there to measure it.

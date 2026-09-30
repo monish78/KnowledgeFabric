@@ -35,6 +35,9 @@ from .fixtures import SAMPLES, manifest, retail_schema
         (7, 7),
         ("N/A", None),
         ("+91 98400 11223", None),
+        ("Rs. 1,25,000/-", 125000),
+        ("\u20b912,50,000", 1250000),
+        ("12,34,567.50", 1234567.5),
         ("", None),
         (True, None),
     ],
@@ -44,7 +47,7 @@ def test_parse_number(raw, expected):
 
 
 @pytest.mark.parametrize(
-    "raw", ["2026-09-22", "22/09/2026", "Sep 22, 2026", dt.datetime(2026, 9, 22), "2026-09-22T10:00:00"]
+    "raw", ["2026-09-22", "22/09/2026", "Sep 22, 2026", dt.datetime(2026, 9, 22), "2026-09-22T10:00:00", "22-Sep-2026"]
 )
 def test_parse_date_formats(raw):
     assert parse_date(raw) == dt.date(2026, 9, 22)
@@ -305,3 +308,21 @@ def test_cypher_lint_explains_schema_mistakes():
     assert lint("MATCH (e:LedgerEntry)-[:PAID_TO]->(v:Vendor) RETURN v.name, sum(e.amount)", f) == []
     assert "Unknown node label Invoice" in " ".join(lint("MATCH (i:Invoice) RETURN i", f))
     assert "ORDER BY" in error_hint("Invalid use of aggregating function max(...) in this context")
+
+
+def test_reader_skips_sheets_that_are_not_tables(tmp_path):
+    from openpyxl import Workbook
+
+    wb = Workbook()
+    wb.active.title = "ReadMe"
+    wb.active.append(["Notes about this workbook"])
+    ws = wb.create_sheet("Data")
+    ws.append(["id", "name"])
+    ws.append(["A1", "x"])
+    wb.save(tmp_path / "w.xlsx")
+    assert [s.name for s in read_table_file(tmp_path / "w.xlsx")] == ["Data"]
+    only_notes = Workbook()
+    only_notes.active.append(["just a note"])
+    only_notes.save(tmp_path / "n.xlsx")
+    with pytest.raises(TabularError, match="No table found"):
+        read_table_file(tmp_path / "n.xlsx")
