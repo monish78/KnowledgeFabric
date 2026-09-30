@@ -150,3 +150,24 @@ def test_rag_chat_quality():
     _save()
     assert sum(r["ok"] for r in rows) >= 0.8 * len(rows)
     assert pii.get("email") == 2 and pii.get("phone") == 2 and pii.get("person_name", 0) >= 1  # 2 in the text
+
+
+def test_extraction_unseen_domain(tmp_path):
+    """Real model on a school workbook it has never seen (no prompt or rule mentions this domain)."""
+    from .unseen_domain import make_school_workbook
+
+    make_school_workbook(tmp_path / "school.xlsx")
+    sheets = read_table_file(tmp_path / "school.xlsx")
+    t = time.time()
+    schema = extraction.extract(sheets, "school.xlsx")
+    keys = {n["sheet"]: n["key"]["column"] for n in schema["nodes"] if n["role"] == "row"}
+    expected = {"Teachers": "Teacher Code", "Courses": "course_code", "Students": "Roll No"}
+    rels = sorted(f"{r['from']['label']}-{r['type']}->{r['to']['label']}" for r in schema["relationships"])
+    pii = {f"{p['sheet']}.{p['column']}": p["category"] for p in schema["pii"]}
+    results["unseen_domain"] = {"seconds": round(time.time() - t),
+                                "keys": f"{sum(keys.get(k) == v for k, v in expected.items())}/3",
+                                "enrolments_is_link_table": "Enrolments" not in keys, "relationships": rels, "pii": pii}
+    _save()
+    assert gs.validate(schema) == []
+    assert sum(keys.get(k) == v for k, v in expected.items()) >= 3 and len(schema["relationships"]) >= 2
+    assert "Students.Email" in pii and "Students.Student Name" in pii

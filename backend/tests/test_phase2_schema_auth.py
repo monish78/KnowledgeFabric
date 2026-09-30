@@ -197,11 +197,12 @@ def test_keycloak_token_accepted_and_user_provisioned(client, keycloak):
 
 
 def test_keycloak_mode_rejects_other_tokens(client, keycloak, demo_users):
+    real = _keycloak_token()  # skips when the local Keycloak isn't running
     local = jwt.encode({"sub": "priya.nair", "iss": "graphbase-local", "exp": time.time() + 60},
                        keycloak.jwt_secret, "HS256")
     assert client.get("/api/auth/me", headers={"Authorization": f"Bearer {local}"}).status_code == 401
     # right claims, but signed with a key that isn't Keycloak's
-    kid = jwt.get_unverified_header(_keycloak_token())["kid"]
+    kid = jwt.get_unverified_header(real)["kid"]
     fake_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     forged = jwt.encode({"sub": "x", "preferred_username": "priya.nair", "iss": f"{KC_PUBLIC}/realms/graphbase",
                          "aud": "graphbase-app", "exp": time.time() + 60}, fake_key, "RS256", headers={"kid": kid})

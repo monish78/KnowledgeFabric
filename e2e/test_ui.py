@@ -103,7 +103,7 @@ def test_upload_extract_review_submit(page):
     login(page)
     page.locator("input[type=file][accept='.csv,.xlsx,.xlsm']").set_input_files(str(SAMPLES / "warehouse_update.csv"))
     page.get_by_label("Knowledge graph name").fill("e2e_inventory_kg")
-    page.get_by_label("Domain").fill("Retail")
+    page.get_by_label("Domain", exact=True).fill("Retail")
     page.get_by_label("Sub-domain").fill("Inventory")
     page.get_by_role("button", name="Create and extract graph").click()
     expect(page).to_have_url(re.compile(r"/kbs/e2e_inventory_kg/jobs/\d+"))

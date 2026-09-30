@@ -42,7 +42,7 @@ Rules:
 - For "how many" use count(DISTINCT x). For totals use sum(). Add LIMIT 50 when listing.
 - If the question follows up an earlier one ("those", "them"), reuse the earlier query's pattern and filters.
 - Write relationship arrows exactly as listed. Relationship properties belong to the relationship variable.
-- Use full id values exactly as in the examples of each id (e.g. 'SKU-10001', not '10001').
+- Write id values in full, in the same format as the example ids listed in the schema (never just the digits).
 - When returning an entity, return both its id and its name.
 - For a follow-up question, reuse the earlier query's MATCH and filters and add the new condition in WHERE;
   do not copy names or values from the earlier answer into the query.

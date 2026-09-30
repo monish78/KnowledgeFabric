@@ -191,3 +191,33 @@ def test_rule_pii_ignores_company_names():
     assert extraction.rule_pii(s, "Supplier Name") is None
     assert extraction.rule_pii(s, "Contact Email")["category"] == "email"
     assert extraction.rule_pii(s, "Contact Phone")["category"] == "phone"
+
+
+def test_unseen_domain_without_any_llm_help(tmp_path, monkeypatch):
+    """A school workbook the code has never seen, with the LLM completely broken: the data-driven
+    heuristics alone must give a valid schema that loads with the right counts."""
+    from .unseen_domain import make_school_workbook
+
+    expected = make_school_workbook(tmp_path / "school.xlsx")
+    monkeypatch.setattr(extraction, "ask_json", lambda *a, **k: (_ for _ in ()).throw(ValueError("no LLM")))
+    sheets = read_table_file(tmp_path / "school.xlsx")
+    schema = extraction.extract(sheets, "school.xlsx")
+    assert gs.validate(schema) == []
+    keys = {n["sheet"]: n["key"]["column"] for n in schema["nodes"] if n["role"] == "row"}
+    assert keys == {"Teachers": "Teacher Code", "Courses": "course_code", "Students": "Roll No"}  # Enrolments = link table
+    links = {frozenset((r["from"]["label"], r["to"]["label"])) for r in schema["relationships"]}
+    assert len(links) == 2 and all(len(l) == 2 for l in links)
+    enrol = next(r for r in schema["relationships"] if r["sheet"] == "Enrolments")
+    assert {p["column"] for p in enrol["properties"]} == {"Grade", "Term"}
+    assert {p["column"] for p in schema["pii"]} >= {"Email"}
+    store = GraphStore("t_school", mode="single")
+    store.drop()
+    try:
+        plan = loader.plan_load(schema, sheets, {})
+        loader.execute_plan(store, schema, plan)
+        c = store.counts()
+        assert sorted(c["nodes"].values()) == sorted([expected["teachers"], expected["courses"], expected["students"]])
+        assert sorted(c["relationships"].values()) == sorted([expected["taught_by"], expected["enrolments"]])
+        assert len(plan.rejected) == expected["rejected"]
+    finally:
+        store.drop()

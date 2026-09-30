@@ -42,13 +42,13 @@ Sheet "{sheet}" has {rows} rows. Columns (type, fill, distinct values, examples)
 {hints}
 
 Decide what one row of sheet "{sheet}" describes.
-- "row_entity": the thing each row describes, as a singular PascalCase label (e.g. Supplier, Order, Customer),
+- "row_entity": the thing each row describes, as a singular PascalCase label (e.g. Employee, Invoice, Patient),
   its identifying column ("key_column", copied exactly), and its descriptive columns ("property_columns").
-  Use null if every row only links things described in other sheets (a link/junction table, e.g. stock of a
-  product in a warehouse).
-- "reference_columns": columns holding the ID of something described in ANOTHER sheet (e.g. customer_id in orders).
+  Use null if every row only links things described in other sheets (a link/junction table, e.g. which
+  student is enrolled in which course).
+- "reference_columns": columns holding the ID of something described in ANOTHER sheet (e.g. department_id in an employees sheet).
 - "embedded_entities": things that have no sheet of their own but are named in a column here and are worth
-  their own node (e.g. a Vendor or Approver column in a ledger). Each needs "label", "key_column",
+  their own node (e.g. a Manager column in a projects sheet). Each needs "label", "key_column",
   "property_columns". Do not list things that have their own sheet.
 - "ignore_columns": row numbers, running indexes, empty or junk columns.
 
@@ -63,9 +63,9 @@ REL_PROMPT = """Graph node types: {labels}.
 These pairs of node types are linked in the data:
 {links}
 
-For each link write a short English sentence with the subject first (e.g. "Supplier supplies Product",
-"Customer placed Order", "Order contains Product", "Product stored in Warehouse"), then the relationship
-type in UPPER_SNAKE_CASE (the verb, e.g. SUPPLIES, PLACED, CONTAINS, STORED_IN, SHIPPED_FROM), "from" = the
+For each link write a short English sentence with the subject first (e.g. "Employee works in Department",
+"Doctor treats Patient", "Invoice issued by Vendor"), then the relationship type in UPPER_SNAKE_CASE (the verb,
+e.g. WORKS_IN, TREATS, ISSUED_BY), "from" = the
 subject node type and "to" = the object node type. Both must be the two node types of that link.
 JSON shape: {{"relationships": [{{"id": 1, "sentence": "...", "type": "...", "from": "...", "to": "..."}}]}}"""
 
@@ -206,7 +206,7 @@ def reference_hints(sheets: list[Sheet]) -> dict[str, list[str]]:
             hints[s.name].append("Columns unique on every row: " + ", ".join(f'"{c}"' for c in uniq[s.name][:4]))
         else:
             hints[s.name].append("No column is unique on every row, so several rows can describe the same thing "
-                                 "(e.g. line items of one order) or each row links other things.")
+                                 "(e.g. line items of one invoice) or each row links other things.")
     return hints
 
 
@@ -405,14 +405,17 @@ def detect_links(sheets: list[Sheet], nodes: list[dict], per_sheet: dict) -> lis
 
 
 def _short_rel(raw) -> str | None:
-    """Model names like PLACED_BY_CUSTOMER_TO_SHOP -> PLACED."""
+    """Model names like PLACED_BY_CUSTOMER_TO_SHOP -> PLACED; STORED_IN_THE_WAREHOUSE -> STORED_IN."""
     if not isinstance(raw, str) or not raw.strip():
         return None
     parts = gs.to_rel_type(raw).split("_")
     if len(parts) > 3 or len("_".join(parts)) > 24:
-        parts = parts[:2] if parts[0] in ("HAS", "IS", "BELONGS", "LOCATED", "STORED", "SHIPPED", "PAID", "POSTED",
-                                          "CHARGED", "APPROVED", "SUBSTITUTE", "PART") else parts[:1]
+        keep2 = len(parts) > 1 and (parts[0] in ("HAS", "IS") or parts[1] in _PREPOSITIONS)
+        parts = parts[:2] if keep2 else parts[:1]
     return "_".join(parts)
+
+
+_PREPOSITIONS = {"IN", "TO", "FROM", "OF", "BY", "ON", "AT", "WITH", "FOR", "INTO", "UNDER", "OVER"}
 
 
 def name_links(links: list[dict], labels: list[str], sheets: list[Sheet]) -> list[dict]:
@@ -497,9 +500,12 @@ def rule_pii(sheet: Sheet, column: str) -> dict | None:
     return None
 
 
-_COMPANY = re.compile(r"\b(ltd|limited|pvt|private|inc|llc|llp|gmbh|sarl|aps|co|corp|company|group|traders|industries|"
-                      r"foods|textiles|packaging|components|logistics|polymers|electricals|hardware|services|"
-                      r"solutions|technologies|enterprises|power|bank)\b", re.I)
+# Generic legal-form and business words (not tuned to any dataset).
+_COMPANY = re.compile(r"\b(ltd|limited|pvt|private|inc|llc|llp|plc|gmbh|ag|sa|sarl|bv|aps|co|corp|corporation|company|"
+                      r"group|holdings|services|solutions|technologies|enterprises|industries|international|bank)\b", re.I)
+# Column headers that name an organisation or thing, never a person.
+_NOT_PERSON_HEADER = re.compile(r"company|supplier|vendor|business|organi[sz]ation|firm|brand|product|store|shop|"
+                                r"warehouse|city|country|region|department|team|category", re.I)
 _SENSITIVITY = {"person_name": "low", "email": "medium", "phone": "medium", "address": "medium", "free_text": "medium",
                 "date_of_birth": "high", "government_id": "high", "bank_account": "high", "financial": "high",
                 "other": "medium"}
@@ -526,7 +532,7 @@ def verify_pii(sheet: Sheet, column: str, category: str) -> bool:
     if category == "address":
         return p.type == "string" and share(lambda t: bool(re.search(r"\d", t)) and len(t.split()) >= 3) >= 0.5
     if category == "person_name":
-        return (p.type == "string" and share(lambda t: 2 <= len(t.split()) <= 5 and not re.search(r"\d", t)) >= 0.7
+        return (p.type == "string" and not _NOT_PERSON_HEADER.search(column) and share(lambda t: 2 <= len(t.split()) <= 5 and not re.search(r"\d", t)) >= 0.7
                 and share(lambda t: bool(_COMPANY.search(t))) < 0.2)
     if category == "email":
         return share(lambda t: bool(_EMAIL.search(t))) >= 0.5
