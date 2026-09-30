@@ -1,4 +1,5 @@
 """Phase 3: LLM / embedding factory."""
+
 import pytest
 from langchain_core.embeddings import Embeddings
 from langchain_ollama import ChatOllama
@@ -24,11 +25,14 @@ def test_switching_provider_is_one_env_var(settings):
         llm.get_embeddings()
 
 
-@pytest.mark.parametrize("text,expected", [
-    ('{"a": 1}', {"a": 1}),
-    ('```json\n{"a": 1}\n```', {"a": 1}),
-    ('Sure! Here it is: {"a": [1, 2]} hope that helps', {"a": [1, 2]}),
-])
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ('{"a": 1}', {"a": 1}),
+        ('```json\n{"a": 1}\n```', {"a": 1}),
+        ('Sure! Here it is: {"a": [1, 2]} hope that helps', {"a": [1, 2]}),
+    ],
+)
 def test_parse_json_tolerates_model_formatting(text, expected):
     assert llm.parse_json(text) == expected
 

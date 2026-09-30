@@ -1,4 +1,5 @@
 """Phase 1: every service the backend depends on is reachable (run inside the backend container)."""
+
 from fastapi.testclient import TestClient
 
 from app.main import app

@@ -1,6 +1,4 @@
-// Thin fetch wrapper: adds the bearer token, turns error responses into Error(message).
-import { accessToken } from "./auth.js";
-
+// Thin fetch wrapper: sends the session cookie and the CSRF header, turns error responses into Error(message).
 export class ApiError extends Error {
   constructor(status, message, details) {
     super(message);
@@ -18,13 +16,9 @@ function messageFrom(body, status) {
   return JSON.stringify(d);
 }
 
-export async function api(path, { method = "GET", json, form } = {}) {
-  const token = await accessToken();
-  if (!token) {
-    window.location.assign(`/login?next=${encodeURIComponent(window.location.pathname + window.location.search)}`);
-    throw new ApiError(401, "Not signed in");
-  }
-  const headers = { Authorization: `Bearer ${token}` };
+// anonymous: the call is allowed without a session (sign-in / sign-out), so a 401 is an error, not a redirect.
+export async function api(path, { method = "GET", json, form, anonymous = false } = {}) {
+  const headers = { "X-Requested-With": "graphbase" };
   let body;
   if (json !== undefined) {
     headers["Content-Type"] = "application/json";
@@ -32,10 +26,10 @@ export async function api(path, { method = "GET", json, form } = {}) {
   } else if (form) {
     body = form;
   }
-  const r = await fetch(`/api${path}`, { method, headers, body });
+  const r = await fetch(`/api${path}`, { method, headers, body, credentials: "same-origin" });
   const data = await r.json().catch(() => null);
-  if (r.status === 401) {
-    window.location.assign("/login");
+  if (r.status === 401 && !anonymous) {
+    window.location.assign(`/login?next=${encodeURIComponent(window.location.pathname + window.location.search)}`);
     throw new ApiError(401, "Your session has expired");
   }
   if (!r.ok) throw new ApiError(r.status, messageFrom(data, r.status), data && data.detail);

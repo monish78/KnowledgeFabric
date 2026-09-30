@@ -4,6 +4,8 @@ Graph KBs: a LangGraph flow  generate_cypher -> run (read-only, KB-scoped) -> [r
 RAG KBs:   retrieve from Chroma -> answer with sources.
 Access is checked by the API layer before either runs.
 """
+
+import contextlib
 import datetime as dt
 import json
 import re
@@ -61,7 +63,7 @@ Do not mention Cypher or databases."""
 
 
 def _json_safe(v):
-    if isinstance(v, (dt.date, dt.datetime)):
+    if isinstance(v, dt.date | dt.datetime):
         return v.isoformat()
     if hasattr(v, "iso_format"):
         return v.iso_format()
@@ -97,30 +99,45 @@ def examples(schema: dict, hints: dict) -> str:
         a, b = nodes[r["from"]["label"]], nodes[r["to"]["label"]]
         if a["label"] == b["label"]:
             continue
-        text_prop = next(((b["label"], p["name"]) for p in b.get("properties", []) if (b["label"], p["name"]) in hints), None)
+        text_prop = next(
+            ((b["label"], p["name"]) for p in b.get("properties", []) if (b["label"], p["name"]) in hints), None
+        )
         if text_prop and len(out) < 1:
             v = hints[text_prop][0]
-            out.append(f"Q: Which {a['label']} are linked to the {b['label']} with {text_prop[1]} {v}?\n"
-                       f"Cypher: MATCH (a:{a['label']})-[:{r['type']}]->(b:{b['label']}) "
-                       f"WHERE toLower(b.{text_prop[1]}) = toLower('{v}') RETURN DISTINCT a.{_display(a)} AS {a['label'].lower()} LIMIT 50")
-    num_rel = next(((r, p) for r in schema["relationships"] for p in r["properties"] if p["type"] in ("integer", "float")), None)
+            out.append(
+                f"Q: Which {a['label']} are linked to the {b['label']} with {text_prop[1]} {v}?\n"
+                f"Cypher: MATCH (a:{a['label']})-[:{r['type']}]->(b:{b['label']}) "
+                f"WHERE toLower(b.{text_prop[1]}) = toLower('{v}') "
+                f"RETURN DISTINCT a.{_display(a)} AS {a['label'].lower()} LIMIT 50"
+            )
+    num_rel = next(
+        ((r, p) for r in schema["relationships"] for p in r["properties"] if p["type"] in ("integer", "float")), None
+    )
     if num_rel:
         r, p = num_rel
         a, b = nodes[r["from"]["label"]], nodes[r["to"]["label"]]
         key = a["key"]["name"]
         sample = (hints.get((a["label"], key)) or ["X"])[0]
-        out.append(f"Q: What is the total {p['name']} for {a['label']} {sample}?\n"
-                   f"Cypher: MATCH (a:{a['label']} {{{key}: '{sample}'}})-[r:{r['type']}]->(b:{b['label']}) "
-                   f"RETURN sum(r.{p['name']}) AS total_{p['name']}")
-        out.append(f"Q: Which {a['label']} has the highest total {p['name']}?\n"
-                   f"Cypher: MATCH (a:{a['label']})-[r:{r['type']}]->(b:{b['label']}) WITH a, sum(r.{p['name']}) AS total "
-                   f"RETURN a.{_display(a)} AS {a['label'].lower()}, total ORDER BY total DESC LIMIT 1")
-    num_node = next(((n, p) for n in schema["nodes"] for p in n.get("properties", []) if p["type"] in ("integer", "float")), None)
+        out.append(
+            f"Q: What is the total {p['name']} for {a['label']} {sample}?\n"
+            f"Cypher: MATCH (a:{a['label']} {{{key}: '{sample}'}})-[r:{r['type']}]->(b:{b['label']}) "
+            f"RETURN sum(r.{p['name']}) AS total_{p['name']}"
+        )
+        out.append(
+            f"Q: Which {a['label']} has the highest total {p['name']}?\n"
+            f"Cypher: MATCH (a:{a['label']})-[r:{r['type']}]->(b:{b['label']}) WITH a, sum(r.{p['name']}) AS total "
+            f"RETURN a.{_display(a)} AS {a['label'].lower()}, total ORDER BY total DESC LIMIT 1"
+        )
+    num_node = next(
+        ((n, p) for n in schema["nodes"] for p in n.get("properties", []) if p["type"] in ("integer", "float")), None
+    )
     if num_node:
         n, p = num_node
-        out.append(f"Q: Which {n['label']} has the largest {p['name']}?\n"
-                   f"Cypher: MATCH (n:{n['label']}) RETURN n.{_display(n)} AS {n['label'].lower()}, n.{p['name']} "
-                   f"ORDER BY n.{p['name']} DESC LIMIT 1")
+        out.append(
+            f"Q: Which {n['label']} has the largest {p['name']}?\n"
+            f"Cypher: MATCH (n:{n['label']}) RETURN n.{_display(n)} AS {n['label'].lower()}, n.{p['name']} "
+            f"ORDER BY n.{p['name']} DESC LIMIT 1"
+        )
     first = schema["nodes"][0]
     out.append(f"Q: How many {first['label']} are there?\nCypher: MATCH (n:{first['label']}) RETURN count(n) AS count")
     return "\n\n".join(out)
@@ -133,15 +150,16 @@ def build_graph_chat(store: GraphStore, schema: dict):
             prompt += f"Earlier in this conversation:\n{_history_text(state['history'])}\n\n"
         prompt += f"Question: {state['question']}"
         if state.get("error"):
-            prompt += (f"\n\nYour previous query:\n{state['cypher']}\nfailed with: {state['error']}\n"
-                       "Write a corrected query.")
+            prompt += (
+                f"\n\nYour previous query:\n{state['cypher']}\nfailed with: {state['error']}\n"
+                "Write a corrected query."
+            )
         schema_text, example_text = state["schema_text"]
         data = ask_json(CYPHER_SYSTEM.format(schema=schema_text, examples=example_text), prompt)
         cypher = str(data.get("cypher") or "").strip().rstrip(";")
-        try:
+        # repair is best effort; the query still goes through the safety checks
+        with contextlib.suppress(Exception):
             cypher = repair(cypher, schema)  # directions, names, misplaced properties
-        except Exception:  # repair is best effort; the query still goes through the safety checks
-            pass
         return {"cypher": cypher, "attempts": state.get("attempts", 0) + 1, "error": ""}
 
     def run(state: GraphState) -> GraphState:
@@ -164,13 +182,18 @@ def build_graph_chat(store: GraphStore, schema: dict):
         if state.get("error"):
             if state["error"].startswith("refused"):
                 return {"answer": "I can only read from this knowledge base, so I can't do that."}
-            return {"answer": "I couldn't turn that question into a working query. Try rephrasing it, "
-                              "for example by naming the entity you're asking about."}
+            return {
+                "answer": "I couldn't turn that question into a working query. Try rephrasing it, "
+                "for example by naming the entity you're asking about."
+            }
         rows = state.get("rows") or []
         if not rows:
             return {"answer": "No matching data was found in this knowledge graph."}
-        text = ask_text(ANSWER_SYSTEM, f"Question: {state['question']}\n\n"
-                                       f"Results ({len(rows)} rows):\n{json.dumps(rows[:MAX_ROWS_TO_LLM], default=str)}")
+        text = ask_text(
+            ANSWER_SYSTEM,
+            f"Question: {state['question']}\n\n"
+            f"Results ({len(rows)} rows):\n{json.dumps(rows[:MAX_ROWS_TO_LLM], default=str)}",
+        )
         return {"answer": text}
 
     def route(state: GraphState) -> str:
@@ -204,7 +227,8 @@ def value_hints(store: GraphStore, schema: dict, max_distinct: int = 12) -> dict
                 continue
             rows = store.read_internal(
                 f"MATCH (n:{store.label(n['label'])}) WHERE n.`{p['name']}` IS NOT NULL "
-                f"WITH DISTINCT n.`{p['name']}` AS v LIMIT {max_distinct + 1} RETURN v")
+                f"WITH DISTINCT n.`{p['name']}` AS v LIMIT {max_distinct + 1} RETURN v"
+            )
             vals = [r["v"] for r in rows if isinstance(r["v"], str) and len(r["v"]) <= 40]
             if 0 < len(vals) <= max_distinct:
                 hints[(n["label"], p["name"])] = vals
@@ -227,13 +251,16 @@ def schema_text(store: GraphStore, schema: dict, version) -> tuple[str, str]:
 
 def graph_path(cypher: str) -> list[dict]:
     """Chips for the UI: the first MATCH pattern as [node, rel, node, ...]."""
-    m = re.search(r"MATCH\s+(?:\w+\s*=\s*)?(\(.*?\))(?=\s+(?:WHERE|RETURN|WITH|OPTIONAL|MATCH|ORDER)\b|\s*$)",
-                  cypher, re.I | re.S)
+    m = re.search(
+        r"MATCH\s+(?:\w+\s*=\s*)?(\(.*?\))(?=\s+(?:WHERE|RETURN|WITH|OPTIONAL|MATCH|ORDER)\b|\s*$)", cypher, re.I | re.S
+    )
     if not m:
         return []
     pattern = m.group(1)
     parts = []
-    for tok in re.finditer(r"\((\w*)\s*(?::\s*`?(\w+)`?)?[^)]*?(\{[^}]*\})?\)|\[\s*\w*\s*:\s*`?(\w+)`?[^\]]*\]", pattern):
+    for tok in re.finditer(
+        r"\((\w*)\s*(?::\s*`?(\w+)`?)?[^)]*?(\{[^}]*\})?\)|\[\s*\w*\s*:\s*`?(\w+)`?[^\]]*\]", pattern
+    ):
         if tok.group(4):
             parts.append({"kind": "rel", "text": tok.group(4)})
         elif tok.group(2):
@@ -250,11 +277,17 @@ def graph_path(cypher: str) -> list[dict]:
 
 def graph_answer(store: GraphStore, schema: dict, schema_version, question: str, history: list) -> dict:
     flow = build_graph_chat(store, schema)
-    state = flow.invoke({"question": question, "history": history or [],
-                         "schema_text": schema_text(store, schema, schema_version)})
-    return {"answer": state.get("answer", ""), "cypher": state.get("cypher", ""),
-            "path": graph_path(state.get("cypher", "")), "rows": (state.get("rows") or [])[:20],
-            "row_count": len(state.get("rows") or []), "error": state.get("error") or None}
+    state = flow.invoke(
+        {"question": question, "history": history or [], "schema_text": schema_text(store, schema, schema_version)}
+    )
+    return {
+        "answer": state.get("answer", ""),
+        "cypher": state.get("cypher", ""),
+        "path": graph_path(state.get("cypher", "")),
+        "rows": (state.get("rows") or [])[:20],
+        "row_count": len(state.get("rows") or []),
+        "error": state.get("error") or None,
+    }
 
 
 # ------------------------------------------------------------------ RAG chat
@@ -272,12 +305,18 @@ def rag_answer(kb_name: str, question: str, history: list) -> dict:
     passages = retrieve(kb_name, query, k=6)
     if not passages:
         return {"answer": "This knowledge base has no documents yet.", "sources": []}
-    context = "\n\n".join(f"[{i}] ({p['source']}{', page ' + str(p['page']) if p['page'] else ''})\n{p['text']}"
-                          for i, p in enumerate(passages, 1))
+    context = "\n\n".join(
+        f"[{i}] ({p['source']}{', page ' + str(p['page']) if p['page'] else ''})\n{p['text']}"
+        for i, p in enumerate(passages, 1)
+    )
     prompt = ""
     if history:
         prompt += f"Earlier in this conversation:\n{_history_text(history)}\n\n"
     prompt += f"Context:\n{context}\n\nQuestion: {question}"
-    return {"answer": ask_text(RAG_SYSTEM, prompt),
-            "sources": [{"n": i, "source": p["source"], "page": p["page"], "score": p["score"],
-                         "snippet": p["text"][:280]} for i, p in enumerate(passages, 1)]}
+    return {
+        "answer": ask_text(RAG_SYSTEM, prompt),
+        "sources": [
+            {"n": i, "source": p["source"], "page": p["page"], "score": p["score"], "snippet": p["text"][:280]}
+            for i, p in enumerate(passages, 1)
+        ],
+    }

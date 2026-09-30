@@ -3,6 +3,7 @@
 Implements the ingest contract in data/generate_dataset.py: offset header rows, blank rows,
 BOM / ';' CSVs, currency and accounting numbers, mixed date formats, Y/N booleans.
 """
+
 import csv
 import datetime as dt
 import io
@@ -59,7 +60,7 @@ def norm_key(v) -> str:
         return ""
     if isinstance(v, float) and v.is_integer():
         v = int(v)
-    if isinstance(v, (dt.datetime, dt.date)):
+    if isinstance(v, dt.datetime | dt.date):
         v = v.isoformat()[:10]
     return str(v).strip().upper()
 
@@ -71,7 +72,7 @@ _NUMBER = re.compile(r"^-?\d+(?:\.\d+)?$")
 def parse_number(v):
     if isinstance(v, bool) or is_blank(v):
         return None
-    if isinstance(v, (int, float)):
+    if isinstance(v, int | float):
         return v
     s = str(v).strip()
     negative = s.startswith("(") and s.endswith(")")
@@ -86,8 +87,17 @@ def parse_number(v):
     return -n if negative else n
 
 
-_DATE_FORMATS = ["%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y", "%d.%m.%Y", "%b %d, %Y", "%B %d, %Y", "%d %b %Y", "%d %B %Y",
-                 "%Y/%m/%d"]
+_DATE_FORMATS = [
+    "%Y-%m-%d",
+    "%d/%m/%Y",
+    "%d-%m-%Y",
+    "%d.%m.%Y",
+    "%b %d, %Y",
+    "%B %d, %Y",
+    "%d %b %Y",
+    "%d %B %Y",
+    "%Y/%m/%d",
+]
 
 
 def parse_date(v):
@@ -139,7 +149,7 @@ def coerce(v, type_: str):
         return parse_bool(v)
     if isinstance(v, float) and v.is_integer():
         v = int(v)
-    if isinstance(v, (dt.datetime, dt.date)):
+    if isinstance(v, dt.datetime | dt.date):
         return v.isoformat()[:10]
     return str(v).strip()
 
@@ -167,8 +177,11 @@ def _find_header(rows: list[list]) -> int | None:
     width = max((sum(not is_blank(c) for c in r) for r in rows[:MAX_HEADER_SCAN]), default=0)
     for i, r in enumerate(rows[:MAX_HEADER_SCAN]):
         cells = [c for c in r if not is_blank(c)]
-        if (len(cells) >= max(2, round(0.6 * width)) and all(isinstance(c, str) for c in cells)
-                and not all(parse_number(c) is not None for c in cells)):
+        if (
+            len(cells) >= max(2, round(0.6 * width))
+            and all(isinstance(c, str) for c in cells)
+            and not all(parse_number(c) is not None for c in cells)
+        ):
             return i
     return None
 
@@ -189,7 +202,7 @@ def _build_sheet(name: str, raw: list[list]) -> Sheet | None:
         columns.append(col)
     # drop trailing unnamed columns that are empty everywhere
     rows = []
-    for offset, r in enumerate(raw[h + 1:], start=h + 2):
+    for offset, r in enumerate(raw[h + 1 :], start=h + 2):
         if all(is_blank(c) for c in r):
             continue
         row = {col: (r[i] if i < len(r) else None) for i, col in enumerate(columns)}
@@ -212,7 +225,7 @@ def read_table_file(path: str | Path, original_name: str | None = None) -> list[
         try:
             wb = load_workbook(io.BytesIO(data), read_only=True, data_only=True)
         except (zipfile.BadZipFile, InvalidFileException, KeyError, OSError) as exc:
-            raise TabularError(f"The file is not a valid Excel workbook ({type(exc).__name__}).")
+            raise TabularError(f"The file is not a valid Excel workbook ({type(exc).__name__}).") from exc
         for ws in wb.worksheets:
             s = _build_sheet(ws.title, [list(r) for r in ws.iter_rows(values_only=True)])
             if s:
@@ -237,7 +250,7 @@ def infer_type(values: list) -> str:
         return "string"
     n = len(present)
     if all(parse_bool(v) is not None for v in present):
-        tokens = {str(v).strip().lower() for v in present if not isinstance(v, (bool, int, float))}
+        tokens = {str(v).strip().lower() for v in present if not isinstance(v, bool | int | float)}
         if any(isinstance(v, bool) for v in present) or tokens - {"0", "1"}:
             return "boolean"
     # 90%: a few "N/A"-style cells shouldn't turn a numeric column into text; they become null
@@ -264,11 +277,18 @@ def profile_column(name: str, values: list) -> Column:
             samples.append(s)
         if len(samples) == 5:
             break
-    id_like = bool(present) and sum(bool(re.fullmatch(r"[A-Z0-9][A-Z0-9\-_/.]*", k)) and any(ch.isdigit() for ch in k)
-                                    for k in keys) >= 0.9 * len(keys)
-    return Column(name=name, type=infer_type(values), fill_rate=round(len(present) / max(len(values), 1), 4),
-                  distinct=distinct, distinct_ratio=round(distinct / max(len(present), 1), 4), id_like=id_like,
-                  samples=samples)
+    id_like = bool(present) and sum(
+        bool(re.fullmatch(r"[A-Z0-9][A-Z0-9\-_/.]*", k)) and any(ch.isdigit() for ch in k) for k in keys
+    ) >= 0.9 * len(keys)
+    return Column(
+        name=name,
+        type=infer_type(values),
+        fill_rate=round(len(present) / max(len(values), 1), 4),
+        distinct=distinct,
+        distinct_ratio=round(distinct / max(len(present), 1), 4),
+        id_like=id_like,
+        samples=samples,
+    )
 
 
 def match_columns(schema_columns: list[str], file_columns: list[str]) -> dict[str, str]:

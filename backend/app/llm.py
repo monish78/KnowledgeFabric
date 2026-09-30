@@ -4,6 +4,7 @@ Ollama is active. The Azure OpenAI (GPT-4.1) code is written but commented out: 
 uncomment the Azure blocks below and langchain-openai in requirements.txt, then set
 LLM_PROVIDER=azure and the AZURE_OPENAI_* variables.
 """
+
 import json
 import re
 
@@ -88,7 +89,7 @@ def parse_json(text: str):
         start, end = text.find("{"), text.rfind("}")
         if start != -1 and end > start:
             try:
-                return json.loads(text[start:end + 1])
+                return json.loads(text[start : end + 1])
             except json.JSONDecodeError:
                 pass
     raise LLMOutputError(f"Model did not return valid JSON: {text[:200]!r}")

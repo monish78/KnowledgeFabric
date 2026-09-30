@@ -1,0 +1,10 @@
+line-length = 120
+target-version = "py311"
+
+[lint]
+select = ["E", "F", "W", "B", "I", "UP", "SIM"]
+# B008: FastAPI declares dependencies as default arguments (Depends/File/Form); that is the intended usage.
+ignore = ["B008"]
+
+[lint.isort]
+known-first-party = ["app", "tests"]

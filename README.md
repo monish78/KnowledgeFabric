@@ -48,6 +48,11 @@ UI use the LLM.
 
 ## How it works
 
+- **Sessions are server-side.** Sign-in (local password or Keycloak) is completed by the backend, which stores the
+  session in Postgres and gives the browser only an HttpOnly cookie. The browser never holds a token. Sessions expire
+  after `SESSION_IDLE_MINUTES` of inactivity or `SESSION_MAX_HOURS`; sign-out revokes the session (and the Keycloak
+  session). State-changing API calls must carry the `X-Requested-With: graphbase` header (CSRF protection).
+
 - **Graph extraction** (`app/extraction.py`): the LLM decides what each sheet's rows are, their keys,
   embedded entities, relationship names/directions and PII columns. Deterministic profiling supplies
   evidence (value overlap between sheets, line-level columns, junk columns) and checks every answer, so
@@ -66,7 +71,7 @@ UI use the LLM.
 ## Tests
 
 ```bash
-docker compose exec backend pytest -q                    # ~170 tests, fake LLM where noted, ~10 min
+docker compose exec backend pytest -q                    # 173 tests (start the keycloak profile for the Keycloak ones)
 docker compose exec backend pytest -m llm -s             # real-LLM quality benchmark, ~40 min on CPU
 .venv/bin/python -m pytest e2e -q                        # browser tests of every screen (needs seed-demo-data)
 ```
@@ -90,11 +95,11 @@ and question/answer pairs). Regenerate with `.venv/bin/python data/generate_data
 
 ## Switching to production (work system)
 
-- **Keycloak:** `AUTH_PROVIDER=keycloak`, `KEYCLOAK_URL` (browser-facing), `KEYCLOAK_INTERNAL_URL`
-  (reachable from the backend container), `KEYCLOAK_REALM`, `KEYCLOAK_CLIENT_ID`. The client must be a
-  public client with the standard flow and PKCE (S256), redirect URI `<app url>/auth/callback`, web
-  origin `<app url>`, post-logout redirect `<app url>/*`, and an audience mapper adding the client ID
-  to access tokens (see `keycloak/graphbase-realm.json`). Remove `keycloak` from `COMPOSE_PROFILES`.
+- **Keycloak:** `AUTH_PROVIDER=keycloak`, `APP_URL` (the app's address as users open it), `KEYCLOAK_URL`
+  (browser-facing, must match the token issuer), `KEYCLOAK_INTERNAL_URL` (reachable from the backend container),
+  `KEYCLOAK_REALM`, `KEYCLOAK_CLIENT_ID` (and `KEYCLOAK_CLIENT_SECRET` for a confidential client). The client needs
+  the standard flow, PKCE S256 and the redirect URI `<APP_URL>/api/auth/callback`; see `keycloak/graphbase-realm.json`.
+  Remove `keycloak` from `COMPOSE_PROFILES`.
 - **Neo4j Enterprise:** `NEO4J_IMAGE=neo4j:5-enterprise`, `NEO4J_ACCEPT_LICENSE=yes`, `NEO4J_MODE=multi`.
 - **Model:** `OLLAMA_CHAT_MODEL=qwen2.5:7b-instruct` (or larger) if the machine has the memory/GPU.
 - **Azure OpenAI:** uncomment the Azure blocks in `app/llm.py` and `langchain-openai` in

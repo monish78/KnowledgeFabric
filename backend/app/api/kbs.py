@@ -3,6 +3,7 @@
 Every route that touches a KB calls kb.require_access() with the roles allowed for it:
 owner-only for review/submit/access management; owner or user for add-data and chat.
 """
+
 import json
 import shutil
 import uuid
@@ -11,7 +12,8 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
-from app import chat, graph_schema as gs, jobs, kb, pipelines, rag
+from app import chat, jobs, kb, pipelines, rag
+from app import graph_schema as gs
 from app.auth import CurrentUser, current_user
 from app.config import get_settings
 from app.db import get_conn
@@ -43,8 +45,23 @@ def _save_upload(kb_name: str, upload: UploadFile, allowed: tuple) -> tuple[str,
 
 
 def _job_view(j: dict) -> dict:
-    return {k: j[k] for k in ("id", "kb_name", "job_type", "status", "source_file", "steps", "progress", "error",
-                              "started_by", "created_at", "started_at", "finished_at")}
+    return {
+        k: j[k]
+        for k in (
+            "id",
+            "kb_name",
+            "job_type",
+            "status",
+            "source_file",
+            "steps",
+            "progress",
+            "error",
+            "started_by",
+            "created_at",
+            "started_at",
+            "finished_at",
+        )
+    }
 
 
 # ------------------------------------------------------------------ list / create
@@ -54,9 +71,14 @@ def list_kbs(user: CurrentUser = Depends(current_user)):
 
 
 @router.post("/kbs", status_code=201)
-def create_kb(kb_name: str = Form(...), kb_type: str = Form(...), domain: str = Form(...),
-              sub_domain: str = Form(...), files: list[UploadFile] = File(...),
-              user: CurrentUser = Depends(current_user)):
+def create_kb(
+    kb_name: str = Form(...),
+    kb_type: str = Form(...),
+    domain: str = Form(...),
+    sub_domain: str = Form(...),
+    files: list[UploadFile] = File(...),
+    user: CurrentUser = Depends(current_user),
+):
     kb_name, domain, sub_domain = kb_name.strip(), domain.strip(), sub_domain.strip()
     if kb_type not in ("graph", "rag"):
         raise HTTPException(422, "kb_type must be graph or rag")
@@ -85,14 +107,34 @@ def create_kb(kb_name: str = Form(...), kb_type: str = Form(...), domain: str = 
 @router.get("/kbs/{kb_name}")
 def get_kb(kb_name: str, user: CurrentUser = Depends(current_user)):
     cat = kb.require_access(user, kb_name)
-    out = {k: cat[k] for k in ("kb_name", "kb_type", "domain", "sub_domain", "owner_id", "status", "status_detail",
-                               "role", "created_at", "updated_at", "approved_at", "approved_by")}
+    out = {
+        k: cat[k]
+        for k in (
+            "kb_name",
+            "kb_type",
+            "domain",
+            "sub_domain",
+            "owner_id",
+            "status",
+            "status_detail",
+            "role",
+            "created_at",
+            "updated_at",
+            "approved_at",
+            "approved_by",
+        )
+    }
     if cat["kb_type"] == "graph" and cat["status"] == "ready":
         counts = GraphStore(kb_name).counts()
         schema = cat["approved_schema"]
-        out["stats"] = {"node_types": len(schema["nodes"]), "relationship_types": len(schema["relationships"]),
-                        "entities": sum(counts["nodes"].values()), "relationships": sum(counts["relationships"].values()),
-                        "by_label": counts["nodes"], "by_type": counts["relationships"]}
+        out["stats"] = {
+            "node_types": len(schema["nodes"]),
+            "relationship_types": len(schema["relationships"]),
+            "entities": sum(counts["nodes"].values()),
+            "relationships": sum(counts["relationships"].values()),
+            "by_label": counts["nodes"],
+            "by_type": counts["relationships"],
+        }
     elif cat["kb_type"] == "rag":
         docs = rag.documents(kb_name) if cat["status"] in ("ready", "ingesting") else {}
         out["stats"] = {"documents": len(docs), "chunks": sum(docs.values())}
@@ -108,16 +150,25 @@ def rerun_extraction(kb_name: str, user: CurrentUser = Depends(current_user)):
     if cat["kb_type"] != "graph" or cat["status"] not in ("failed", "awaiting_review"):
         raise HTTPException(409, "Extraction can only be re-run for a graph that is failed or awaiting review")
     with get_conn() as conn:
-        job = conn.execute("""SELECT source_file FROM jobs WHERE kb_name = %s AND job_type = 'graph_extract'
-                              ORDER BY id DESC LIMIT 1""", (kb_name,)).fetchone()
+        job = conn.execute(
+            """SELECT source_file FROM jobs WHERE kb_name = %s AND job_type = 'graph_extract'
+                              ORDER BY id DESC LIMIT 1""",
+            (kb_name,),
+        ).fetchone()
     folder = Path(get_settings().upload_dir) / kb_name
     matches = sorted(folder.glob(f"*_{job['source_file']}")) if job else []
     if not matches:
         raise HTTPException(409, "The original upload is no longer available; create the knowledge base again")
     kb.set_status(kb_name, "extracting", None, actor=user.user_id)
     job_id = jobs.create(kb_name, "graph_extract", pipelines.EXTRACT_STEPS, user.user_id, job["source_file"])
-    jobs.submit(job_id, pipelines.graph_extract, kb_name, str(matches[-1]), job["source_file"],
-                on_error=lambda m: kb.set_status(kb_name, "failed", m[:500]))
+    jobs.submit(
+        job_id,
+        pipelines.graph_extract,
+        kb_name,
+        str(matches[-1]),
+        job["source_file"],
+        on_error=lambda m: kb.set_status(kb_name, "failed", m[:500]),
+    )
     return {"job_id": job_id}
 
 
@@ -152,21 +203,30 @@ class SchemaBody(BaseModel):
 
 
 def _review_payload(cat: dict, schema: dict) -> dict:
-    return {"kb_name": cat["kb_name"], "status": cat["status"], "schema": schema, "cypher": gs.preview(schema),
-            "summary": gs.summary(schema), "pii": schema.get("pii", [])}
+    return {
+        "kb_name": cat["kb_name"],
+        "status": cat["status"],
+        "schema": schema,
+        "cypher": gs.preview(schema),
+        "summary": gs.summary(schema),
+        "pii": schema.get("pii", []),
+    }
 
 
 def _merge_edit(saved: dict, edited: dict) -> dict:
     """Users edit nodes/relationships/pii; sheet profiles and source path always come from the server copy."""
-    merged = {**saved, "nodes": edited.get("nodes", saved["nodes"]),
-              "relationships": edited.get("relationships", saved["relationships"]),
-              "pii": edited.get("pii", saved.get("pii", []))}
+    merged = {
+        **saved,
+        "nodes": edited.get("nodes", saved["nodes"]),
+        "relationships": edited.get("relationships", saved["relationships"]),
+        "pii": edited.get("pii", saved.get("pii", [])),
+    }
     try:
         return gs.clean(merged)
     except gs.SchemaError as exc:
-        raise HTTPException(422, {"message": "The schema has problems", "errors": exc.errors})
+        raise HTTPException(422, {"message": "The schema has problems", "errors": exc.errors}) from exc
     except (KeyError, TypeError) as exc:
-        raise HTTPException(422, {"message": "Malformed schema", "errors": [f"missing field {exc}"]})
+        raise HTTPException(422, {"message": "Malformed schema", "errors": [f"missing field {exc}"]}) from exc
 
 
 @router.get("/kbs/{kb_name}/review")
@@ -204,15 +264,28 @@ def submit_review(kb_name: str, body: SchemaBody, user: CurrentUser = Depends(cu
     schema = _merge_edit(cat["draft_schema"], body.schema_)
     cypher = "\n".join(gs.preview(schema))
     with get_conn() as conn:
-        conn.execute("""UPDATE kb_catalog SET status = 'building', status_detail = NULL, draft_schema = %s,
+        conn.execute(
+            """UPDATE kb_catalog SET status = 'building', status_detail = NULL, draft_schema = %s,
                         approved_schema = %s, approved_cypher = %s, approved_by = %s, approved_at = now(),
                         modified_by = %s WHERE kb_name = %s""",
-                     (json.dumps(schema, default=str), json.dumps(schema, default=str), cypher, user.user_id,
-                      user.user_id, kb_name))
+            (
+                json.dumps(schema, default=str),
+                json.dumps(schema, default=str),
+                cypher,
+                user.user_id,
+                user.user_id,
+                kb_name,
+            ),
+        )
     pipelines.sync_graph_pii(kb_name, schema, actor=user.user_id)
     job_id = jobs.create(kb_name, "graph_build", pipelines.BUILD_STEPS, user.user_id, schema["source_file"])
-    jobs.submit(job_id, pipelines.graph_build, kb_name, user.user_id,
-                on_error=lambda m: kb.set_status(kb_name, "failed", f"Build failed: {m}"[:500]))
+    jobs.submit(
+        job_id,
+        pipelines.graph_build,
+        kb_name,
+        user.user_id,
+        on_error=lambda m: kb.set_status(kb_name, "failed", f"Build failed: {m}"[:500]),
+    )
     return {"job_id": job_id}
 
 
@@ -220,10 +293,13 @@ def submit_review(kb_name: str, body: SchemaBody, user: CurrentUser = Depends(cu
 def get_pii(kb_name: str, user: CurrentUser = Depends(current_user)):
     kb.require_access(user, kb_name)
     with get_conn() as conn:
-        return conn.execute("""SELECT id, node_label, property_name, source_document, pii_category, sensitivity,
+        return conn.execute(
+            """SELECT id, node_label, property_name, source_document, pii_category, sensitivity,
                                       confidence, occurrences, reason, detected_by, status, created_at, updated_at,
                                       modified_by
-                               FROM kb_pii_fields WHERE kb_name = %s ORDER BY id""", (kb_name,)).fetchall()
+                               FROM kb_pii_fields WHERE kb_name = %s ORDER BY id""",
+            (kb_name,),
+        ).fetchall()
 
 
 # ------------------------------------------------------------------ access (owner only)
@@ -254,8 +330,9 @@ def revoke_access(kb_name: str, user_id: str, user: CurrentUser = Depends(curren
 @router.get("/users/{user_id}")
 def lookup_user(user_id: str, user: CurrentUser = Depends(current_user)):
     with get_conn() as conn:
-        row = conn.execute("SELECT user_id, display_name FROM users WHERE user_id = %s AND is_active",
-                           (user_id,)).fetchone()
+        row = conn.execute(
+            "SELECT user_id, display_name FROM users WHERE user_id = %s AND is_active", (user_id,)
+        ).fetchone()
     if not row:
         raise HTTPException(404, "No such user")
     return row
@@ -278,14 +355,19 @@ def check_add_data(kb_name: str, file: UploadFile = File(...), user: CurrentUser
     try:
         return {"kind": "graph", "file": name, **pipelines.check_graph_file(cat["approved_schema"], path, name)}
     except TabularError as exc:
-        raise HTTPException(422, str(exc))
+        raise HTTPException(422, str(exc)) from exc
     finally:
         Path(path).unlink(missing_ok=True)
 
 
 @router.post("/kbs/{kb_name}/add-data", status_code=202)
-def add_data(kb_name: str, files: list[UploadFile] = File(...), merge_existing: bool = Form(True),
-             skip_invalid: bool = Form(True), user: CurrentUser = Depends(current_user)):
+def add_data(
+    kb_name: str,
+    files: list[UploadFile] = File(...),
+    merge_existing: bool = Form(True),
+    skip_invalid: bool = Form(True),
+    user: CurrentUser = Depends(current_user),
+):
     cat = kb.require_access(user, kb_name)
     _require_ready(cat)
     if cat["kb_type"] == "rag":
@@ -299,7 +381,7 @@ def add_data(kb_name: str, files: list[UploadFile] = File(...), merge_existing: 
     try:
         check = pipelines.check_graph_file(cat["approved_schema"], path, name)
     except TabularError as exc:
-        raise HTTPException(422, str(exc))
+        raise HTTPException(422, str(exc)) from exc
     if not check["matched"]:
         raise HTTPException(422, "No sheet in this file matches the knowledge graph's schema")
     job_id = jobs.create(kb_name, "add_data", pipelines.ADD_GRAPH_STEPS, user.user_id, name)
@@ -316,15 +398,20 @@ def list_runs(kb_name: str, user: CurrentUser = Depends(current_user)):
                       r.rows_rejected, r.nodes_created, r.relationships_created, r.chunks_added, r.summary,
                       r.started_by, r.started_at, r.finished_at, j.progress, j.id AS job_id
                FROM pipeline_runs r LEFT JOIN jobs j ON j.id = r.job_id
-               WHERE r.kb_name = %s ORDER BY r.run_no DESC""", (kb_name,)).fetchall()
+               WHERE r.kb_name = %s ORDER BY r.run_no DESC""",
+            (kb_name,),
+        ).fetchall()
 
 
 @router.get("/kbs/{kb_name}/runs/{run_id}/report")
 def run_report(kb_name: str, run_id: int, user: CurrentUser = Depends(current_user)):
     kb.require_access(user, kb_name)
     with get_conn() as conn:
-        row = conn.execute("""SELECT run_no, source_file, summary, rejected_report FROM pipeline_runs
-                              WHERE id = %s AND kb_name = %s""", (run_id, kb_name)).fetchone()
+        row = conn.execute(
+            """SELECT run_no, source_file, summary, rejected_report FROM pipeline_runs
+                              WHERE id = %s AND kb_name = %s""",
+            (run_id, kb_name),
+        ).fetchone()
     if not row:
         raise HTTPException(404, "Run not found")
     return {**row, "rejected_report": row["rejected_report"] or []}
@@ -344,6 +431,8 @@ def chat_with_kb(kb_name: str, body: ChatBody, user: CurrentUser = Depends(curre
     history = [{k: str(h.get(k, ""))[:2000] for k in ("question", "answer", "cypher")} for h in body.history[-5:]]
     if cat["kb_type"] == "graph":
         store = GraphStore(kb_name)
-        return {"kind": "graph", **chat.graph_answer(store, cat["approved_schema"], cat["approved_at"],
-                                                     body.question.strip(), history)}
+        return {
+            "kind": "graph",
+            **chat.graph_answer(store, cat["approved_schema"], cat["approved_at"], body.question.strip(), history),
+        }
     return {"kind": "rag", **chat.rag_answer(kb_name, body.question.strip(), history)}

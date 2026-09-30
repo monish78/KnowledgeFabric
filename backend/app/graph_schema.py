@@ -15,6 +15,7 @@ matches what runs.
                          "properties": [], "required": true, "count": 307}]
     }
 """
+
 import copy
 import re
 
@@ -96,7 +97,7 @@ def validate(schema: dict) -> list[str]:
     errors = []
     sheets = schema.get("sheets", {})
     labels = [n["label"] for n in schema["nodes"]]
-    for dup in {l for l in labels if labels.count(l) > 1}:
+    for dup in {lab for lab in labels if labels.count(lab) > 1}:
         errors.append(f"Node type {dup} is defined more than once")
     if not schema["nodes"]:
         errors.append("At least one node type is required")
@@ -153,22 +154,27 @@ def node_cypher(node: dict, kb_label: str | None = None, prop_names: list[str] |
     return q
 
 
-def relationship_cypher(rel: dict, schema: dict, kb_label: str | None = None,
-                        prop_names: list[str] | None = None) -> str:
+def relationship_cypher(
+    rel: dict, schema: dict, kb_label: str | None = None, prop_names: list[str] | None = None
+) -> str:
     a, b = node_by_label(schema, rel["from"]["label"]), node_by_label(schema, rel["to"]["label"])
     props = [p["name"] for p in rel["properties"] if prop_names is None or p["name"] in prop_names]
-    q = (f"UNWIND $rows AS row\n"
-         f"MATCH (a:{_labels(a['label'], kb_label)} {{{a['key']['name']}: row.from_key}})\n"
-         f"MATCH (b:{_labels(b['label'], kb_label)} {{{b['key']['name']}: row.to_key}})\n"
-         f"MERGE (a)-[r:`{rel['type']}`]->(b)")
+    q = (
+        f"UNWIND $rows AS row\n"
+        f"MATCH (a:{_labels(a['label'], kb_label)} {{{a['key']['name']}: row.from_key}})\n"
+        f"MATCH (b:{_labels(b['label'], kb_label)} {{{b['key']['name']}: row.to_key}})\n"
+        f"MERGE (a)-[r:`{rel['type']}`]->(b)"
+    )
     if props:
         q += "\nSET " + ", ".join(f"r.{p} = row.{p}" for p in props)
     return q
 
 
 def index_cypher(node: dict) -> str:
-    return (f"CREATE INDEX `idx_{node['label']}_{node['key']['name']}` IF NOT EXISTS "
-            f"FOR (n:`{node['label']}`) ON (n.`{node['key']['name']}`)")
+    return (
+        f"CREATE INDEX `idx_{node['label']}_{node['key']['name']}` IF NOT EXISTS "
+        f"FOR (n:`{node['label']}`) ON (n.`{node['key']['name']}`)"
+    )
 
 
 def preview(schema: dict) -> list[str]:
@@ -183,16 +189,20 @@ def preview(schema: dict) -> list[str]:
         if not a or not b:
             continue
         sets = ", ".join(f"r.{p['name']} = row.{p['name']}" for p in r["properties"])
-        out.append(f"MATCH (a:{a['label']} {{{a['key']['name']}: row.from_key}}), "
-                   f"(b:{b['label']} {{{b['key']['name']}: row.to_key}}) "
-                   f"MERGE (a)-[r:{r['type']}]->(b)" + (f" SET {sets}" if sets else ""))
+        out.append(
+            f"MATCH (a:{a['label']} {{{a['key']['name']}: row.from_key}}), "
+            f"(b:{b['label']} {{{b['key']['name']}: row.to_key}}) "
+            f"MERGE (a)-[r:{r['type']}]->(b)" + (f" SET {sets}" if sets else "")
+        )
     return out
 
 
 def summary(schema: dict) -> dict:
-    return {"node_types": len(schema["nodes"]),
-            "entities": sum(n.get("count") or 0 for n in schema["nodes"]),
-            "relationship_types": len({r["type"] for r in schema["relationships"]})}
+    return {
+        "node_types": len(schema["nodes"]),
+        "entities": sum(n.get("count") or 0 for n in schema["nodes"]),
+        "relationship_types": len({r["type"] for r in schema["relationships"]}),
+    }
 
 
 def describe_for_llm(schema: dict, value_hints: dict | None = None) -> str:
@@ -201,14 +211,20 @@ def describe_for_llm(schema: dict, value_hints: dict | None = None) -> str:
     lines = ["Node labels and properties:"]
     for n in schema["nodes"]:
         ids = value_hints.get((n["label"], n["key"]["name"]))
-        props = [f"{n['key']['name']} (string, unique id" + (f", e.g. {', '.join(map(repr, ids))}" if ids else "") + ")"]
+        props = [
+            f"{n['key']['name']} (string, unique id" + (f", e.g. {', '.join(map(repr, ids))}" if ids else "") + ")"
+        ]
         for p in n.get("properties", []):
             hint = value_hints.get((n["label"], p["name"]))
-            props.append(f"{p['name']} ({p['type']}" + (f"; values: {', '.join(map(repr, hint))}" if hint else "") + ")")
+            props.append(
+                f"{p['name']} ({p['type']}" + (f"; values: {', '.join(map(repr, hint))}" if hint else "") + ")"
+            )
         lines.append(f"- {n['label']}: " + ", ".join(props))
     lines.append("Relationships (direction matters):")
     for r in schema["relationships"]:
         props = ", ".join(f"{p['name']} ({p['type']})" for p in r["properties"])
-        lines.append(f"- (:{r['from']['label']})-[:{r['type']}]->(:{r['to']['label']})"
-                     + (f" relationship properties: {props}" if props else ""))
+        lines.append(
+            f"- (:{r['from']['label']})-[:{r['type']}]->(:{r['to']['label']})"
+            + (f" relationship properties: {props}" if props else "")
+        )
     return "\n".join(lines)

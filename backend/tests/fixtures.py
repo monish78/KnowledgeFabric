@@ -1,4 +1,5 @@
 """Shared test data: dataset paths, manifest, and 'reviewed' schemas (what an owner would approve)."""
+
 import json
 from functools import lru_cache
 from pathlib import Path
@@ -16,7 +17,6 @@ def manifest() -> dict:
 
 def questions(kb: str, level: str = "core") -> list[dict]:
     return [q for q in manifest()["questions"] if q["kb"] == kb and q["level"] == level]
-
 
 
 def retail_schema() -> dict:

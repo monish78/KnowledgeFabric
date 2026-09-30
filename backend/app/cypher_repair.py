@@ -8,13 +8,17 @@ Small models get the shape of a query right but the details wrong. Fixed here, d
 Anything that can't be repaired unambiguously is left alone; the query then fails or returns nothing
 and the chat flow retries with the error.
 """
+
 import re
 
 from app.graphstore import _mask_strings, _unmask
 
 _NAME = r"`?[A-Za-z_][A-Za-z0-9_]*`?"
 _NODE = rf"\(\s*(?P<v>{_NAME})?\s*(?::\s*(?P<l>{_NAME}))?\s*(?P<m>\{{[^{{}}]*\}})?\s*\)"
-_REL = rf"(?P<lt><)?-\s*\[\s*(?P<rv>{_NAME})?\s*(?::\s*(?P<rt>{_NAME}))?\s*(?P<star>\*[^\]\{{]*)?\s*(?P<rm>\{{[^{{}}]*\}})?\s*\]\s*-(?P<gt>>)?"
+_REL = (
+    rf"(?P<lt><)?-\s*\[\s*(?P<rv>{_NAME})?\s*(?::\s*(?P<rt>{_NAME}))?\s*"
+    rf"(?P<star>\*[^\]\{{]*)?\s*(?P<rm>\{{[^{{}}]*\}})?\s*\]\s*-(?P<gt>>)?"
+)
 NODE_RE = re.compile(_NODE)
 REL_RE = re.compile(_REL)
 _plain = lambda p: re.sub(r"\?P<\w+>", "?:", p)  # noqa: E731
@@ -29,8 +33,9 @@ class SchemaIndex:
     def __init__(self, schema: dict):
         self.labels = {_norm(n["label"]): n["label"] for n in schema["nodes"]}
         self.types = {_norm(r["type"]): r["type"] for r in schema["relationships"]}
-        self.node_props = {n["label"]: {n["key"]["name"]} | {p["name"] for p in n.get("properties", [])}
-                           for n in schema["nodes"]}
+        self.node_props = {
+            n["label"]: {n["key"]["name"]} | {p["name"] for p in n.get("properties", [])} for n in schema["nodes"]
+        }
         self.rel_props = {r["type"]: {p["name"] for p in r["properties"]} for r in schema["relationships"]}
         self.edges = {(r["from"]["label"], r["type"], r["to"]["label"]) for r in schema["relationships"]}
 
@@ -44,8 +49,12 @@ class SchemaIndex:
         """'->', '<-' or None (unknown/ambiguous) for left-[rtype]-right."""
         if not rtype:
             return None
-        fwd = any(e[1] == rtype and (left is None or e[0] == left) and (right is None or e[2] == right) for e in self.edges)
-        back = any(e[1] == rtype and (right is None or e[0] == right) and (left is None or e[2] == left) for e in self.edges)
+        fwd = any(
+            e[1] == rtype and (left is None or e[0] == left) and (right is None or e[2] == right) for e in self.edges
+        )
+        back = any(
+            e[1] == rtype and (right is None or e[0] == right) and (left is None or e[2] == left) for e in self.edges
+        )
         if fwd and not back:
             return "->"
         if back and not fwd:
@@ -102,10 +111,18 @@ def repair(cypher: str, schema: dict) -> str:
             lab = idx.label(n.group("l")) or var_label.get(v)
             recs.append({"v": v, "l": n.group("l"), "lab": lab, "m": n.group("m")})
         rrecs = []
-        for i, r in enumerate(rels):
+        for r in rels:
             t = idx.rtype(r.group("rt")) or rel_var_type.get((r.group("rv") or "").strip("`"))
-            rrecs.append({"v": (r.group("rv") or "").strip("`"), "t": t, "raw_t": r.group("rt"), "star": r.group("star"),
-                          "m": r.group("rm"), "dir": "<-" if r.group("lt") else "->" if r.group("gt") else "-"})
+            rrecs.append(
+                {
+                    "v": (r.group("rv") or "").strip("`"),
+                    "t": t,
+                    "raw_t": r.group("rt"),
+                    "star": r.group("star"),
+                    "m": r.group("rm"),
+                    "dir": "<-" if r.group("lt") else "->" if r.group("gt") else "-",
+                }
+            )
         for i, rr in enumerate(rrecs):
             left, right = recs[i], recs[i + 1]
             if rr["dir"] != "-" and not rr["star"]:
@@ -160,13 +177,19 @@ def repair(cypher: str, schema: dict) -> str:
 
     rebuilt, pos = [], 0
     for m in CHAIN_RE.finditer(masked):
-        rebuilt.append(masked[pos:m.start()] + fix_chain(m.group(0)))
+        rebuilt.append(masked[pos : m.start()] + fix_chain(m.group(0)))
         pos = m.end()
     rebuilt.append(masked[pos:])
     text = "".join(rebuilt)
     # single node patterns outside chains: fix label spelling
-    text = NODE_RE.sub(lambda m: "(" + (m.group("v") or "") + (f":{idx.label(m.group('l')) or m.group('l')}" if m.group("l") else "")
-                       + (f" {m.group('m')}" if m.group("m") else "") + ")", text)
+    text = NODE_RE.sub(
+        lambda m: "("
+        + (m.group("v") or "")
+        + (f":{idx.label(m.group('l')) or m.group('l')}" if m.group("l") else "")
+        + (f" {m.group('m')}" if m.group("m") else "")
+        + ")",
+        text,
+    )
     for (var, prop), new in moves.items():
         text = re.sub(rf"\b{re.escape(var)}\.{prop}\b", f"{new}.{prop}", text)
     return _unmask(text, literals)
@@ -197,26 +220,41 @@ def lint(cypher: str, schema: dict) -> list[str]:
                 rel_vars[r.group("rv").strip("`")] = t
             left = idx.label(nodes[i].group("l")) or var_label.get((nodes[i].group("v") or "").strip("`"))
             right = idx.label(nodes[i + 1].group("l")) or var_label.get((nodes[i + 1].group("v") or "").strip("`"))
-            if t and left and right and not r.group("star") and not (
-                    (left, t, right) in idx.edges or (right, t, left) in idx.edges):
+            if (
+                t
+                and left
+                and right
+                and not r.group("star")
+                and not ((left, t, right) in idx.edges or (right, t, left) in idx.edges)
+            ):
                 problems.append(f"{t} does not connect {left} and {right}. The relationships are: {edges_text}.")
     for var, prop in set(re.findall(r"\b([A-Za-z_]\w*)\.([A-Za-z_]\w*)\b", masked)):
         if var in var_label and prop not in idx.node_props[var_label[var]]:
-            owners = [l for l, ps in idx.node_props.items() if prop in ps] + [t for t, ps in idx.rel_props.items() if prop in ps]
-            problems.append(f"{var_label[var]} has no property {prop}"
-                            + (f" ({prop} belongs to {', '.join(owners)})" if owners else "")
-                            + f"; {var_label[var]} properties: {', '.join(sorted(idx.node_props[var_label[var]]))}.")
+            owners = [lab for lab, ps in idx.node_props.items() if prop in ps] + [
+                t for t, ps in idx.rel_props.items() if prop in ps
+            ]
+            problems.append(
+                f"{var_label[var]} has no property {prop}"
+                + (f" ({prop} belongs to {', '.join(owners)})" if owners else "")
+                + f"; {var_label[var]} properties: {', '.join(sorted(idx.node_props[var_label[var]]))}."
+            )
         elif var in rel_vars and prop not in idx.rel_props.get(rel_vars[var], set()):
-            owners = [l for l, ps in idx.node_props.items() if prop in ps]
-            problems.append(f"Relationship {rel_vars[var]} has no property {prop}"
-                            + (f" ({prop} belongs to {', '.join(owners)})" if owners else "") + ".")
+            owners = [lab for lab, ps in idx.node_props.items() if prop in ps]
+            problems.append(
+                f"Relationship {rel_vars[var]} has no property {prop}"
+                + (f" ({prop} belongs to {', '.join(owners)})" if owners else "")
+                + "."
+            )
     return list(dict.fromkeys(problems))
 
 
 ERROR_HINTS = [  # Neo4j error text -> advice a small model can act on
-    (re.compile(r"aggregat", re.I), "Aggregations (max, min, sum, count) can't be used in WHERE or inside node "
-                                   "patterns. For the largest/smallest value use ORDER BY x.prop DESC LIMIT 1; "
-                                   "for totals use WITH n, sum(...) AS total."),
+    (
+        re.compile(r"aggregat", re.I),
+        "Aggregations (max, min, sum, count) can't be used in WHERE or inside node "
+        "patterns. For the largest/smallest value use ORDER BY x.prop DESC LIMIT 1; "
+        "for totals use WITH n, sum(...) AS total.",
+    ),
     (re.compile(r"not defined", re.I), "Every variable used in RETURN/WHERE must be introduced in a MATCH first."),
     (re.compile(r"Invalid input", re.I), "Check brackets and quotes; write one MATCH ... RETURN statement."),
 ]

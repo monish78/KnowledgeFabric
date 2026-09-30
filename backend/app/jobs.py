@@ -3,6 +3,7 @@
 A small thread pool runs jobs in-process; state lives in the jobs table so any request can read
 it. Jobs interrupted by a restart are marked failed on startup.
 """
+
 import json
 import logging
 import threading
@@ -24,8 +25,14 @@ def create(kb_name: str, job_type: str, steps: list[str], started_by: str, sourc
         return conn.execute(
             """INSERT INTO jobs (kb_name, job_type, source_file, steps, started_by, modified_by)
                VALUES (%s, %s, %s, %s, %s, %s) RETURNING id""",
-            (kb_name, job_type, source_file,
-             json.dumps([{"name": s, "status": "waiting", "detail": ""} for s in steps]), started_by, started_by),
+            (
+                kb_name,
+                job_type,
+                source_file,
+                json.dumps([{"name": s, "status": "waiting", "detail": ""} for s in steps]),
+                started_by,
+                started_by,
+            ),
         ).fetchone()["id"]
 
 
@@ -43,8 +50,10 @@ def step(job_id: int, index: int, status: str, detail: str = "", progress: float
         if progress is None:
             done = sum(s["status"] == "done" for s in steps)
             progress = 100 * (done + (0.5 if status == "running" else 0)) / len(steps)
-        conn.execute("UPDATE jobs SET steps = %s, progress = %s, modified_by = 'system' WHERE id = %s",
-                     (json.dumps(steps), round(min(progress, 100), 2), job_id))
+        conn.execute(
+            "UPDATE jobs SET steps = %s, progress = %s, modified_by = 'system' WHERE id = %s",
+            (json.dumps(steps), round(min(progress, 100), 2), job_id),
+        )
         if job["status"] == "cancelled":
             raise JobCancelled()
 
@@ -56,8 +65,14 @@ def is_cancelled(job_id: int) -> bool:
 
 def cancel(job_id: int, actor: str) -> bool:
     with get_conn() as conn:
-        return conn.execute("""UPDATE jobs SET status = 'cancelled', finished_at = now(), modified_by = %s
-                               WHERE id = %s AND status IN ('queued', 'running')""", (actor, job_id)).rowcount > 0
+        return (
+            conn.execute(
+                """UPDATE jobs SET status = 'cancelled', finished_at = now(), modified_by = %s
+                               WHERE id = %s AND status IN ('queued', 'running')""",
+                (actor, job_id),
+            ).rowcount
+            > 0
+        )
 
 
 def submit(job_id: int, fn, *args, on_error=None, **kwargs) -> None:
@@ -65,15 +80,21 @@ def submit(job_id: int, fn, *args, on_error=None, **kwargs) -> None:
 
     def run():
         with get_conn() as conn:
-            started = conn.execute("""UPDATE jobs SET status = 'running', started_at = now(), modified_by = 'system'
-                                      WHERE id = %s AND status = 'queued'""", (job_id,)).rowcount
+            started = conn.execute(
+                """UPDATE jobs SET status = 'running', started_at = now(), modified_by = 'system'
+                                      WHERE id = %s AND status = 'queued'""",
+                (job_id,),
+            ).rowcount
         if not started:
             return
         try:
             fn(job_id, *args, **kwargs)
             with get_conn() as conn:
-                conn.execute("""UPDATE jobs SET status = 'succeeded', progress = 100, finished_at = now(),
-                                modified_by = 'system' WHERE id = %s AND status = 'running'""", (job_id,))
+                conn.execute(
+                    """UPDATE jobs SET status = 'succeeded', progress = 100, finished_at = now(),
+                                modified_by = 'system' WHERE id = %s AND status = 'running'""",
+                    (job_id,),
+                )
         except JobCancelled:
             log.info("job %s cancelled", job_id)
             if on_error:
@@ -82,8 +103,11 @@ def submit(job_id: int, fn, *args, on_error=None, **kwargs) -> None:
             log.exception("job %s failed", job_id)
             message = str(exc) if isinstance(exc, ValueError) else f"{type(exc).__name__}: {exc}"
             with get_conn() as conn:
-                conn.execute("""UPDATE jobs SET status = 'failed', error = %s, finished_at = now(),
-                                modified_by = 'system' WHERE id = %s AND status = 'running'""", (message[:2000], job_id))
+                conn.execute(
+                    """UPDATE jobs SET status = 'failed', error = %s, finished_at = now(),
+                                modified_by = 'system' WHERE id = %s AND status = 'running'""",
+                    (message[:2000], job_id),
+                )
             if on_error:
                 on_error(message)
 

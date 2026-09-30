@@ -9,6 +9,7 @@ Used for the initial build (after Review) and for the add-data pipeline. Rules:
     spelling or the spelling already in the graph); for repeated rows the last one wins
   * all nodes are written before relationships, so forward references are fine
 """
+
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 
@@ -34,13 +35,13 @@ class SheetMatch:
 class LoadPlan:
     matches: list[SheetMatch]
     unmatched_sheets: list[str]
-    node_rows: dict[str, dict[str, dict]] = field(default_factory=dict)      # label -> key -> props
-    rel_rows: dict[str, dict[tuple, dict]] = field(default_factory=dict)     # rel id -> (from, to) -> props
+    node_rows: dict[str, dict[str, dict]] = field(default_factory=dict)  # label -> key -> props
+    rel_rows: dict[str, dict[tuple, dict]] = field(default_factory=dict)  # rel id -> (from, to) -> props
     rows_total: int = 0
     rows_loaded: int = 0
     rejected: list[dict] = field(default_factory=list)
     rejected_by_reason: Counter = field(default_factory=Counter)
-    present_props: dict[str, set] = field(default_factory=dict)               # node label / rel id -> props in file
+    present_props: dict[str, set] = field(default_factory=dict)  # node label / rel id -> props in file
 
 
 def sheet_required_columns(schema: dict, sheet: str) -> set[str]:
@@ -96,8 +97,9 @@ def _display_key(variants: Counter) -> str:
     return best
 
 
-def plan_load(schema: dict, sheets: list[Sheet], existing_keys: dict[str, dict[str, str]],
-              merge_existing: bool = True) -> LoadPlan:
+def plan_load(
+    schema: dict, sheets: list[Sheet], existing_keys: dict[str, dict[str, str]], merge_existing: bool = True
+) -> LoadPlan:
     """Validate every row and build what will be written. existing_keys: label -> norm key -> stored key."""
     matches, unmatched = match_sheets(schema, sheets)
     if not matches:
@@ -164,11 +166,13 @@ def plan_load(schema: dict, sheets: list[Sheet], existing_keys: dict[str, dict[s
         for n in schema["nodes"]:
             if n["sheet"] == m.schema_sheet:
                 plan.present_props.setdefault(n["label"], set()).update(
-                    p["name"] for p in n.get("properties", []) if p["column"] in m.columns)
+                    p["name"] for p in n.get("properties", []) if p["column"] in m.columns
+                )
         for r in schema["relationships"]:
             if r["sheet"] == m.schema_sheet:
                 plan.present_props.setdefault(r["id"], set()).update(
-                    p["name"] for p in r["properties"] if p["column"] in m.columns)
+                    p["name"] for p in r["properties"] if p["column"] in m.columns
+                )
 
     for i, (m, row) in enumerate(work):
         if i in rejected:
@@ -179,8 +183,11 @@ def plan_load(schema: dict, sheets: list[Sheet], existing_keys: dict[str, dict[s
             k = norm_key(cell(m, row, n["key"]["column"]))
             if not k:
                 continue
-            props = {p["name"]: coerce(cell(m, row, p["column"]), p["type"])
-                     for p in n.get("properties", []) if p["column"] in m.columns}
+            props = {
+                p["name"]: coerce(cell(m, row, p["column"]), p["type"])
+                for p in n.get("properties", [])
+                if p["column"] in m.columns
+            }
             target = plan.node_rows.setdefault(n["label"], {})
             merged = target.get(k, {})
             # embedded entities repeat on many rows: don't let a blank cell wipe a known value
@@ -192,9 +199,14 @@ def plan_load(schema: dict, sheets: list[Sheet], existing_keys: dict[str, dict[s
             fk, tk = norm_key(cell(m, row, r["from"]["column"])), norm_key(cell(m, row, r["to"]["column"]))
             if not fk or not tk:
                 continue
-            props = {p["name"]: coerce(cell(m, row, p["column"]), p["type"])
-                     for p in r["properties"] if p["column"] in m.columns}
-            plan.rel_rows.setdefault(r["id"], {})[(stored(r["from"]["label"], fk), stored(r["to"]["label"], tk))] = props
+            props = {
+                p["name"]: coerce(cell(m, row, p["column"]), p["type"])
+                for p in r["properties"]
+                if p["column"] in m.columns
+            }
+            plan.rel_rows.setdefault(r["id"], {})[(stored(r["from"]["label"], fk), stored(r["to"]["label"], tk))] = (
+                props
+            )
 
     # attach stored key spellings to node rows
     for label, rows in plan.node_rows.items():

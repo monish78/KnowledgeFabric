@@ -61,7 +61,7 @@ export default function Access() {
           <div className="sub">Choose one of the knowledge bases you own to control who can use it.</div>
         </div>
         {owned && owned.length === 0 && (
-          <div className="notice">You don't own any knowledge bases yet. Only the owner of a knowledge base can manage its access.</div>
+          <div className="notice">You don&apos;t own any knowledge bases yet. Only the owner of a knowledge base can manage its access.</div>
         )}
         {current && (
           <div className="notice">

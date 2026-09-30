@@ -1,4 +1,5 @@
 """A workbook from a domain the code has never seen (a school), for generality tests."""
+
 import random
 
 from openpyxl import Workbook
@@ -6,10 +7,26 @@ from openpyxl import Workbook
 
 def make_school_workbook(path):
     rng = random.Random(7)
-    first = ["Asha", "Rahul", "Neha", "Imran", "Lakshmi", "Tom", "Fatima", "Wei", "Carlos", "Anita", "Dev", "Sara",
-             "Vikram", "Meena", "John", "Priti"]
+    first = [
+        "Asha",
+        "Rahul",
+        "Neha",
+        "Imran",
+        "Lakshmi",
+        "Tom",
+        "Fatima",
+        "Wei",
+        "Carlos",
+        "Anita",
+        "Dev",
+        "Sara",
+        "Vikram",
+        "Meena",
+        "John",
+        "Priti",
+    ]
     last = ["Kumar", "Shah", "Das", "Brown", "Iyer", "Khan", "Lopez", "Chen", "Nair", "Joshi", "Roy", "Patel"]
-    names = [f"{f} {l}" for f in first for l in last]
+    names = [f"{f} {s}" for f in first for s in last]
     rng.shuffle(names)
     wb = Workbook()
     ws = wb.active

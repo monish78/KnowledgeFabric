@@ -1,4 +1,5 @@
-"""Phase 5: RAG ingest — parsing, chunking, Chroma storage, retrieval quality, PII scan."""
+"""Phase 5: RAG ingest: parsing, chunking, Chroma storage, retrieval quality, PII scan."""
+
 import re
 
 import pytest
@@ -27,9 +28,9 @@ def test_pdf_headers_and_footers_are_removed():
 
 
 def test_docx_tables_and_txt_unicode():
-    (_, docx), = rag.extract_text(SAMPLES / "vendor_handbook.docx", "vendor_handbook.docx")
+    ((_, docx),) = rag.extract_text(SAMPLES / "vendor_handbook.docx", "vendor_handbook.docx")
     assert "On time in full (OTIF) | 95% or higher" in docx
-    (_, txt), = rag.extract_text(SAMPLES / "warehouse_sop.txt", "warehouse_sop.txt")
+    ((_, txt),) = rag.extract_text(SAMPLES / "warehouse_sop.txt", "warehouse_sop.txt")
     assert "\r" not in txt and "குளிர் அறை" in txt
 
 
@@ -63,7 +64,9 @@ def test_documents_indexed(indexed):
 
 def test_reupload_replaces_instead_of_duplicating(indexed):
     before = rag.documents(indexed)["warehouse_sop.txt"]
-    rag.store_chunks(indexed, "warehouse_sop.txt", rag.chunk(rag.extract_text(SAMPLES / "warehouse_sop.txt", "warehouse_sop.txt")))
+    rag.store_chunks(
+        indexed, "warehouse_sop.txt", rag.chunk(rag.extract_text(SAMPLES / "warehouse_sop.txt", "warehouse_sop.txt"))
+    )
     assert rag.documents(indexed)["warehouse_sop.txt"] == before
 
 
@@ -76,8 +79,13 @@ def test_retrieval_finds_the_fact(indexed, question):
 
 def test_pii_scan_counts_by_category(monkeypatch):
     people = {"Deepa Menon", "Karthik Pillai", "Priya Nair", "Venkat Rao"}
-    monkeypatch.setattr(rag, "ask_json", lambda s, u, retries=1: {
-        "people": [c for c in re.findall(r"^- (.+)$", u, re.M) if c in people] + ["Invented Person"]})
+    monkeypatch.setattr(
+        rag,
+        "ask_json",
+        lambda s, u, retries=1: {
+            "people": [c for c in re.findall(r"^- (.+)$", u, re.M) if c in people] + ["Invented Person"]
+        },
+    )
     for name in DOCS:
         chunks = rag.chunk(rag.extract_text(SAMPLES / name, name))
         found = {p["pii_category"]: p for p in rag.scan_pii(name, chunks)}

@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings
 
 
@@ -32,8 +33,13 @@ class Settings(BaseSettings):
     azure_openai_embed_deployment: str = "text-embedding-3-large"
 
     auth_provider: str = "local"  # local | keycloak
-    jwt_secret: str = ""
-    jwt_expire_minutes: int = 480
+    # Encrypts the Keycloak tokens stored in sessions. JWT_SECRET is accepted as the old name.
+    secret_key: str = Field("", validation_alias=AliasChoices("SECRET_KEY", "JWT_SECRET"))
+    session_idle_minutes: int = 60
+    session_max_hours: int = 12
+    session_cookie_name: str = "graphbase_session"
+    session_cookie_secure: bool = False  # set true when the app is served over https
+    app_url: str = ""  # browser-facing URL of the app, e.g. http://graphbase.example:5173
     keycloak_url: str = ""  # browser-facing; token issuer is {keycloak_url}/realms/{realm}
     keycloak_internal_url: str = ""  # where the backend fetches signing keys; defaults to keycloak_url
     keycloak_realm: str = ""

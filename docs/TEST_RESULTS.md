@@ -4,9 +4,12 @@ All prompts and rules are domain-neutral (dataset-specific examples and word lis
 every number below was measured after that change.
 
 ## Without the LLM
-- Backend: 158 passed (`docker compose exec backend pytest -q`), including 22 auth tests against a real Keycloak and a
-  never-seen school workbook extracted and loaded correctly with the LLM switched off.
-- Browser (Playwright, `e2e/`): 8/8 passed, including the real Keycloak redirect login (PKCE).
+- Backend: 173 passed (`docker compose exec backend pytest -q`), including server-side sessions, CSRF protection, the
+  Keycloak sign-in flow run by the backend against a real Keycloak, and a never-seen school workbook extracted and
+  loaded correctly with the LLM switched off.
+- Browser (Playwright, `e2e/`): 11/11 passed, including the Keycloak sign-in, the full upload -> extraction -> review ->
+  build -> chat flow with the real LLM, and checks that the browser holds no session data (HttpOnly cookie, empty storage).
+- Lint: ruff (backend, tests, e2e, data) and ESLint (frontend) report no issues.
 
 ## With the real LLM
 | Area | Result |

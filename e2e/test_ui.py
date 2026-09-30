@@ -4,6 +4,7 @@ Prerequisites: `docker compose up -d` and `docker compose exec backend python -m
 Run from the repo root:  .venv/bin/python -m pytest e2e -q
 Screenshots of every screen are written to e2e/screenshots/ for comparison with docs/mockups/.
 """
+
 import os
 import re
 import subprocess
@@ -16,12 +17,17 @@ ROOT = Path(__file__).resolve().parents[1]
 SAMPLES = ROOT / "data" / "samples"
 SHOTS = Path(__file__).parent / "screenshots"
 BASE = os.environ.get("GRAPHBASE_URL", "http://localhost:5173")
-LLM_TIMEOUT = 600_000  # ms: CPU-only qwen2.5:3b
+LLM_TIMEOUT = 600_000  # ms; generous because local models on CPU are slow
 
 
 def backend_python(code: str) -> str:
-    out = subprocess.run(["docker", "compose", "exec", "-T", "backend", "python", "-c", code], cwd=ROOT,
-                         capture_output=True, text=True, timeout=600)
+    out = subprocess.run(
+        ["docker", "compose", "exec", "-T", "backend", "python", "-c", code],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        timeout=600,
+    )
     assert out.returncode == 0, out.stderr[-2000:]
     return out.stdout
 
@@ -83,6 +89,11 @@ def test_login_rejects_bad_password_then_signs_in(page):
     page.get_by_role("button", name="Sign in").click()
     expect(page).to_have_url(re.compile(r"/workspace"))
     expect(page.get_by_text("Priya Nair")).to_be_visible()
+    # the session lives on the server: scripts can't read the cookie and nothing is kept in storage
+    assert "graphbase_session" not in page.evaluate("document.cookie")
+    assert page.evaluate("sessionStorage.length + localStorage.length") == 0
+    cookie = next(c for c in page.context.cookies() if c["name"] == "graphbase_session")
+    assert cookie["httpOnly"] and cookie["sameSite"] == "Lax"
 
 
 # ------------------------------------------------------------------ 2. workspace
@@ -124,7 +135,8 @@ def test_review_edit_delete_undo_live_cypher(page):
 from app import demo
 from app.db import open_pool
 open_pool()
-demo._graph('supplier_orders_review_kg', 'priya.nair', 'Retail', 'Supply chain', demo.retail_schema(), False, approve=False)
+demo._graph('supplier_orders_review_kg', 'priya.nair', 'Retail', 'Supply chain', demo.retail_schema(), False,
+            approve=False)
 """)
     login(page)
     page.goto(f"{BASE}/kbs/supplier_orders_review_kg/review")

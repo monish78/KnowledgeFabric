@@ -1,26 +1,23 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
-import { api } from "./api.js";
-import { session } from "./auth.js";
+import { currentUser } from "./auth.js";
 import { TopBar, UserContext } from "./components/common.jsx";
 import Access from "./pages/Access.jsx";
 import AddData from "./pages/AddData.jsx";
-import AuthCallback from "./pages/AuthCallback.jsx";
 import Chat from "./pages/Chat.jsx";
 import Login from "./pages/Login.jsx";
 import Processing from "./pages/Processing.jsx";
 import Review from "./pages/Review.jsx";
 import Workspace from "./pages/Workspace.jsx";
 
+// The server decides whether the session is valid; the UI only asks who is signed in.
 function Protected() {
   const location = useLocation();
-  const [user, setUser] = useState(null);
-  const [failed, setFailed] = useState(false);
-  const signedIn = !!session();
+  const [user, setUser] = useState(undefined);
   useEffect(() => {
-    if (signedIn) api("/auth/me").then(setUser).catch(() => setFailed(true));
-  }, [signedIn]);
-  if (!signedIn || failed) {
+    currentUser().then(setUser).catch(() => setUser(null));
+  }, []);
+  if (user === null) {
     return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   }
   if (!user) return <div className="page muted">Loading…</div>;
@@ -39,7 +36,6 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route element={<Protected />}>
           <Route path="/workspace" element={<Workspace />} />
           <Route path="/kbs/:kb/jobs/:jobId" element={<Processing />} />

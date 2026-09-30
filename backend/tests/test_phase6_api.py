@@ -1,16 +1,17 @@
 """Phases 4-8 through the HTTP API: create -> extract -> review -> submit -> build -> access -> add data
 -> chat, for graph and RAG bases, plus the access-control matrix. The LLM is scripted here (its real
 behaviour is measured in test_llm_quality.py); Neo4j, Postgres, Chroma and embeddings are real."""
+
 import json
-from pathlib import Path
 
 import pytest
 
-from app import chat, extraction, jobs, pipelines, rag
+from app import chat, extraction, jobs, rag
 from app.cli import main as cli_main
 from app.db import get_conn
 from app.graphstore import GraphStore
 
+from .conftest import login
 from .fixtures import SAMPLES, manifest, retail_schema
 
 RETAIL = "t_api_retail"
@@ -25,8 +26,7 @@ def users():
 
 
 def token(client, user):
-    r = client.post("/api/auth/login", json={"user_id": user, "password": "test1234"})
-    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+    return login(client, user)
 
 
 def upload(*names, folder=SAMPLES):
@@ -40,21 +40,42 @@ def wait(job_id):
 @pytest.fixture(autouse=True)
 def fake_llm(monkeypatch):
     """Extraction returns the reviewed schema; chat returns scripted Cypher / answers; PII scan is quiet."""
+
     def fake_extract(sheets, file_name, step=None, cancelled=None):
         for i in range(1, 5):
             step and step(i, "done", "scripted")
         s = retail_schema()
-        s["pii"] = [{"sheet": "Customers", "column": "Email", "category": "email", "sensitivity": "medium",
-                     "confidence": 0.95, "reason": "e-mail addresses", "detected_by": "rules"},
-                    {"sheet": "Suppliers", "column": "Bank Account", "category": "bank_account", "sensitivity": "high",
-                     "confidence": 0.9, "reason": "bank details", "detected_by": "llm"}]
+        s["pii"] = [
+            {
+                "sheet": "Customers",
+                "column": "Email",
+                "category": "email",
+                "sensitivity": "medium",
+                "confidence": 0.95,
+                "reason": "e-mail addresses",
+                "detected_by": "rules",
+            },
+            {
+                "sheet": "Suppliers",
+                "column": "Bank Account",
+                "category": "bank_account",
+                "sensitivity": "high",
+                "confidence": 0.9,
+                "reason": "bank details",
+                "detected_by": "llm",
+            },
+        ]
         return s
+
     monkeypatch.setattr(extraction, "extract", fake_extract)
     monkeypatch.setattr(rag, "ask_json", lambda s, u, retries=1: {"people": []})
 
-    cypher = {"chennai": "MATCH (s:Supplier)-[:SUPPLIES]->(p:Product)-[:STORED_IN]->(w:Warehouse {city: 'Chennai'}) "
-                         "RETURN DISTINCT s.name AS supplier ORDER BY supplier",
-              "delete": "MATCH (n) DETACH DELETE n", "broken": "MATCH (n:Supplier RETURN n"}
+    cypher = {
+        "chennai": "MATCH (s:Supplier)-[:SUPPLIES]->(p:Product)-[:STORED_IN]->(w:Warehouse {city: 'Chennai'}) "
+        "RETURN DISTINCT s.name AS supplier ORDER BY supplier",
+        "delete": "MATCH (n) DETACH DELETE n",
+        "broken": "MATCH (n:Supplier RETURN n",
+    }
     calls = {"n": 0}
 
     def fake_ask_json(system, prompt, retries=1):
@@ -65,6 +86,7 @@ def fake_llm(monkeypatch):
         if "nonsense" in q:
             return {"cypher": cypher["broken"]}
         return {"cypher": cypher["chennai"]}
+
     monkeypatch.setattr(chat, "ask_json", fake_ask_json)
     monkeypatch.setattr(chat, "ask_text", lambda system, prompt: "ANSWER: " + prompt[-200:])
     return calls
@@ -82,8 +104,12 @@ def cleanup():
 
 
 def create_graph(client, h, name=RETAIL, file="supplier_orders.xlsx"):
-    return client.post("/api/kbs", headers=h, files=upload(file),
-                       data={"kb_name": name, "kb_type": "graph", "domain": "Retail", "sub_domain": "Supply chain"})
+    return client.post(
+        "/api/kbs",
+        headers=h,
+        files=upload(file),
+        data={"kb_name": name, "kb_type": "graph", "domain": "Retail", "sub_domain": "Supply chain"},
+    )
 
 
 def build_retail(client, h):
@@ -118,7 +144,7 @@ def test_graph_kb_end_to_end(client):
     supplier = schema["nodes"][0]
     supplier["properties"] = [p for p in supplier["properties"] if p["name"] != "bank_account"]  # delete
     shipped = next(r for r in schema["relationships"] if r["type"] == "SHIPPED_FROM")
-    shipped["type"] = "shipped from warehouse"                                                  # rename
+    shipped["type"] = "shipped from warehouse"  # rename
     preview = client.post(f"/api/kbs/{RETAIL}/review/preview", headers=priya, json={"schema": schema}).json()
     assert any("SHIPPED_FROM_WAREHOUSE" in c for c in preview["cypher"])
     assert not any("bank_account" in c for c in preview["cypher"])
@@ -138,21 +164,32 @@ def test_graph_kb_end_to_end(client):
     assert job["status"] == "succeeded", job["error"]
     kb = client.get(f"/api/kbs/{RETAIL}", headers=priya).json()
     assert kb["status"] == "ready" and kb["approved_by"] == "priya.nair"
-    assert kb["stats"]["entities"] == 48 + 307 + 9 + 120 + manifest()["files"]["supplier_orders.xlsx"]["expected_nodes"]["Orders.order_id"]
+    assert (
+        kb["stats"]["entities"]
+        == 48 + 307 + 9 + 120 + manifest()["files"]["supplier_orders.xlsx"]["expected_nodes"]["Orders.order_id"]
+    )
     assert "SHIPPED_FROM_WAREHOUSE" in kb["stats"]["by_type"]
     with get_conn() as conn:
-        cat = conn.execute("SELECT approved_cypher, modified_by, storage_ref FROM kb_catalog WHERE kb_name = %s",
-                           (RETAIL,)).fetchone()
+        cat = conn.execute(
+            "SELECT approved_cypher, modified_by, storage_ref FROM kb_catalog WHERE kb_name = %s", (RETAIL,)
+        ).fetchone()
     assert "SHIPPED_FROM_WAREHOUSE" in cat["approved_cypher"] and cat["storage_ref"] == f"label:KB_{RETAIL}"
     runs = client.get(f"/api/kbs/{RETAIL}/runs", headers=priya).json()
-    assert [(x["run_no"], x["run_type"], x["status"], x["rows_rejected"]) for x in runs] == [(1, "initial_build", "completed", 32)]
+    assert [(x["run_no"], x["run_type"], x["status"], x["rows_rejected"]) for x in runs] == [
+        (1, "initial_build", "completed", 32)
+    ]
     report = client.get(f"/api/kbs/{RETAIL}/runs/{runs[0]['id']}/report", headers=priya).json()
     assert len(report["rejected_report"]) == 32 and {"sheet", "row", "reason"} <= set(report["rejected_report"][0])
 
     # chat: cypher + path chips + rows, read-only, retry on a broken query
-    r = client.post(f"/api/kbs/{RETAIL}/chat", headers=priya,
-                    json={"question": "Which suppliers deliver products stored in the Chennai warehouse?"}).json()
-    assert [x["supplier"] for x in r["rows"]] == next(q["answer"] for q in manifest()["questions"] if "Chennai warehouse?" in q["q"])
+    r = client.post(
+        f"/api/kbs/{RETAIL}/chat",
+        headers=priya,
+        json={"question": "Which suppliers deliver products stored in the Chennai warehouse?"},
+    ).json()
+    assert [x["supplier"] for x in r["rows"]] == next(
+        q["answer"] for q in manifest()["questions"] if "Chennai warehouse?" in q["q"]
+    )
     assert [p["text"] for p in r["path"]] == ["Supplier", "SUPPLIES", "Product", "STORED_IN", "Warehouse: Chennai"]
     assert r["cypher"].startswith("MATCH (s:Supplier)")
     r = client.post(f"/api/kbs/{RETAIL}/chat", headers=priya, json={"question": "Please delete everything"}).json()
@@ -168,11 +205,16 @@ def test_access_control_matrix(client):
     oct_file = upload("supplier_orders_october.xlsx")
 
     # outsiders get 403 everywhere, and the KB isn't listed for them
-    for method, url, kw in [("get", f"/api/kbs/{RETAIL}", {}), ("get", f"/api/kbs/{RETAIL}/review", {}),
-                            ("post", f"/api/kbs/{RETAIL}/chat", {"json": chat_q}), ("get", f"/api/kbs/{RETAIL}/runs", {}),
-                            ("get", f"/api/kbs/{RETAIL}/access", {}), ("get", f"/api/kbs/{RETAIL}/pii", {}),
-                            ("post", f"/api/kbs/{RETAIL}/access", {"json": {"user_id": "outsider"}}),
-                            ("post", f"/api/kbs/{RETAIL}/add-data", {"files": oct_file})]:
+    for method, url, kw in [
+        ("get", f"/api/kbs/{RETAIL}", {}),
+        ("get", f"/api/kbs/{RETAIL}/review", {}),
+        ("post", f"/api/kbs/{RETAIL}/chat", {"json": chat_q}),
+        ("get", f"/api/kbs/{RETAIL}/runs", {}),
+        ("get", f"/api/kbs/{RETAIL}/access", {}),
+        ("get", f"/api/kbs/{RETAIL}/pii", {}),
+        ("post", f"/api/kbs/{RETAIL}/access", {"json": {"user_id": "outsider"}}),
+        ("post", f"/api/kbs/{RETAIL}/add-data", {"files": oct_file}),
+    ]:
         assert getattr(client, method)(url, headers=out, **kw).status_code == 403, url
     assert all(k["kb_name"] != RETAIL for k in client.get("/api/kbs", headers=out).json())
 
@@ -181,16 +223,23 @@ def test_access_control_matrix(client):
     assert r.status_code == 201
     assert client.post(f"/api/kbs/{RETAIL}/access", headers=priya, json={"user_id": "arjun.mehta"}).status_code == 409
     assert client.post(f"/api/kbs/{RETAIL}/access", headers=priya, json={"user_id": "ghost"}).status_code == 404
-    assert client.post(f"/api/kbs/{RETAIL}/access", headers=priya,
-                       json={"user_id": "sneha.iyer", "role": "owner"}).status_code == 422
+    assert (
+        client.post(
+            f"/api/kbs/{RETAIL}/access", headers=priya, json={"user_id": "sneha.iyer", "role": "owner"}
+        ).status_code
+        == 422
+    )
 
     # a 'user' can chat and add data, but not review, see the access page, grant or revoke
     assert client.get(f"/api/kbs/{RETAIL}", headers=arjun).json()["role"] == "user"
     assert client.post(f"/api/kbs/{RETAIL}/chat", headers=arjun, json=chat_q).status_code == 200
-    for method, url, kw in [("get", f"/api/kbs/{RETAIL}/review", {}), ("get", f"/api/kbs/{RETAIL}/access", {}),
-                            ("post", f"/api/kbs/{RETAIL}/access", {"json": {"user_id": "sneha.iyer"}}),
-                            ("delete", f"/api/kbs/{RETAIL}/access/priya.nair", {}),
-                            ("post", f"/api/kbs/{RETAIL}/submit", {"json": {"schema": {}}})]:
+    for method, url, kw in [
+        ("get", f"/api/kbs/{RETAIL}/review", {}),
+        ("get", f"/api/kbs/{RETAIL}/access", {}),
+        ("post", f"/api/kbs/{RETAIL}/access", {"json": {"user_id": "sneha.iyer"}}),
+        ("delete", f"/api/kbs/{RETAIL}/access/priya.nair", {}),
+        ("post", f"/api/kbs/{RETAIL}/submit", {"json": {"schema": {}}}),
+    ]:
         r = getattr(client, method)(url, headers=arjun, **kw)
         assert r.status_code == 403 and "owner" in r.json()["detail"], url
     r = client.post(f"/api/kbs/{RETAIL}/add-data", headers=arjun, files=oct_file)
@@ -207,12 +256,21 @@ def test_access_control_matrix(client):
 
     # audit trail in Postgres
     with get_conn() as conn:
-        rows = conn.execute("SELECT user_id, role, granted_by, revoked_at, modified_by, created_at, updated_at "
-                            "FROM kb_access WHERE kb_name = %s ORDER BY id", (RETAIL,)).fetchall()
+        rows = conn.execute(
+            "SELECT user_id, role, granted_by, revoked_at, modified_by, created_at, updated_at "
+            "FROM kb_access WHERE kb_name = %s ORDER BY id",
+            (RETAIL,),
+        ).fetchall()
         kbs = conn.execute("SELECT user_id, access FROM knowledge_bases WHERE kb_name = %s", (RETAIL,)).fetchall()
-    assert [(r["user_id"], r["role"], r["granted_by"]) for r in rows] == [("priya.nair", "owner", "system"),
-                                                                          ("arjun.mehta", "user", "priya.nair")]
-    assert rows[1]["revoked_at"] and rows[1]["modified_by"] == "priya.nair" and rows[1]["updated_at"] > rows[1]["created_at"]
+    assert [(r["user_id"], r["role"], r["granted_by"]) for r in rows] == [
+        ("priya.nair", "owner", "system"),
+        ("arjun.mehta", "user", "priya.nair"),
+    ]
+    assert (
+        rows[1]["revoked_at"]
+        and rows[1]["modified_by"] == "priya.nair"
+        and rows[1]["updated_at"] > rows[1]["created_at"]
+    )
     assert kbs == [{"user_id": "priya.nair", "access": "owner"}]
 
     # re-grant after revoke adds a new audit row; the log reads newest first
@@ -228,31 +286,65 @@ def test_access_control_matrix(client):
 
 
 def test_every_route_requires_login(client):
-    for method, url in [("get", "/api/kbs"), ("post", "/api/kbs"), ("get", f"/api/kbs/{RETAIL}"),
-                        ("get", "/api/jobs/1"), ("post", f"/api/kbs/{RETAIL}/chat"), ("get", "/api/users/priya.nair"),
-                        ("get", f"/api/kbs/{RETAIL}/access"), ("delete", f"/api/kbs/{RETAIL}/access/x")]:
+    for method, url in [
+        ("get", "/api/kbs"),
+        ("post", "/api/kbs"),
+        ("get", f"/api/kbs/{RETAIL}"),
+        ("get", "/api/jobs/1"),
+        ("post", f"/api/kbs/{RETAIL}/chat"),
+        ("get", "/api/users/priya.nair"),
+        ("get", f"/api/kbs/{RETAIL}/access"),
+        ("delete", f"/api/kbs/{RETAIL}/access/x"),
+    ]:
         assert getattr(client, method)(url).status_code == 401, url
 
 
 def test_create_validation(client):
     h = token(client, "priya.nair")
     form = {"kb_type": "graph", "domain": "Retail", "sub_domain": "Supply chain"}
-    assert client.post("/api/kbs", headers=h, files=upload("supplier_orders.xlsx"),
-                       data={**form, "kb_name": "Bad Name!"}).status_code == 422
-    assert client.post("/api/kbs", headers=h, files=upload("returns_policy.pdf"),
-                       data={**form, "kb_name": "t_api_pdf"}).status_code == 415
-    assert client.post("/api/kbs", headers=h, files=upload("supplier_orders.xlsx"),
-                       data={**form, "kb_name": "t_api_x", "domain": " "}).status_code == 422
-    assert client.post("/api/kbs", headers=h, files=upload("supplier_orders.xlsx", "finance_ledger.csv"),
-                       data={**form, "kb_name": "t_api_two"}).status_code == 422
+    assert (
+        client.post(
+            "/api/kbs", headers=h, files=upload("supplier_orders.xlsx"), data={**form, "kb_name": "Bad Name!"}
+        ).status_code
+        == 422
+    )
+    assert (
+        client.post(
+            "/api/kbs", headers=h, files=upload("returns_policy.pdf"), data={**form, "kb_name": "t_api_pdf"}
+        ).status_code
+        == 415
+    )
+    assert (
+        client.post(
+            "/api/kbs",
+            headers=h,
+            files=upload("supplier_orders.xlsx"),
+            data={**form, "kb_name": "t_api_x", "domain": " "},
+        ).status_code
+        == 422
+    )
+    assert (
+        client.post(
+            "/api/kbs",
+            headers=h,
+            files=upload("supplier_orders.xlsx", "finance_ledger.csv"),
+            data={**form, "kb_name": "t_api_two"},
+        ).status_code
+        == 422
+    )
     r = create_graph(client, h, "t_api_dup")
     assert r.status_code == 201
     assert create_graph(client, h, "t_api_dup").status_code == 409
     wait(r.json()["job_id"])
 
 
-@pytest.mark.parametrize("name,file,message", [("t_api_bad", "edge_cases/corrupt.xlsx", "not a valid Excel"),
-                                               ("t_api_empty", "edge_cases/empty.csv", "no data rows")])
+@pytest.mark.parametrize(
+    "name,file,message",
+    [
+        ("t_api_bad", "edge_cases/corrupt.xlsx", "not a valid Excel"),
+        ("t_api_empty", "edge_cases/empty.csv", "no data rows"),
+    ],
+)
 def test_bad_files_fail_cleanly(client, name, file, message):
     h = token(client, "priya.nair")
     r = create_graph(client, h, name, file)
@@ -267,17 +359,24 @@ def test_bad_files_fail_cleanly(client, name, file, message):
 def test_add_data_checks_and_strict_mode(client):
     h = token(client, "priya.nair")
     build_retail(client, h)
-    check = client.post(f"/api/kbs/{RETAIL}/add-data/check", headers=h,
-                        files={"file": ("warehouse_update.csv", (SAMPLES / "warehouse_update.csv").read_bytes())}).json()
+    check = client.post(
+        f"/api/kbs/{RETAIL}/add-data/check",
+        headers=h,
+        files={"file": ("warehouse_update.csv", (SAMPLES / "warehouse_update.csv").read_bytes())},
+    ).json()
     assert check["matched"] and check["sheets"][0]["schema_sheet"] == "Inventory" and check["total_rows"] == 56
-    r = client.post(f"/api/kbs/{RETAIL}/add-data/check", headers=h,
-                    files={"file": ("finance_ledger.csv", (SAMPLES / "finance_ledger.csv").read_bytes())}).json()
+    r = client.post(
+        f"/api/kbs/{RETAIL}/add-data/check",
+        headers=h,
+        files={"file": ("finance_ledger.csv", (SAMPLES / "finance_ledger.csv").read_bytes())},
+    ).json()
     assert r["matched"] is False
     assert client.post(f"/api/kbs/{RETAIL}/add-data", headers=h, files=upload("finance_ledger.csv")).status_code == 422
     # skip_invalid off: nothing written when any row is bad
     before = GraphStore(RETAIL).counts()
-    r = client.post(f"/api/kbs/{RETAIL}/add-data", headers=h, files=upload("warehouse_update.csv"),
-                    data={"skip_invalid": "false"})
+    r = client.post(
+        f"/api/kbs/{RETAIL}/add-data", headers=h, files=upload("warehouse_update.csv"), data={"skip_invalid": "false"}
+    )
     assert wait(r.json()["job_id"])["status"] == "failed"
     assert GraphStore(RETAIL).counts() == before
     run = client.get(f"/api/kbs/{RETAIL}/runs", headers=h).json()[0]
@@ -289,8 +388,12 @@ def test_add_data_checks_and_strict_mode(client):
 
 def test_rag_kb_end_to_end(client):
     priya, sneha = token(client, "priya.nair"), token(client, "sneha.iyer")
-    r = client.post("/api/kbs", headers=priya, files=upload("returns_policy.pdf", "vendor_handbook.docx", "warehouse_sop.txt"),
-                    data={"kb_name": RAG, "kb_type": "rag", "domain": "Retail", "sub_domain": "Policies"})
+    r = client.post(
+        "/api/kbs",
+        headers=priya,
+        files=upload("returns_policy.pdf", "vendor_handbook.docx", "warehouse_sop.txt"),
+        data={"kb_name": RAG, "kb_type": "rag", "domain": "Retail", "sub_domain": "Policies"},
+    )
     assert r.status_code == 201, r.text
     job = wait(r.json()["job_id"])
     assert job["status"] == "succeeded", job["error"]
@@ -304,7 +407,9 @@ def test_rag_kb_end_to_end(client):
     assert by_doc[("vendor_handbook.docx", "email")] == 2 and by_doc[("warehouse_sop.txt", "phone")] == 1
     assert all(p["node_label"] is None for p in pii)
 
-    r = client.post(f"/api/kbs/{RAG}/chat", headers=priya, json={"question": "What is the restocking fee for electronics?"}).json()
+    r = client.post(
+        f"/api/kbs/{RAG}/chat", headers=priya, json={"question": "What is the restocking fee for electronics?"}
+    ).json()
     assert r["kind"] == "rag" and "returns_policy.pdf" in [x["source"] for x in r["sources"][:3]]
     assert r["answer"].startswith("ANSWER") and "[1]" not in r["sources"][0]["snippet"]
     assert client.post(f"/api/kbs/{RAG}/chat", headers=sneha, json={"question": "x"}).status_code == 403
@@ -314,7 +419,9 @@ def test_rag_kb_end_to_end(client):
     r = client.post(f"/api/kbs/{RAG}/add-data", headers=priya, files=upload("warehouse_sop.txt"))
     assert wait(r.json()["job_id"])["status"] == "succeeded"
     assert client.get(f"/api/kbs/{RAG}", headers=priya).json()["stats"]["chunks"] == chunks
-    assert client.post(f"/api/kbs/{RAG}/add-data", headers=priya, files=upload("supplier_orders.xlsx")).status_code == 415
+    assert (
+        client.post(f"/api/kbs/{RAG}/add-data", headers=priya, files=upload("supplier_orders.xlsx")).status_code == 415
+    )
 
 
 def test_jobs_visibility_and_cancel(client):

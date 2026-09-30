@@ -4,11 +4,13 @@ from contextlib import asynccontextmanager
 import chromadb
 import httpx
 import psycopg
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from neo4j import GraphDatabase
 
 from app import jobs
-from app.api import auth as auth_api, kbs as kbs_api
+from app.api import auth as auth_api
+from app.api import kbs as kbs_api
 from app.config import get_settings
 from app.db import close_pool, open_pool, run_migrations
 from app.graphstore import close_driver
@@ -27,6 +29,24 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Graphbase API", lifespan=lifespan)
+
+CSRF_HEADER = "X-Requested-With"
+SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
+
+
+@app.middleware("http")
+async def csrf_protection(request: Request, call_next):
+    """Sessions are cookies, so state-changing API calls must also carry a custom header. Browsers only
+    let other sites send custom headers after a CORS preflight, which this API never grants."""
+    if (
+        request.method not in SAFE_METHODS
+        and request.url.path.startswith("/api/")
+        and request.headers.get(CSRF_HEADER) != "graphbase"
+    ):
+        return JSONResponse({"detail": "Missing CSRF header"}, status_code=403)
+    return await call_next(request)
+
+
 app.include_router(auth_api.router)
 app.include_router(kbs_api.router)
 
@@ -53,7 +73,9 @@ def _check_chroma(s) -> str:
 def _check_ollama(s) -> str:
     tags = httpx.get(f"{s.ollama_base_url}/api/tags", timeout=3).json()
     models = {m["name"] for m in tags.get("models", [])}
-    missing = [m for m in (s.ollama_chat_model, s.ollama_embed_model) if m not in models and f"{m}:latest" not in models]
+    missing = [
+        m for m in (s.ollama_chat_model, s.ollama_embed_model) if m not in models and f"{m}:latest" not in models
+    ]
     if missing:
         raise RuntimeError(f"reachable, missing models: {', '.join(missing)}")
     return "ok"

@@ -27,7 +27,7 @@ function Answer({ m }) {
           {m.sources.slice(0, 4).map((s) => (
             <div key={s.n} className="small" style={{ padding: "4px 0" }}>
               <strong>[{s.n}] {s.source}{s.page ? `, page ${s.page}` : ""}</strong>
-              <span className="muted"> — {s.snippet.slice(0, 160)}…</span>
+              <span className="muted">: {s.snippet.slice(0, 160)}…</span>
             </div>
           ))}
         </div>

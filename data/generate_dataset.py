@@ -18,6 +18,7 @@ The data is deliberately messy.  The ingest contract the backend must honour
   * duplicate rows merge on the key property; for repeated relationship rows
     the last row wins
 """
+
 import csv
 import datetime as dt
 import json
@@ -37,11 +38,60 @@ SAMPLES = ROOT / "samples"
 EXPECTED = ROOT / "expected"
 rng = random.Random(20260929)
 
-FIRST = ["Aarav", "Ananya", "Vikram", "Meera", "Rohan", "Sneha", "Arjun", "Kavya", "Karthik", "Divya",
-         "Rahul", "Priyanka", "Suresh", "Lakshmi", "Nikhil", "Pooja", "Ravi", "Deepa", "Sanjay", "Nandini",
-         "Farhan", "Zoya", "Gurpreet", "Harleen", "Joseph", "Mary", "Tenzin", "Anjali", "Venkat", "Shreya"]
-LAST = ["Sharma", "Iyer", "Nair", "Reddy", "Menon", "Gupta", "Krishnan", "Pillai", "Das", "Mehta",
-        "Kulkarni", "Banerjee", "Singh", "Khan", "Fernandes", "Rao", "Joshi", "Chatterjee", "Varghese", "Bhat"]
+FIRST = [
+    "Aarav",
+    "Ananya",
+    "Vikram",
+    "Meera",
+    "Rohan",
+    "Sneha",
+    "Arjun",
+    "Kavya",
+    "Karthik",
+    "Divya",
+    "Rahul",
+    "Priyanka",
+    "Suresh",
+    "Lakshmi",
+    "Nikhil",
+    "Pooja",
+    "Ravi",
+    "Deepa",
+    "Sanjay",
+    "Nandini",
+    "Farhan",
+    "Zoya",
+    "Gurpreet",
+    "Harleen",
+    "Joseph",
+    "Mary",
+    "Tenzin",
+    "Anjali",
+    "Venkat",
+    "Shreya",
+]
+LAST = [
+    "Sharma",
+    "Iyer",
+    "Nair",
+    "Reddy",
+    "Menon",
+    "Gupta",
+    "Krishnan",
+    "Pillai",
+    "Das",
+    "Mehta",
+    "Kulkarni",
+    "Banerjee",
+    "Singh",
+    "Khan",
+    "Fernandes",
+    "Rao",
+    "Joshi",
+    "Chatterjee",
+    "Varghese",
+    "Bhat",
+]
 
 
 def person(used):
@@ -96,13 +146,45 @@ def build_retail():
         "SUP-003": ("Orion Components", 3.9),
         "SUP-004": ("Suvarna Foods", 4.4),
     }
-    foreign = [("Müller Präzisionsteile GmbH", "Germany"), ("Société Lumière SARL", "France"),
-               ("Østergaard Tools ApS", "Denmark")]
-    prefixes = ["Apex", "Nimbus", "Sahyadri", "Coromandel", "Deccan", "Indus", "Kestrel", "Lotus", "Meridian",
-                "Narmada", "Pinnacle", "Quartz", "Riverstone", "Saffron", "Terra", "Vega", "Zenith", "Ganga",
-                "Himalaya", "Konkan"]
-    suffixes = ["Traders", "Industries", "Polymers", "Logistics", "Electricals", "Hardware", "Components",
-                "Foods", "Textiles", "Packaging"]
+    foreign = [
+        ("Müller Präzisionsteile GmbH", "Germany"),
+        ("Société Lumière SARL", "France"),
+        ("Østergaard Tools ApS", "Denmark"),
+    ]
+    prefixes = [
+        "Apex",
+        "Nimbus",
+        "Sahyadri",
+        "Coromandel",
+        "Deccan",
+        "Indus",
+        "Kestrel",
+        "Lotus",
+        "Meridian",
+        "Narmada",
+        "Pinnacle",
+        "Quartz",
+        "Riverstone",
+        "Saffron",
+        "Terra",
+        "Vega",
+        "Zenith",
+        "Ganga",
+        "Himalaya",
+        "Konkan",
+    ]
+    suffixes = [
+        "Traders",
+        "Industries",
+        "Polymers",
+        "Logistics",
+        "Electricals",
+        "Hardware",
+        "Components",
+        "Foods",
+        "Textiles",
+        "Packaging",
+    ]
     names = set(n for n, _ in planted.values()) | {n for n, _ in foreign}
     generated = []
     while len(generated) < 41:
@@ -122,28 +204,63 @@ def build_retail():
             rating = None if i in (17, 29, 40) else round(rng.uniform(3.0, 5.0), 1)
         contact = person(people)
         suppliers[sid] = {
-            "supplier_id": sid, "name": name, "country": country, "rating": rating,
+            "supplier_id": sid,
+            "name": name,
+            "country": country,
+            "rating": rating,
             "contact_person": contact,
             "contact_email": f"{contact.lower().replace(' ', '.')}@{name.split()[0].lower()}.example",
             "contact_phone": phone(),
-            "bank_account": f"{rng.randint(10**11, 10**12 - 1)} / IFSC {rng.choice(['HDFC', 'ICIC', 'SBIN', 'UTIB'])}0{rng.randint(100000, 999999)}",
+            "bank_account": f"{rng.randint(10**11, 10**12 - 1)} / IFSC "
+            f"{rng.choice(['HDFC', 'ICIC', 'SBIN', 'UTIB'])}0{rng.randint(100000, 999999)}",
             "onboarded": rand_date(dt.date(2019, 1, 1), dt.date(2026, 6, 30)),
         }
 
     warehouses = {}
-    for code, city, cap in [("WH-CHN", "Chennai", 4000), ("WH-MUM", "Mumbai", 25000), ("WH-DEL", "Delhi", 24500),
-                            ("WH-BLR", "Bangalore", 18000), ("WH-HYD", "Hyderabad", 15000),
-                            ("WH-KOL", "Kolkata", 12000), ("WH-PUN", "Pune", 14000),
-                            ("WH-AMD", "Ahmedabad", 11000), ("WH-KOC", "Kochi", 6500)]:
-        warehouses[code] = {"warehouse_id": code, "city": city, "capacity": cap,
-                            "manager": person(people), "manager_phone": phone()}
+    for code, city, cap in [
+        ("WH-CHN", "Chennai", 4000),
+        ("WH-MUM", "Mumbai", 25000),
+        ("WH-DEL", "Delhi", 24500),
+        ("WH-BLR", "Bangalore", 18000),
+        ("WH-HYD", "Hyderabad", 15000),
+        ("WH-KOL", "Kolkata", 12000),
+        ("WH-PUN", "Pune", 14000),
+        ("WH-AMD", "Ahmedabad", 11000),
+        ("WH-KOC", "Kochi", 6500),
+    ]:
+        warehouses[code] = {
+            "warehouse_id": code,
+            "city": city,
+            "capacity": cap,
+            "manager": person(people),
+            "manager_phone": phone(),
+        }
 
     # Products: the four planted suppliers get fixed counts, the rest spread over the other 44.
     categories = ["Apparel", "Home", "Kitchen", "Electronics", "Grocery", "Packaging", "Tools", "Stationery"]
-    nouns = ["Cotton Towel", "Steel Tumbler", "LED Bulb", "Basmati Rice", "Corrugated Box", "Hex Key Set",
-             "Notebook", "Bedsheet", "Pressure Cooker", "USB Cable", "Masala Mix", "Bubble Wrap", "Drill Bit",
-             "Gel Pen", "Curtain", "Tawa", "Extension Board", "Tea Dust", "Packing Tape", "Spanner"]
-    owners = (["SUP-001"] * 45 + ["SUP-002"] * 14 + ["SUP-003"] * 11 + ["SUP-004"] * 18)
+    nouns = [
+        "Cotton Towel",
+        "Steel Tumbler",
+        "LED Bulb",
+        "Basmati Rice",
+        "Corrugated Box",
+        "Hex Key Set",
+        "Notebook",
+        "Bedsheet",
+        "Pressure Cooker",
+        "USB Cable",
+        "Masala Mix",
+        "Bubble Wrap",
+        "Drill Bit",
+        "Gel Pen",
+        "Curtain",
+        "Tawa",
+        "Extension Board",
+        "Tea Dust",
+        "Packing Tape",
+        "Spanner",
+    ]
+    owners = ["SUP-001"] * 45 + ["SUP-002"] * 14 + ["SUP-003"] * 11 + ["SUP-004"] * 18
     rest = [f"SUP-{i:03d}" for i in range(5, 49)]
     owners += rest + [rng.choice(rest) for _ in range(312 - len(owners) - len(rest))]
     products = {}
@@ -152,9 +269,15 @@ def build_retail():
         cat = rng.choice(categories)
         if rng.random() < 0.08:
             cat = f"{cat}; {rng.choice(categories)}"
-        products[sku] = {"sku": sku, "name": f"{rng.choice(nouns)} {rng.choice(['Classic', 'Pro', 'Lite', 'XL', 'Eco'])}",
-                         "category": cat, "unit_price": round(rng.uniform(20, 4000), 2),
-                         "supplier_id": owner, "discontinued": rng.random() < 0.1, "substitute": None}
+        products[sku] = {
+            "sku": sku,
+            "name": f"{rng.choice(nouns)} {rng.choice(['Classic', 'Pro', 'Lite', 'XL', 'Eco'])}",
+            "category": cat,
+            "unit_price": round(rng.uniform(20, 4000), 2),
+            "supplier_id": owner,
+            "discontinued": rng.random() < 0.1,
+            "substitute": None,
+        }
     skus = list(products)
     # 5 unrecoverable product rows: supplier written as a name, not an ID (not from planted suppliers)
     bad_products = rng.sample([s for s in skus if products[s]["supplier_id"] not in planted], 5)
@@ -199,12 +322,17 @@ def build_retail():
         cid = f"CUS-{i:04d}"
         name = person(people)
         customers[cid] = {
-            "customer_id": cid, "name": name,
+            "customer_id": cid,
+            "name": name,
             "email": f"{name.lower().replace(' ', '.')}{rng.randint(1, 99)}@mail.example",
             "phone": phone(),
             "dob": None if rng.random() < 0.1 else rand_date(dt.date(1960, 1, 1), dt.date(2004, 12, 31)),
-            "pan": "".join(rng.choice("ABCDEFGHJKLMNPQRSTUVWXYZ") for _ in range(5)) + f"{rng.randint(1000, 9999)}" + rng.choice("ABCDEFGHJKLMNPQRSTUVWXYZ"),
-            "address": f"{rng.randint(1, 250)}, {rng.choice(['MG Road', 'Anna Salai', 'Park Street', 'Linking Road', 'FC Road'])}, {rng.choice([w['city'] for w in warehouses.values()])}",
+            "pan": "".join(rng.choice("ABCDEFGHJKLMNPQRSTUVWXYZ") for _ in range(5))
+            + f"{rng.randint(1000, 9999)}"
+            + rng.choice("ABCDEFGHJKLMNPQRSTUVWXYZ"),
+            "address": f"{rng.randint(1, 250)}, "
+            f"{rng.choice(['MG Road', 'Anna Salai', 'Park Street', 'Linking Road', 'FC Road'])}, "
+            f"{rng.choice([w['city'] for w in warehouses.values()])}",
             "region": rng.choice(regions),
         }
 
@@ -222,49 +350,100 @@ def build_retail():
         odate = rand_date(dt.date(2026, 6, 1), dt.date(2026, 9, 20))
         status = rng.choices([s for s, _ in status_w], [w for _, w in status_w])[0]
         shipped = odate + dt.timedelta(days=rng.randint(1, 5)) if status in ("Delivered", "Shipped") else None
-        orders[oid] = {"order_id": oid, "date": odate, "status": status, "customer_id": cid,
-                       "warehouse": rng.choice(list(warehouses)), "shipped_on": shipped}
+        orders[oid] = {
+            "order_id": oid,
+            "date": odate,
+            "status": status,
+            "customer_id": cid,
+            "warehouse": rng.choice(list(warehouses)),
+            "shipped_on": shipped,
+        }
         for sku in rng.sample(order_skus, rng.randint(1, 5)):
             if len(lines) >= 4812 - 27:
                 break
             qty = rng.randint(10, 40) if cid == "CUS-0042" else rng.randint(1, 20)
             lines.append({"order_id": oid, "sku": sku, "qty": qty})
 
-    return {"suppliers": suppliers, "warehouses": warehouses, "products": products,
-            "bad_products": bad_products, "loadable_products": loadable, "inventory": inventory,
-            "chennai": chennai, "customers": customers, "orders": orders, "lines": lines}
+    return {
+        "suppliers": suppliers,
+        "warehouses": warehouses,
+        "products": products,
+        "bad_products": bad_products,
+        "loadable_products": loadable,
+        "inventory": inventory,
+        "chennai": chennai,
+        "customers": customers,
+        "orders": orders,
+        "lines": lines,
+    }
 
 
 def note_text():
-    return rng.choice([
-        "Leave at security gate", "Fragile - handle with care", "Partial delivery accepted",
-        f"Customer asked to call {rng.choice(FIRST)} on {phone()}",  # PII hiding in free text
-        f"Deliver to {rng.randint(1, 99)}, Anna Salai, flat {rng.randint(1, 30)}",
-        "Invoice to be emailed", "Reschedule if raining",
-    ])
+    return rng.choice(
+        [
+            "Leave at security gate",
+            "Fragile - handle with care",
+            "Partial delivery accepted",
+            f"Customer asked to call {rng.choice(FIRST)} on {phone()}",  # PII hiding in free text
+            f"Deliver to {rng.randint(1, 99)}, Anna Salai, flat {rng.randint(1, 30)}",
+            "Invoice to be emailed",
+            "Reschedule if raining",
+        ]
+    )
 
 
 def write_retail_xlsx(m, path):
     wb = Workbook()
     ws = wb.active
     ws.title = "Suppliers"
-    ws.append(["Supplier Master — exported 22/09/2026 by procurement"])
+    ws.append(["Supplier Master: exported 22/09/2026 by procurement"])
     ws.append([])
-    ws.append(["Supplier ID", "Supplier Name", "Country", "Rating (1-5)", "Contact Person", "Contact Email",
-               "Contact Phone", "Bank Account", "Onboarded"])
+    ws.append(
+        [
+            "Supplier ID",
+            "Supplier Name",
+            "Country",
+            "Rating (1-5)",
+            "Contact Person",
+            "Contact Email",
+            "Contact Phone",
+            "Bank Account",
+            "Onboarded",
+        ]
+    )
     rows = list(m["suppliers"].values())
     rows += [dict(m["suppliers"]["SUP-011"]), dict(m["suppliers"]["SUP-023"])]  # duplicates
     for s in rows:
         rating = "N/A" if s["rating"] is None else rng.choice([s["rating"], str(s["rating"])])
-        ws.append([messy_key(s["supplier_id"]), s["name"], s["country"], rating, s["contact_person"],
-                   s["contact_email"], s["contact_phone"], s["bank_account"], messy_date(s["onboarded"])])
+        ws.append(
+            [
+                messy_key(s["supplier_id"]),
+                s["name"],
+                s["country"],
+                rating,
+                s["contact_person"],
+                s["contact_email"],
+                s["contact_phone"],
+                s["bank_account"],
+                messy_date(s["onboarded"]),
+            ]
+        )
 
     ws = wb.create_sheet("Products")
     ws.append(["SKU", "Product", "Category", "Unit Price", "Supplier", "Substitute SKU", "Discontinued"])
     for sku, p in m["products"].items():
         sup = m["suppliers"][p["supplier_id"]]["name"] if sku in m["bad_products"] else messy_key(p["supplier_id"])
-        ws.append([messy_key(sku), p["name"], p["category"], messy_money(p["unit_price"]), sup,
-                   p["substitute"] or "", messy_bool(p["discontinued"])])
+        ws.append(
+            [
+                messy_key(sku),
+                p["name"],
+                p["category"],
+                messy_money(p["unit_price"]),
+                sup,
+                p["substitute"] or "",
+                messy_bool(p["discontinued"]),
+            ]
+        )
 
     ws = wb.create_sheet("Warehouses")
     ws.append(["WH Code", "City", "Capacity (units)", "Manager", "Manager Phone"])
@@ -275,26 +454,56 @@ def write_retail_xlsx(m, path):
     ws.append(["customer_id", "Name", "Email", "Phone", "DOB", "PAN", "Address", "Region"])
     rows = list(m["customers"].values()) + [m["customers"][c] for c in ("CUS-0007", "CUS-0063", "CUS-0101")]
     for c in rows:
-        ws.append([messy_key(c["customer_id"]), c["name"], c["email"], c["phone"],
-                   messy_date(c["dob"]) if c["dob"] else "", c["pan"], c["address"], c["region"]])
+        ws.append(
+            [
+                messy_key(c["customer_id"]),
+                c["name"],
+                c["email"],
+                c["phone"],
+                messy_date(c["dob"]) if c["dob"] else "",
+                c["pan"],
+                c["address"],
+                c["region"],
+            ]
+        )
 
     ws = wb.create_sheet("Orders")
-    ws.append(["order_id", "order_date", "customer_id", "sku", "qty", "warehouse", "shipped_on", "status",
-               "notes", "row_no"])
+    ws.append(
+        ["order_id", "order_date", "customer_id", "sku", "qty", "warehouse", "shipped_on", "status", "notes", "row_no"]
+    )
     out = []
     for ln in m["lines"]:
         o = m["orders"][ln["order_id"]]
-        out.append([ln["order_id"], messy_date(o["date"]), messy_key(o["customer_id"]), messy_key(ln["sku"]),
-                    ln["qty"], o["warehouse"], messy_date(o["shipped_on"]) if o["shipped_on"] else "", o["status"],
-                    note_text() if rng.random() < 0.02 else ""])
+        out.append(
+            [
+                ln["order_id"],
+                messy_date(o["date"]),
+                messy_key(o["customer_id"]),
+                messy_key(ln["sku"]),
+                ln["qty"],
+                o["warehouse"],
+                messy_date(o["shipped_on"]) if o["shipped_on"] else "",
+                o["status"],
+                note_text() if rng.random() < 0.02 else "",
+            ]
+        )
     bad = []
-    reasons = ([("missing_customer_id", 9), ("unknown_sku", 7), ("unknown_warehouse", 5), ("missing_order_id", 6)])
+    reasons = [("missing_customer_id", 9), ("unknown_sku", 7), ("unknown_warehouse", 5), ("missing_order_id", 6)]
     k = 90000
     for reason, count in reasons:
         for _ in range(count):
             k += 1
-            row = [f"ORD-2026-{k}", messy_date(dt.date(2026, 9, 1)), rng.choice(list(m["customers"])),
-                   rng.choice(m["loadable_products"]), rng.randint(1, 9), "WH-MUM", "", "Pending", ""]
+            row = [
+                f"ORD-2026-{k}",
+                messy_date(dt.date(2026, 9, 1)),
+                rng.choice(list(m["customers"])),
+                rng.choice(m["loadable_products"]),
+                rng.randint(1, 9),
+                "WH-MUM",
+                "",
+                "Pending",
+                "",
+            ]
             if reason == "missing_customer_id":
                 row[2] = ""
             elif reason == "unknown_sku":
@@ -328,26 +537,47 @@ def write_october(m, path):
         oid = f"ORD-2026-{n:05d}"
         odate = rand_date(dt.date(2026, 10, 1), dt.date(2026, 10, 28))
         status = rng.choices(["Delivered", "Shipped", "Pending", "Cancelled"], [55, 25, 12, 8])[0]
-        new_orders[oid] = {"order_id": oid, "date": odate, "status": status,
-                           "customer_id": rng.choice(list(m["customers"])), "warehouse": rng.choice(list(m["warehouses"])),
-                           "shipped_on": odate + dt.timedelta(days=2) if status in ("Delivered", "Shipped") else None}
+        new_orders[oid] = {
+            "order_id": oid,
+            "date": odate,
+            "status": status,
+            "customer_id": rng.choice(list(m["customers"])),
+            "warehouse": rng.choice(list(m["warehouses"])),
+            "shipped_on": odate + dt.timedelta(days=2) if status in ("Delivered", "Shipped") else None,
+        }
         for sku in rng.sample(m["loadable_products"], rng.randint(1, 4)):
             if len(new_lines) < 1200:
                 new_lines.append({"order_id": oid, "sku": sku, "qty": rng.randint(1, 20)})
 
     def row(o, ln):
-        return {"SKU": ln["sku"], "Order ID": o["order_id"], "Qty": ln["qty"], "Customer ID": o["customer_id"],
-                "Order Date": messy_date(o["date"]), "Status": o["status"], "Warehouse": o["warehouse"],
-                "Shipped On": messy_date(o["shipped_on"]) if o["shipped_on"] else "", "Notes": ""}
+        return {
+            "SKU": ln["sku"],
+            "Order ID": o["order_id"],
+            "Qty": ln["qty"],
+            "Customer ID": o["customer_id"],
+            "Order Date": messy_date(o["date"]),
+            "Status": o["status"],
+            "Warehouse": o["warehouse"],
+            "Shipped On": messy_date(o["shipped_on"]) if o["shipped_on"] else "",
+            "Notes": "",
+        }
 
     rows = [row(new_orders[ln["order_id"]], ln) for ln in new_lines]
     rows += [row(m["orders"][ln["order_id"]], ln) for ln in rng.sample(m["lines"], 20)]  # already loaded
     bad = Counter()
     for reason, count in [("unknown_customer_id", 4), ("unknown_sku", 3), ("missing_order_id", 3)]:
         for i in range(count):
-            r = row({"order_id": f"ORD-2026-{19900 + len(rows)}", "date": dt.date(2026, 10, 15), "status": "Pending",
-                     "customer_id": "CUS-0005", "warehouse": "WH-DEL", "shipped_on": None},
-                    {"sku": "SKU-10020", "qty": 3})
+            r = row(
+                {
+                    "order_id": f"ORD-2026-{19900 + len(rows)}",
+                    "date": dt.date(2026, 10, 15),
+                    "status": "Pending",
+                    "customer_id": "CUS-0005",
+                    "warehouse": "WH-DEL",
+                    "shipped_on": None,
+                },
+                {"sku": "SKU-10020", "qty": 3},
+            )
             if reason == "unknown_customer_id":
                 r["Customer ID"] = f"CUS-09{90 + i}"
             elif reason == "unknown_sku":
@@ -391,10 +621,26 @@ def write_inventory_update(m, path):
 def write_finance(path):
     people = set()
     approvers = [person(people) for _ in range(6)]
-    vendors = ["Bluepeak Textiles", "Tata Power", "Airtel Business", "Infosys BPM", "Deccan Couriers",
-               "Sodexo Facilities", "Amazon Web Services", "Kaveri Packaging"]
-    accounts = [("5100", "Utilities"), ("5200", "Telecom"), ("5300", "Cloud Hosting"), ("5400", "Outsourcing"),
-                ("5500", "Logistics"), ("5600", "Facilities"), ("5700", "Raw Material"), ("2100", "Accounts Payable")]
+    vendors = [
+        "Bluepeak Textiles",
+        "Tata Power",
+        "Airtel Business",
+        "Infosys BPM",
+        "Deccan Couriers",
+        "Sodexo Facilities",
+        "Amazon Web Services",
+        "Kaveri Packaging",
+    ]
+    accounts = [
+        ("5100", "Utilities"),
+        ("5200", "Telecom"),
+        ("5300", "Cloud Hosting"),
+        ("5400", "Outsourcing"),
+        ("5500", "Logistics"),
+        ("5600", "Facilities"),
+        ("5700", "Raw Material"),
+        ("2100", "Accounts Payable"),
+    ]
     ccs = ["CC-OPS", "CC-MKT", "CC-IT", "CC-HR", "CC-FIN"]
     rows, truth = [], []
     for i in range(1, 481):
@@ -406,17 +652,48 @@ def write_finance(path):
         if acct[0] == "5300":
             amt = abs(amt) + 150000  # AWS is the biggest spender by construction
         appr = rng.choice(approvers)
-        e = {"entry": f"JE-{2026}{i:05d}", "date": rand_date(dt.date(2026, 4, 1), dt.date(2026, 9, 25)),
-             "account": acct[0], "account_name": acct[1], "cc": rng.choice(ccs), "vendor": vendor,
-             "amount": amt, "approver": appr}
+        e = {
+            "entry": f"JE-{2026}{i:05d}",
+            "date": rand_date(dt.date(2026, 4, 1), dt.date(2026, 9, 25)),
+            "account": acct[0],
+            "account_name": acct[1],
+            "cc": rng.choice(ccs),
+            "vendor": vendor,
+            "amount": amt,
+            "approver": appr,
+        }
         truth.append(e)
         amount_txt = f"({abs(amt):,.2f})" if amt < 0 else f"{amt:,.2f}"
-        rows.append([e["entry"], e["date"].strftime("%d/%m/%Y"), e["account"], e["account_name"], e["cc"], vendor,
-                     amount_txt, "INR", appr, f"{appr.lower().replace(' ', '.')}@graphbase-retail.example"])
+        rows.append(
+            [
+                e["entry"],
+                e["date"].strftime("%d/%m/%Y"),
+                e["account"],
+                e["account_name"],
+                e["cc"],
+                vendor,
+                amount_txt,
+                "INR",
+                appr,
+                f"{appr.lower().replace(' ', '.')}@graphbase-retail.example",
+            ]
+        )
     with open(path, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f, delimiter=";", lineterminator="\r\n")
-        w.writerow(["Entry No", "Posting Date", "GL Account", "Account Name", "Cost Centre", "Vendor", "Amount",
-                    "Currency", "Approved By", "Approver Email"])
+        w.writerow(
+            [
+                "Entry No",
+                "Posting Date",
+                "GL Account",
+                "Account Name",
+                "Cost Centre",
+                "Vendor",
+                "Amount",
+                "Currency",
+                "Approved By",
+                "Approver Email",
+            ]
+        )
         w.writerows(rows)
     return truth
 
@@ -434,34 +711,57 @@ FILLER = [
 
 def write_returns_pdf(path):
     styles = getSampleStyleSheet()
-    story = [Paragraph("Customer Returns Policy", styles["Title"]),
-             Paragraph("Version 4.2, effective 1 January 2025", styles["Normal"]), Spacer(1, 12),
-             Paragraph("1. Standard return window", styles["Heading2"]),
-             Paragraph("Unless a category rule below says otherwise, customers may return products within "
-                       "<b>30 days</b> of delivery with proof of purchase.", styles["Normal"])]
+    story = [
+        Paragraph("Customer Returns Policy", styles["Title"]),
+        Paragraph("Version 4.2, effective 1 January 2025", styles["Normal"]),
+        Spacer(1, 12),
+        Paragraph("1. Standard return window", styles["Heading2"]),
+        Paragraph(
+            "Unless a category rule below says otherwise, customers may return products within "
+            "<b>30 days</b> of delivery with proof of purchase.",
+            styles["Normal"],
+        ),
+    ]
     story += [Paragraph(t, styles["Normal"]) for t in FILLER]
-    story += [Paragraph("2. Category rules", styles["Heading2"]),
-              Paragraph("The table below overrides the standard window for specific categories.", styles["Normal"]),
-              Spacer(1, 6)]
-    table = Table([["Category", "Return window", "Restocking fee"],
-                   ["Electronics", "15 days", "12% of item price"],
-                   ["Apparel", "30 days", "None"],
-                   ["Furniture", "30 days", "8% of item price"],
-                   ["Perishables / Grocery", "Not returnable", "-"]])
-    table.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
-                               ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey)]))
+    story += [
+        Paragraph("2. Category rules", styles["Heading2"]),
+        Paragraph("The table below overrides the standard window for specific categories.", styles["Normal"]),
+        Spacer(1, 6),
+    ]
+    table = Table(
+        [
+            ["Category", "Return window", "Restocking fee"],
+            ["Electronics", "15 days", "12% of item price"],
+            ["Apparel", "30 days", "None"],
+            ["Furniture", "30 days", "8% of item price"],
+            ["Perishables / Grocery", "Not returnable", "-"],
+        ]
+    )
+    table.setStyle(
+        TableStyle([("GRID", (0, 0), (-1, -1), 0.5, colors.grey), ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey)])
+    )
     story += [table, Spacer(1, 12)]
     story += [Paragraph(t, styles["Normal"]) for t in FILLER] + [PageBreak()]
-    story += [Paragraph("3. Refund timelines", styles["Heading2"]),
-              Paragraph("Approved refunds are processed within 7 working days. UPI and card refunds may take a "
-                        "further 3 to 5 bank working days to appear.", styles["Normal"]),
-              Paragraph("4. Contact", styles["Heading2"]),
-              Paragraph("Returns desk: returns@graphbase-retail.example, phone +91 44 4000 1234 "
-                        "(Mon to Sat, 9:00 to 18:00). Escalations go to Deepa Menon, Customer Care Manager.",
-                        styles["Normal"]),
-              Paragraph("5. History", styles["Heading2"]),
-              Paragraph("Before 1 January 2025 the standard return window was 45 days. That rule is superseded "
-                        "and must not be quoted to customers.", styles["Normal"])]
+    story += [
+        Paragraph("3. Refund timelines", styles["Heading2"]),
+        Paragraph(
+            "Approved refunds are processed within 7 working days. UPI and card refunds may take a "
+            "further 3 to 5 bank working days to appear.",
+            styles["Normal"],
+        ),
+        Paragraph("4. Contact", styles["Heading2"]),
+        Paragraph(
+            "Returns desk: returns@graphbase-retail.example, phone +91 44 4000 1234 "
+            "(Mon to Sat, 9:00 to 18:00). Escalations go to Deepa Menon, Customer Care Manager.",
+            styles["Normal"],
+        ),
+        Paragraph("5. History", styles["Heading2"]),
+        Paragraph(
+            "Before 1 January 2025 the standard return window was 45 days. That rule is superseded "
+            "and must not be quoted to customers.",
+            styles["Normal"],
+        ),
+    ]
     story += [Paragraph(t, styles["Normal"]) for t in FILLER]
 
     def footer(canvas, doc):
@@ -477,22 +777,33 @@ def write_handbook_docx(path):
     d.add_heading("Vendor Handbook", 0)
     d.add_paragraph("This handbook applies to every supplier registered with Graphbase Retail.")
     d.add_heading("Onboarding", 1)
-    for item in ["GST registration certificate", "Cancelled cheque for the payout account",
-                 "Signed code of conduct", "Two trade references"]:
+    for item in [
+        "GST registration certificate",
+        "Cancelled cheque for the payout account",
+        "Signed code of conduct",
+        "Two trade references",
+    ]:
         d.add_paragraph(item, style="List Bullet")
     d.add_heading("Payment terms", 1)
-    d.add_paragraph("Invoices are paid on net 45 day terms from the date a correct invoice is received. "
-                    "Early payment at a 1.5% discount is available on request for invoices paid within 10 days.")
+    d.add_paragraph(
+        "Invoices are paid on net 45 day terms from the date a correct invoice is received. "
+        "Early payment at a 1.5% discount is available on request for invoices paid within 10 days."
+    )
     d.add_heading("Performance targets", 1)
     t = d.add_table(rows=1, cols=2)
     t.rows[0].cells[0].text, t.rows[0].cells[1].text = "KPI", "Target"
-    for k, v in [("On time in full (OTIF)", "95% or higher"), ("Defect rate", "below 1.5%"),
-                 ("Invoice accuracy", "98% or higher")]:
+    for k, v in [
+        ("On time in full (OTIF)", "95% or higher"),
+        ("Defect rate", "below 1.5%"),
+        ("Invoice accuracy", "98% or higher"),
+    ]:
         c = t.add_row().cells
         c[0].text, c[1].text = k, v
     d.add_heading("Late delivery penalty", 1)
-    d.add_paragraph("Late deliveries attract a penalty of 2% of the purchase order value for each week of delay, "
-                    "capped at 10% of the purchase order value.")
+    d.add_paragraph(
+        "Late deliveries attract a penalty of 2% of the purchase order value for each week of delay, "
+        "capped at 10% of the purchase order value."
+    )
     d.add_heading("Escalation contacts", 1)
     d.add_paragraph("Procurement lead: Priya Nair, priya.nair@graphbase-retail.example, +91 98400 11223.")
     d.add_paragraph("Accounts payable: Venkat Rao, ap@graphbase-retail.example, +91 98400 44556.")
@@ -572,111 +883,257 @@ def main():
         "ingest_contract": __doc__.split("contract the backend must honour")[1].split('"""')[0].strip(),
         "files": {
             "supplier_orders.xlsx": {
-                "kb": "retail_supply_chain_kg", "kind": "graph_initial",
-                "sheets": {"Suppliers": {"header_row": 3, "data_rows": 50},
-                           "Products": {"header_row": 1, "data_rows": 312},
-                           "Warehouses": {"header_row": 1, "data_rows": 9},
-                           "Customers": {"header_row": 1, "data_rows": 123},
-                           "Orders": {"header_row": 1, "data_rows": 4812, "blank_rows": 6},
-                           "Inventory": {"header_row": 1, "data_rows": len(m["inventory"])}},
+                "kb": "retail_supply_chain_kg",
+                "kind": "graph_initial",
+                "sheets": {
+                    "Suppliers": {"header_row": 3, "data_rows": 50},
+                    "Products": {"header_row": 1, "data_rows": 312},
+                    "Warehouses": {"header_row": 1, "data_rows": 9},
+                    "Customers": {"header_row": 1, "data_rows": 123},
+                    "Orders": {"header_row": 1, "data_rows": 4812, "blank_rows": 6},
+                    "Inventory": {"header_row": 1, "data_rows": len(m["inventory"])},
+                },
                 "expected_nodes": {  # keyed by source sheet + key column (labels are chosen by the LLM)
-                    "Suppliers.Supplier ID": 48, "Products.SKU": 307, "Warehouses.WH Code": 9,
-                    "Customers.customer_id": 120, "Orders.order_id": len(m["orders"])},
+                    "Suppliers.Supplier ID": 48,
+                    "Products.SKU": 307,
+                    "Warehouses.WH Code": 9,
+                    "Customers.customer_id": 120,
+                    "Orders.order_id": len(m["orders"]),
+                },
                 "expected_relationships": {
-                    "supplier->product": 307, "product->substitute_product": subs,
-                    "product->warehouse (stock)": len(stock), "customer->order": len(m["orders"]),
-                    "order->product (line)": len(m["lines"]), "order->warehouse": len(m["orders"])},
-                "expected_rejections": {"Products": {"supplier_given_as_name": 5},
-                                        "Orders": dict(bad_orders)},
+                    "supplier->product": 307,
+                    "product->substitute_product": subs,
+                    "product->warehouse (stock)": len(stock),
+                    "customer->order": len(m["orders"]),
+                    "order->product (line)": len(m["lines"]),
+                    "order->warehouse": len(m["orders"]),
+                },
+                "expected_rejections": {"Products": {"supplier_given_as_name": 5}, "Orders": dict(bad_orders)},
                 "pii": {
-                    "Suppliers": {"Contact Person": "person_name", "Contact Email": "email",
-                                  "Contact Phone": "phone", "Bank Account": "bank_account"},
+                    "Suppliers": {
+                        "Contact Person": "person_name",
+                        "Contact Email": "email",
+                        "Contact Phone": "phone",
+                        "Bank Account": "bank_account",
+                    },
                     "Warehouses": {"Manager": "person_name", "Manager Phone": "phone"},
-                    "Customers": {"Name": "person_name", "Email": "email", "Phone": "phone",
-                                  "DOB": "date_of_birth", "PAN": "government_id", "Address": "address"},
-                    "Orders": {"notes": "free_text_may_contain_pii"}},
-                "not_pii_traps": ["Suppliers.Supplier Name (company)", "Products.Product", "Warehouses.City",
-                                  "Customers.Region", "Orders.row_no"],
+                    "Customers": {
+                        "Name": "person_name",
+                        "Email": "email",
+                        "Phone": "phone",
+                        "DOB": "date_of_birth",
+                        "PAN": "government_id",
+                        "Address": "address",
+                    },
+                    "Orders": {"notes": "free_text_may_contain_pii"},
+                },
+                "not_pii_traps": [
+                    "Suppliers.Supplier Name (company)",
+                    "Products.Product",
+                    "Warehouses.City",
+                    "Customers.Region",
+                    "Orders.row_no",
+                ],
                 "junk_columns": ["Orders.row_no"],
             },
             "supplier_orders_october.xlsx": {
-                "kb": "retail_supply_chain_kg", "kind": "graph_add_data", "rows": 1230,
+                "kb": "retail_supply_chain_kg",
+                "kind": "graph_add_data",
+                "rows": 1230,
                 "header_note": "same columns as Orders but renamed/reordered, no row_no",
-                "expected": {"new_orders": len(oct_orders), "new_order_lines": len(oct_lines),
-                             "already_loaded_lines": 20, "rejected": dict(oct_bad)}},
+                "expected": {
+                    "new_orders": len(oct_orders),
+                    "new_order_lines": len(oct_lines),
+                    "already_loaded_lines": 20,
+                    "rejected": dict(oct_bad),
+                },
+            },
             "warehouse_update.csv": {
-                "kb": "retail_supply_chain_kg", "kind": "graph_add_data", "rows": 56,
+                "kb": "retail_supply_chain_kg",
+                "kind": "graph_add_data",
+                "rows": 56,
                 "format": "UTF-8 BOM, ';' delimiter, CRLF",
-                "expected": {"updated_pairs": 30, "new_pairs": 14, "rejected": {"missing_sku": 12}}},
+                "expected": {"updated_pairs": 30, "new_pairs": 14, "rejected": {"missing_sku": 12}},
+            },
             "finance_ledger.csv": {
-                "kb": "finance_ledger_kg", "kind": "graph_initial", "rows": 480,
+                "kb": "finance_ledger_kg",
+                "kind": "graph_initial",
+                "rows": 480,
                 "format": "UTF-8 BOM, ';' delimiter, CRLF, accounting negatives '(1,200.00)', DD/MM/YYYY",
                 "pii": {"Approved By": "person_name", "Approver Email": "email"},
-                "isolation_trap": "vendors 'Bluepeak Textiles' and 'Kaveri Packaging' also exist in the retail KB"},
-            "returns_policy.pdf": {"kb": "retail_policies_rag", "kind": "rag",
-                                   "pii": {"email": 1, "phone": 1, "person_name": 1},
-                                   "not_pii_traps": ["returns@ is a shared mailbox but still counts as an email"]},
-            "vendor_handbook.docx": {"kb": "retail_policies_rag", "kind": "rag",
-                                     "pii": {"person_name": 2, "email": 2, "phone": 2}},
-            "warehouse_sop.txt": {"kb": "retail_policies_rag", "kind": "rag", "format": "CRLF, contains Tamil",
-                                  "pii": {"person_name": 1, "phone": 1}},
+                "isolation_trap": "vendors 'Bluepeak Textiles' and 'Kaveri Packaging' also exist in the retail KB",
+            },
+            "returns_policy.pdf": {
+                "kb": "retail_policies_rag",
+                "kind": "rag",
+                "pii": {"email": 1, "phone": 1, "person_name": 1},
+                "not_pii_traps": ["returns@ is a shared mailbox but still counts as an email"],
+            },
+            "vendor_handbook.docx": {
+                "kb": "retail_policies_rag",
+                "kind": "rag",
+                "pii": {"person_name": 2, "email": 2, "phone": 2},
+            },
+            "warehouse_sop.txt": {
+                "kb": "retail_policies_rag",
+                "kind": "rag",
+                "format": "CRLF, contains Tamil",
+                "pii": {"person_name": 1, "phone": 1},
+            },
             "edge_cases/corrupt.xlsx": {"expect": "clear error, no job crash"},
             "edge_cases/empty.csv": {"expect": "clear error: no data rows"},
         },
         "questions": [
             {"kb": "retail_supply_chain_kg", "level": "core", "q": "How many suppliers are there?", "answer": 48},
-            {"kb": "retail_supply_chain_kg", "level": "core",
-             "q": "Which suppliers deliver products stored in the Chennai warehouse?", "answer": chennai_sups},
-            {"kb": "retail_supply_chain_kg", "level": "core", "follow_up": True,
-             "q": "Which of those have a rating below 4?", "answer": low_rated},
-            {"kb": "retail_supply_chain_kg", "level": "core",
-             "q": "Which customer ordered the largest total quantity?",
-             "answer": m["customers"][top_c]["name"], "detail": {"customer_id": top_c, "qty": top_q}},
-            {"kb": "retail_supply_chain_kg", "level": "core", "q": "How many orders were cancelled?",
-             "answer": cancelled},
-            {"kb": "retail_supply_chain_kg", "level": "core", "q": "Which warehouse has the largest capacity?",
-             "answer": "Mumbai"},
-            {"kb": "retail_supply_chain_kg", "level": "core", "q": "What is the substitute product for SKU-10007?",
-             "answer": "SKU-10213"},
-            {"kb": "retail_supply_chain_kg", "level": "core",
-             "q": "What is the total stock of SKU-10001 across all warehouses?", "answer": sku1_stock,
-             "after_add_data": sum(q for (s, _), q in stock_after.items() if s == "SKU-10001")},
-            {"kb": "retail_supply_chain_kg", "level": "core", "q": "How many products does Bluepeak Textiles supply?",
-             "answer": 45},
-            {"kb": "retail_supply_chain_kg", "level": "stretch",
-             "q": "How many products are stored in the Bengaluru warehouse?", "answer": blr,
-             "trap": "city is stored as 'Bangalore'"},
-            {"kb": "retail_supply_chain_kg", "level": "core", "after_add_data_only": True,
-             "q": "How many orders were cancelled?",
-             "answer": sum(o["status"] == "Cancelled" for o in all_orders.values())},
-            {"kb": "finance_ledger_kg", "level": "core", "q": "What is the total amount posted to cost centre CC-IT?",
-             "answer": cc_it, "tolerance": 0.01},
-            {"kb": "finance_ledger_kg", "level": "core", "q": "Which vendor has the highest total spend?",
-             "answer": spend.most_common(1)[0][0]},
-            {"kb": "retail_policies_rag", "level": "core", "q": "What is the standard return window?",
-             "answer": "30 days", "trap": "superseded 45-day rule is also in the document"},
-            {"kb": "retail_policies_rag", "level": "core", "q": "What is the restocking fee for electronics?",
-             "answer": "12%", "trap": "fact is only in a PDF table"},
-            {"kb": "retail_policies_rag", "level": "core", "q": "What are the vendor payment terms?",
-             "answer": "net 45 days"},
-            {"kb": "retail_policies_rag", "level": "core", "q": "What is the late delivery penalty?",
-             "answer": "2% of PO value per week of delay, capped at 10%"},
-            {"kb": "retail_policies_rag", "level": "core", "q": "What temperature must the Chennai cold room be kept at?",
-             "answer": "2 to 8 degrees Celsius"},
-            {"kb": "retail_policies_rag", "level": "core", "q": "What are the inbound dock hours?",
-             "answer": "06:00 to 14:00, Monday to Saturday"},
-            {"kb": "retail_supply_chain_kg", "level": "security", "as_user": "unauthorised",
-             "q": "How many suppliers are there?", "answer": "403 access denied"},
-            {"kb": "retail_supply_chain_kg", "level": "security",
-             "q": "Delete all suppliers", "answer": "refused: chat Cypher is read-only"},
-            {"kb": "finance_ledger_kg", "level": "security",
-             "q": "Which products are stored in the Chennai warehouse?",
-             "answer": "no retail data (KB isolation)"},
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "core",
+                "q": "Which suppliers deliver products stored in the Chennai warehouse?",
+                "answer": chennai_sups,
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "core",
+                "follow_up": True,
+                "q": "Which of those have a rating below 4?",
+                "answer": low_rated,
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "core",
+                "q": "Which customer ordered the largest total quantity?",
+                "answer": m["customers"][top_c]["name"],
+                "detail": {"customer_id": top_c, "qty": top_q},
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "core",
+                "q": "How many orders were cancelled?",
+                "answer": cancelled,
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "core",
+                "q": "Which warehouse has the largest capacity?",
+                "answer": "Mumbai",
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "core",
+                "q": "What is the substitute product for SKU-10007?",
+                "answer": "SKU-10213",
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "core",
+                "q": "What is the total stock of SKU-10001 across all warehouses?",
+                "answer": sku1_stock,
+                "after_add_data": sum(q for (s, _), q in stock_after.items() if s == "SKU-10001"),
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "core",
+                "q": "How many products does Bluepeak Textiles supply?",
+                "answer": 45,
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "stretch",
+                "q": "How many products are stored in the Bengaluru warehouse?",
+                "answer": blr,
+                "trap": "city is stored as 'Bangalore'",
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "core",
+                "after_add_data_only": True,
+                "q": "How many orders were cancelled?",
+                "answer": sum(o["status"] == "Cancelled" for o in all_orders.values()),
+            },
+            {
+                "kb": "finance_ledger_kg",
+                "level": "core",
+                "q": "What is the total amount posted to cost centre CC-IT?",
+                "answer": cc_it,
+                "tolerance": 0.01,
+            },
+            {
+                "kb": "finance_ledger_kg",
+                "level": "core",
+                "q": "Which vendor has the highest total spend?",
+                "answer": spend.most_common(1)[0][0],
+            },
+            {
+                "kb": "retail_policies_rag",
+                "level": "core",
+                "q": "What is the standard return window?",
+                "answer": "30 days",
+                "trap": "superseded 45-day rule is also in the document",
+            },
+            {
+                "kb": "retail_policies_rag",
+                "level": "core",
+                "q": "What is the restocking fee for electronics?",
+                "answer": "12%",
+                "trap": "fact is only in a PDF table",
+            },
+            {
+                "kb": "retail_policies_rag",
+                "level": "core",
+                "q": "What are the vendor payment terms?",
+                "answer": "net 45 days",
+            },
+            {
+                "kb": "retail_policies_rag",
+                "level": "core",
+                "q": "What is the late delivery penalty?",
+                "answer": "2% of PO value per week of delay, capped at 10%",
+            },
+            {
+                "kb": "retail_policies_rag",
+                "level": "core",
+                "q": "What temperature must the Chennai cold room be kept at?",
+                "answer": "2 to 8 degrees Celsius",
+            },
+            {
+                "kb": "retail_policies_rag",
+                "level": "core",
+                "q": "What are the inbound dock hours?",
+                "answer": "06:00 to 14:00, Monday to Saturday",
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "security",
+                "as_user": "unauthorised",
+                "q": "How many suppliers are there?",
+                "answer": "403 access denied",
+            },
+            {
+                "kb": "retail_supply_chain_kg",
+                "level": "security",
+                "q": "Delete all suppliers",
+                "answer": "refused: chat Cypher is read-only",
+            },
+            {
+                "kb": "finance_ledger_kg",
+                "level": "security",
+                "q": "Which products are stored in the Chennai warehouse?",
+                "answer": "no retail data (KB isolation)",
+            },
         ],
     }
     (EXPECTED / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False, default=str))
-    print(json.dumps({k: v.get("expected_nodes", v.get("expected", "")) for k, v in manifest["files"].items()
-                      if isinstance(v, dict) and ("expected_nodes" in v or "expected" in v)}, indent=1, default=str))
+    print(
+        json.dumps(
+            {
+                k: v.get("expected_nodes", v.get("expected", ""))
+                for k, v in manifest["files"].items()
+                if isinstance(v, dict) and ("expected_nodes" in v or "expected" in v)
+            },
+            indent=1,
+            default=str,
+        )
+    )
 
 
 if __name__ == "__main__":

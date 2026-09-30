@@ -8,6 +8,7 @@ NEO4J_MODE=multi   (Enterprise): one database per KB, created on demand. Session
 
 Chat Cypher is additionally checked to be read-only and executed in a read transaction.
 """
+
 import re
 import threading
 
@@ -24,8 +25,9 @@ def get_driver() -> Driver:
     with _lock:
         if _driver is None:
             s = get_settings()
-            _driver = GraphDatabase.driver(s.neo4j_uri, auth=(s.neo4j_user, s.neo4j_password),
-                                           max_connection_pool_size=20)
+            _driver = GraphDatabase.driver(
+                s.neo4j_uri, auth=(s.neo4j_user, s.neo4j_password), max_connection_pool_size=20
+            )
     return _driver
 
 
@@ -74,20 +76,24 @@ class GraphStore:
             self.driver.execute_query(f"DROP DATABASE `{self.database}` IF EXISTS", database_="system")
         else:  # CALL ... IN TRANSACTIONS needs an auto-commit transaction
             with self.driver.session() as session:
-                session.run(f"MATCH (n:`{self.kb_label}`) CALL (n) {{ DETACH DELETE n }} "
-                            f"IN TRANSACTIONS OF 5000 ROWS").consume()
+                session.run(
+                    f"MATCH (n:`{self.kb_label}`) CALL (n) {{ DETACH DELETE n }} " f"IN TRANSACTIONS OF 5000 ROWS"
+                ).consume()
 
     # -------------------------------------------------------------- writes (loader only)
     def write(self, query: str, **params) -> dict:
         summary = self.driver.execute_query(query, params, database_=self.database).summary
         c = summary.counters
-        return {"nodes_created": c.nodes_created, "relationships_created": c.relationships_created,
-                "properties_set": c.properties_set}
+        return {
+            "nodes_created": c.nodes_created,
+            "relationships_created": c.relationships_created,
+            "properties_set": c.properties_set,
+        }
 
     def write_batches(self, query: str, rows: list[dict], batch_size: int = 1000, on_batch=None) -> dict:
         total = {"nodes_created": 0, "relationships_created": 0, "properties_set": 0}
         for i in range(0, len(rows), batch_size):
-            for k, v in self.write(query, rows=rows[i:i + batch_size]).items():
+            for k, v in self.write(query, rows=rows[i : i + batch_size]).items():
                 total[k] += v
             if on_batch:
                 on_batch(min(i + batch_size, len(rows)), len(rows))
@@ -107,9 +113,12 @@ class GraphStore:
         if self.kb_label:
             nodes = self.read_internal(
                 f"MATCH (n:`{self.kb_label}`) UNWIND [l IN labels(n) WHERE l <> $kb] AS label "
-                f"RETURN label, count(*) AS n", kb=self.kb_label)
+                f"RETURN label, count(*) AS n",
+                kb=self.kb_label,
+            )
             rels = self.read_internal(
-                f"MATCH (:`{self.kb_label}`)-[r]->(:`{self.kb_label}`) RETURN type(r) AS type, count(*) AS n")
+                f"MATCH (:`{self.kb_label}`)-[r]->(:`{self.kb_label}`) RETURN type(r) AS type, count(*) AS n"
+            )
         else:
             nodes = self.read_internal("MATCH (n) UNWIND labels(n) AS label RETURN label, count(*) AS n")
             rels = self.read_internal("MATCH ()-[r]->() RETURN type(r) AS type, count(*) AS n")
@@ -138,7 +147,9 @@ _STRING = re.compile(r"'(?:[^'\\]|\\.)*'|\"(?:[^\"\\]|\\.)*\"")
 _COMMENT = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
 _FORBIDDEN = re.compile(
     r"\b(CREATE|MERGE|DELETE|DETACH|SET|REMOVE|DROP|LOAD\s+CSV|CALL|FOREACH|USE|ALTER|GRANT|REVOKE|DENY|"
-    r"START|STOP|TERMINATE|SHOW|RENAME|ENABLE|DISABLE|FINISH|INSERT)\b", re.I)
+    r"START|STOP|TERMINATE|SHOW|RENAME|ENABLE|DISABLE|FINISH|INSERT)\b",
+    re.I,
+)
 
 
 def _mask_strings(cypher: str) -> tuple[str, list[str]]:
@@ -169,9 +180,11 @@ def check_read_only(cypher: str) -> None:
 _NAME = r"(?:`[^`]+`|[A-Za-z_][A-Za-z0-9_]*)"
 _NODE = re.compile(
     r"(?<![\w)\]`])\(\s*(?P<var>" + _NAME + r")?\s*(?P<labels>:\s*[^(){}]*?)?\s*"
-    r"(?P<props>\{[^{}]*\})?\s*(?P<where>\bWHERE\b[^()]*)?\)")
-_CLAUSE = re.compile(r"\b(OPTIONAL\s+MATCH|MATCH|WHERE|RETURN|WITH|UNWIND|ORDER\s+BY|SKIP|LIMIT|UNION|EXISTS|COUNT|"
-                     r"COLLECT)\b", re.I)
+    r"(?P<props>\{[^{}]*\})?\s*(?P<where>\bWHERE\b[^()]*)?\)"
+)
+_CLAUSE = re.compile(
+    r"\b(OPTIONAL\s+MATCH|MATCH|WHERE|RETURN|WITH|UNWIND|ORDER\s+BY|SKIP|LIMIT|UNION|EXISTS|COUNT|" r"COLLECT)\b", re.I
+)
 
 
 def _in_pattern_context(text: str, start: int, end: int) -> bool:
@@ -195,7 +208,12 @@ def scope_cypher(cypher: str, kb_label: str) -> str:
     for m in _NODE.finditer(masked):
         if not _in_pattern_context(masked, m.start(), m.end()):
             continue
-        var, labels, props, where = m.group("var") or "", (m.group("labels") or "").strip(), m.group("props"), m.group("where")
+        var, labels, props, where = (
+            m.group("var") or "",
+            (m.group("labels") or "").strip(),
+            m.group("props"),
+            m.group("where"),
+        )
         expr = labels[1:].strip() if labels else ""
         if expr and re.search(r"[|&!%()]", expr):
             new_labels = f":({expr})&`{kb_label}`"
@@ -204,7 +222,7 @@ def scope_cypher(cypher: str, kb_label: str) -> str:
         else:
             new_labels = f":`{kb_label}`"
         node = f"({var}{new_labels}" + (f" {props}" if props else "") + (f" {where.strip()}" if where else "") + ")"
-        out.append(masked[pos:m.start()] + node)
+        out.append(masked[pos : m.start()] + node)
         pos = m.end()
     out.append(masked[pos:])
     scoped = "".join(out)
@@ -218,6 +236,6 @@ def _assert_fully_scoped(masked: str, kb_label: str) -> None:
         if _in_pattern_context(masked, m.start(), m.end()) and f"`{kb_label}`" not in m.group(0):
             raise UnsafeQueryError("Query could not be restricted to this knowledge base")
     for m in re.finditer(r"(?<![\w)\]`])\((?=[^()]*\bWHERE\b)", masked):
-        seg = masked[m.start():masked.find(")", m.start()) + 1]
+        seg = masked[m.start() : masked.find(")", m.start()) + 1]
         if re.match(r"\(\s*" + _NAME + r"?\s*:", seg) and f"`{kb_label}`" not in seg:
             raise UnsafeQueryError("Query could not be restricted to this knowledge base")

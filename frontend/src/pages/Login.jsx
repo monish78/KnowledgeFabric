@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { authConfig, keycloakRedirect, localLogin, session } from "../auth.js";
+import { authConfig, currentUser, keycloakLogin, localLogin } from "../auth.js";
 
 function Network() {
   // decorative graph from the mockup
@@ -28,11 +28,11 @@ export default function Login() {
   const [cfg, setCfg] = useState(null);
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(params.get("error"));
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (session()) navigate(next, { replace: true });
+    currentUser().then((u) => u && navigate(next, { replace: true })).catch(() => {});
     authConfig().then(setCfg).catch(() => setError("The server is not reachable"));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -42,7 +42,7 @@ export default function Login() {
     setError(null);
     try {
       if (cfg.provider === "keycloak") {
-        await keycloakRedirect(next);
+        keycloakLogin(next);
         return;
       }
       await localLogin(userId.trim(), password);

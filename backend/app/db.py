@@ -1,4 +1,5 @@
 """Postgres connection pool and a minimal SQL-file migration runner."""
+
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -17,8 +18,9 @@ _pool: ConnectionPool | None = None
 def open_pool() -> ConnectionPool:
     global _pool
     if _pool is None:
-        _pool = ConnectionPool(get_settings().postgres_dsn, min_size=1, max_size=10,
-                               kwargs={"row_factory": dict_row}, open=True)
+        _pool = ConnectionPool(
+            get_settings().postgres_dsn, min_size=1, max_size=10, kwargs={"row_factory": dict_row}, open=True
+        )
     return _pool
 
 
